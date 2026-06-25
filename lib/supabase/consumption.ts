@@ -29,7 +29,7 @@ export async function fetchProductByQrCode(
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, qr_code, name, product_type, unit_cost, default_unit, stock_quantity, sac_en_mm, sac_boy_mm, sac_derinlik_mm, sac_adet"
+      "id, qr_code, name, product_type, unit_cost, default_unit, stock_quantity, sac_en_mm, sac_boy_mm, sac_derinlik_mm, sac_adet, category, min_stock_threshold, notes"
     )
     .eq("qr_code", qrCode)
     .maybeSingle();
@@ -110,7 +110,7 @@ export async function adminFetchAllProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, qr_code, name, product_type, unit_cost, default_unit, stock_quantity, sac_en_mm, sac_boy_mm, sac_derinlik_mm, sac_adet"
+      "id, qr_code, name, product_type, unit_cost, default_unit, stock_quantity, sac_en_mm, sac_boy_mm, sac_derinlik_mm, sac_adet, category, min_stock_threshold, notes"
     )
     .order("name");
   if (error) throw new Error(error.message);
@@ -136,6 +136,9 @@ function buildProductRow(
     sac_boy_mm: isSac ? product.sac_boy_mm : null,
     sac_derinlik_mm: isSac ? product.sac_derinlik_mm : null,
     sac_adet: isSac ? (product.sac_adet ?? 1) : null,
+    category: product.category ?? null,
+    min_stock_threshold: product.min_stock_threshold ?? null,
+    notes: product.notes ?? null,
   };
 }
 
