@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --ozmaksan-bg: #0c1117;
+  --ozmaksan-surface: #141c27;
+  --ozmaksan-surface-elevated: #1a2535;
+  --ozmaksan-border: #2a3d52;
+  --ozmaksan-text: #e8edf2;
+  --ozmaksan-muted: #8fa3b8;
+  --ozmaksan-accent: #e85d04;
+  --ozmaksan-accent-hover: #f97316;
+  --ozmaksan-steel: #3d5a80;
+  --background: var(--ozmaksan-bg);
+  --foreground: var(--ozmaksan-text);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ozmaksan-bg: var(--ozmaksan-bg);
+  --color-ozmaksan-surface: var(--ozmaksan-surface);
+  --color-ozmaksan-surface-elevated: var(--ozmaksan-surface-elevated);
+  --color-ozmaksan-border: var(--ozmaksan-border);
+  --color-ozmaksan-text: var(--ozmaksan-text);
+  --color-ozmaksan-muted: var(--ozmaksan-muted);
+  --color-ozmaksan-accent: var(--ozmaksan-accent);
+  --color-ozmaksan-accent-hover: var(--ozmaksan-accent-hover);
+  --color-ozmaksan-steel: var(--ozmaksan-steel);
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Consolas", monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+#qr-reader video {
+  border-radius: 0.75rem;
+}
+
+#qr-reader__scan_region {
+  border-radius: 0.75rem;
+}
+
+#qr-reader__dashboard_section_csr button {
+  min-height: 3rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+}
