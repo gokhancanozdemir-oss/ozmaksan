@@ -28,7 +28,9 @@ export async function fetchProductByQrCode(
 
   const { data, error } = await supabase
     .from("products")
-    .select("id, qr_code, name, unit_cost, default_unit, stock_quantity")
+    .select(
+      "id, qr_code, name, product_type, unit_cost, default_unit, stock_quantity, sac_en_mm, sac_boy_mm, sac_derinlik_mm"
+    )
     .eq("qr_code", qrCode)
     .maybeSingle();
 
@@ -37,7 +39,10 @@ export async function fetchProductByQrCode(
 }
 
 export async function saveConsumption(
-  input: Pick<ConsumptionData, "qrCode" | "projeId" | "miktar" | "birim">
+  input: Pick<
+    ConsumptionData,
+    "qrCode" | "projeId" | "miktar" | "birim" | "sacUsedEnMm" | "sacUsedBoyMm"
+  >
 ): Promise<ConsumptionResult> {
   const supabase = createClient();
 
@@ -46,6 +51,8 @@ export async function saveConsumption(
     p_project_id: input.projeId,
     p_quantity: input.miktar,
     p_unit: input.birim,
+    p_sac_used_en_mm: input.sacUsedEnMm ?? null,
+    p_sac_used_boy_mm: input.sacUsedBoyMm ?? null,
   });
 
   if (error) throw new Error(error.message);
@@ -102,10 +109,33 @@ export async function adminFetchAllProducts(): Promise<Product[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("id, qr_code, name, unit_cost, default_unit, stock_quantity")
+    .select(
+      "id, qr_code, name, product_type, unit_cost, default_unit, stock_quantity, sac_en_mm, sac_boy_mm, sac_derinlik_mm"
+    )
     .order("name");
   if (error) throw new Error(error.message);
   return data ?? [];
+}
+
+function buildProductRow(
+  product: Partial<Product> & {
+    qr_code: string;
+    name: string;
+    default_unit: Unit;
+  }
+) {
+  const isSac = product.product_type === "sac";
+  return {
+    qr_code: product.qr_code,
+    name: product.name,
+    product_type: product.product_type ?? "standard",
+    unit_cost: product.unit_cost ?? 0,
+    default_unit: (isSac ? "kg" : product.default_unit) as Unit,
+    stock_quantity: product.stock_quantity ?? 0,
+    sac_en_mm: isSac ? product.sac_en_mm : null,
+    sac_boy_mm: isSac ? product.sac_boy_mm : null,
+    sac_derinlik_mm: isSac ? product.sac_derinlik_mm : null,
+  };
 }
 
 export async function adminUpsertProduct(
@@ -116,26 +146,15 @@ export async function adminUpsertProduct(
   }
 ): Promise<void> {
   const supabase = createClient();
+  const row = buildProductRow(product);
   if (product.id) {
     const { error } = await supabase
       .from("products")
-      .update({
-        qr_code: product.qr_code,
-        name: product.name,
-        unit_cost: product.unit_cost ?? 0,
-        default_unit: product.default_unit,
-        stock_quantity: product.stock_quantity ?? 0,
-      })
+      .update(row)
       .eq("id", product.id);
     if (error) throw new Error(error.message);
   } else {
-    const { error } = await supabase.from("products").insert({
-      qr_code: product.qr_code,
-      name: product.name,
-      unit_cost: product.unit_cost ?? 0,
-      default_unit: product.default_unit,
-      stock_quantity: product.stock_quantity ?? 0,
-    });
+    const { error } = await supabase.from("products").insert(row);
     if (error) throw new Error(error.message);
   }
 }
@@ -166,7 +185,7 @@ export async function adminFetchConsumptionByProjectId(
   const { data: records, error } = await supabase
     .from("consumption_records")
     .select(
-      "id, product_id, project_id, user_id, quantity, unit, unit_cost, total_cost, created_at"
+      "id, product_id, project_id, user_id, quantity, unit, unit_cost, total_cost, created_at, sac_used_en_mm, sac_used_boy_mm"
     )
     .eq("project_id", projectId)
     .order("created_at", { ascending: false });
@@ -213,7 +232,7 @@ export async function adminFetchConsumptionRecords(): Promise<
   const { data: records, error } = await supabase
     .from("consumption_records")
     .select(
-      "id, product_id, project_id, user_id, quantity, unit, unit_cost, total_cost, created_at"
+      "id, product_id, project_id, user_id, quantity, unit, unit_cost, total_cost, created_at, sac_used_en_mm, sac_used_boy_mm"
     )
     .order("created_at", { ascending: false })
     .limit(100);

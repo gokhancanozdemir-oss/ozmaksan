@@ -11,6 +11,8 @@ DROP TABLE IF EXISTS public.profiles CASCADE;
 
 DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
 DROP FUNCTION IF EXISTS public.record_consumption(TEXT, UUID, NUMERIC, TEXT) CASCADE;
+DROP FUNCTION IF EXISTS public.record_consumption(TEXT, UUID, NUMERIC, TEXT, NUMERIC, NUMERIC) CASCADE;
+DROP FUNCTION IF EXISTS public.calc_sac_kg(NUMERIC, NUMERIC, NUMERIC) CASCADE;
 DROP FUNCTION IF EXISTS public.is_admin() CASCADE;
 DROP FUNCTION IF EXISTS public.is_authenticated_user() CASCADE;
 
@@ -41,10 +43,18 @@ CREATE TABLE public.products (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   qr_code TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
+  product_type TEXT NOT NULL DEFAULT 'standard' CHECK (product_type IN ('standard', 'sac')),
   unit_cost NUMERIC(12, 2) NOT NULL DEFAULT 0 CHECK (unit_cost >= 0),
   default_unit TEXT NOT NULL CHECK (default_unit IN ('kg', 'm', 'adet')),
   stock_quantity NUMERIC(12, 3) NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  sac_en_mm NUMERIC,
+  sac_boy_mm NUMERIC,
+  sac_derinlik_mm NUMERIC,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT products_sac_dims_check CHECK (
+    product_type = 'standard'
+    OR (sac_en_mm > 0 AND sac_boy_mm > 0 AND sac_derinlik_mm > 0)
+  )
 );
 
 CREATE TABLE public.consumption_records (
@@ -56,6 +66,8 @@ CREATE TABLE public.consumption_records (
   unit TEXT NOT NULL CHECK (unit IN ('kg', 'm', 'adet')),
   unit_cost NUMERIC(12, 2) NOT NULL CHECK (unit_cost >= 0),
   total_cost NUMERIC(12, 2) GENERATED ALWAYS AS (quantity * unit_cost) STORED,
+  sac_used_en_mm NUMERIC,
+  sac_used_boy_mm NUMERIC,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -110,11 +122,26 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
+CREATE OR REPLACE FUNCTION public.calc_sac_kg(
+  en_mm NUMERIC,
+  boy_mm NUMERIC,
+  derinlik_mm NUMERIC
+)
+RETURNS NUMERIC
+LANGUAGE sql
+IMMUTABLE
+SET search_path = public
+AS $$
+  SELECT (en_mm * boy_mm * derinlik_mm * 7.85) / 1000000.0;
+$$;
+
 CREATE OR REPLACE FUNCTION public.record_consumption(
   p_qr_code TEXT,
   p_project_id UUID,
   p_quantity NUMERIC,
-  p_unit TEXT
+  p_unit TEXT,
+  p_sac_used_en_mm NUMERIC DEFAULT NULL,
+  p_sac_used_boy_mm NUMERIC DEFAULT NULL
 )
 RETURNS JSON
 LANGUAGE plpgsql
@@ -125,6 +152,8 @@ DECLARE
   v_product public.products%ROWTYPE;
   v_record public.consumption_records%ROWTYPE;
   v_remaining NUMERIC(12, 3);
+  v_qty NUMERIC(12, 3);
+  v_unit TEXT;
 BEGIN
   IF auth.uid() IS NULL THEN
     RAISE EXCEPTION 'Giriş yapmanız gerekiyor';
@@ -134,14 +163,6 @@ BEGIN
     SELECT 1 FROM public.profiles WHERE id = auth.uid()
   ) THEN
     RAISE EXCEPTION 'Kullanıcı profili bulunamadı';
-  END IF;
-
-  IF p_quantity IS NULL OR p_quantity <= 0 THEN
-    RAISE EXCEPTION 'Miktar sıfırdan büyük olmalı';
-  END IF;
-
-  IF p_unit NOT IN ('kg', 'm', 'adet') THEN
-    RAISE EXCEPTION 'Geçersiz birim: %', p_unit;
   END IF;
 
   IF NOT EXISTS (
@@ -160,20 +181,44 @@ BEGIN
     RAISE EXCEPTION 'Ürün bulunamadı: %', p_qr_code;
   END IF;
 
-  IF v_product.stock_quantity < p_quantity THEN
+  IF v_product.product_type = 'sac' THEN
+    IF p_sac_used_en_mm IS NULL OR p_sac_used_boy_mm IS NULL
+       OR p_sac_used_en_mm <= 0 OR p_sac_used_boy_mm <= 0 THEN
+      RAISE EXCEPTION 'Sac için kullanılan en ve boy (mm) girilmeli';
+    END IF;
+    IF v_product.sac_derinlik_mm IS NULL OR v_product.sac_derinlik_mm <= 0 THEN
+      RAISE EXCEPTION 'Sac ürününde kalınlık tanımlı değil';
+    END IF;
+    v_qty := public.calc_sac_kg(p_sac_used_en_mm, p_sac_used_boy_mm, v_product.sac_derinlik_mm);
+    v_unit := 'kg';
+  ELSE
+    v_qty := p_quantity;
+    v_unit := p_unit;
+    IF v_qty IS NULL OR v_qty <= 0 THEN
+      RAISE EXCEPTION 'Miktar sıfırdan büyük olmalı';
+    END IF;
+    IF v_unit NOT IN ('kg', 'm', 'adet') THEN
+      RAISE EXCEPTION 'Geçersiz birim: %', v_unit;
+    END IF;
+  END IF;
+
+  IF v_product.stock_quantity < v_qty THEN
     RAISE EXCEPTION 'Yetersiz stok. Mevcut: % %', v_product.stock_quantity, v_product.default_unit;
   END IF;
 
   INSERT INTO public.consumption_records (
-    product_id, project_id, quantity, unit, unit_cost, user_id
+    product_id, project_id, quantity, unit, unit_cost, user_id,
+    sac_used_en_mm, sac_used_boy_mm
   )
   VALUES (
-    v_product.id, p_project_id, p_quantity, p_unit, v_product.unit_cost, auth.uid()
+    v_product.id, p_project_id, v_qty, v_unit, v_product.unit_cost, auth.uid(),
+    CASE WHEN v_product.product_type = 'sac' THEN p_sac_used_en_mm ELSE NULL END,
+    CASE WHEN v_product.product_type = 'sac' THEN p_sac_used_boy_mm ELSE NULL END
   )
   RETURNING * INTO v_record;
 
   UPDATE public.products
-  SET stock_quantity = stock_quantity - p_quantity
+  SET stock_quantity = stock_quantity - v_qty
   WHERE id = v_product.id
   RETURNING stock_quantity INTO v_remaining;
 
@@ -181,7 +226,8 @@ BEGIN
     'id', v_record.id,
     'total_cost', v_record.total_cost,
     'product_name', v_product.name,
-    'remaining_stock', v_remaining
+    'remaining_stock', v_remaining,
+    'quantity_kg', v_qty
   );
 END;
 $$;
@@ -260,6 +306,7 @@ GRANT SELECT ON public.products TO authenticated;
 GRANT SELECT ON public.consumption_records TO authenticated;
 GRANT INSERT, UPDATE, DELETE ON public.projects TO authenticated;
 GRANT INSERT, UPDATE, DELETE ON public.products TO authenticated;
+GRANT EXECUTE ON FUNCTION public.calc_sac_kg TO authenticated;
 GRANT EXECUTE ON FUNCTION public.record_consumption TO authenticated;
 GRANT EXECUTE ON FUNCTION public.is_admin TO authenticated;
 

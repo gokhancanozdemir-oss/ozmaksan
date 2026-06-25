@@ -12,10 +12,15 @@ import {
   adminUpsertProject,
   UNITS,
 } from "@/lib/supabase/consumption";
-import type { ConsumptionRecord, Product, Project, Unit } from "@/lib/types/database";
+import type { ConsumptionRecord, Product, ProductType, Project, Unit } from "@/lib/types/database";
 import AppHeader from "@/components/AppHeader";
 import QrCodePreview from "@/components/admin/QrCodePreview";
 import { downloadQrPng, generateProductQrCode } from "@/lib/qr";
+import {
+  calcSacWeightKg,
+  formatSacDimensions,
+  formatWeightKg,
+} from "@/lib/sac";
 
 type Tab = "projects" | "products" | "consumption";
 
@@ -33,9 +38,23 @@ const emptyProduct = (): Partial<Product> & {
   qr_code: string;
   name: string;
   default_unit: Unit;
+  product_type: ProductType;
 } => ({
   qr_code: generateProductQrCode(),
   name: "",
+  product_type: "standard",
+  default_unit: "kg",
+});
+
+const emptySacProduct = (): Partial<Product> & {
+  qr_code: string;
+  name: string;
+  default_unit: Unit;
+  product_type: ProductType;
+} => ({
+  qr_code: generateProductQrCode(),
+  name: "Sac",
+  product_type: "sac",
   default_unit: "kg",
 });
 
@@ -52,8 +71,25 @@ export default function AdminDashboard() {
     (Partial<Project> & { name: string }) | null
   >(null);
   const [editingProduct, setEditingProduct] = useState<
-    (Partial<Product> & { qr_code: string; name: string; default_unit: Unit }) | null
+    (Partial<Product> & {
+      qr_code: string;
+      name: string;
+      default_unit: Unit;
+      product_type?: ProductType;
+    }) | null
   >(null);
+
+  const editingSacKg =
+    editingProduct?.product_type === "sac" &&
+    editingProduct.sac_en_mm &&
+    editingProduct.sac_boy_mm &&
+    editingProduct.sac_derinlik_mm
+      ? calcSacWeightKg(
+          editingProduct.sac_en_mm,
+          editingProduct.sac_boy_mm,
+          editingProduct.sac_derinlik_mm
+        )
+      : null;
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -104,11 +140,35 @@ export default function AdminDashboard() {
   async function handleSaveProduct() {
     if (!editingProduct?.qr_code.trim() || !editingProduct.name.trim()) return;
     const isNew = !editingProduct.id;
-    const payload = {
+    const isSac = editingProduct.product_type === "sac";
+
+    let payload = {
       ...editingProduct,
+      product_type: editingProduct.product_type ?? "standard",
       unit_cost: editingProduct.unit_cost ?? 0,
+      default_unit: (isSac ? "kg" : editingProduct.default_unit) as Unit,
       stock_quantity: editingProduct.stock_quantity ?? 0,
     };
+
+    if (isSac) {
+      if (
+        !editingProduct.sac_en_mm ||
+        !editingProduct.sac_boy_mm ||
+        !editingProduct.sac_derinlik_mm
+      ) {
+        setError("Sac için en, boy ve kalınlık (mm) zorunludur.");
+        return;
+      }
+      payload = {
+        ...payload,
+        stock_quantity: calcSacWeightKg(
+          editingProduct.sac_en_mm,
+          editingProduct.sac_boy_mm,
+          editingProduct.sac_derinlik_mm
+        ),
+      };
+    }
+
     try {
       await adminUpsertProduct(payload);
       if (isNew) {
@@ -353,18 +413,31 @@ export default function AdminDashboard() {
           </div>
         ) : tab === "products" ? (
           <div className="space-y-4">
-            <button
-              type="button"
-              onClick={() => setEditingProduct(emptyProduct())}
-              className="h-12 rounded-xl bg-ozmaksan-accent px-5 font-semibold text-white"
-            >
-              + Yeni Ürün
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => setEditingProduct(emptyProduct())}
+                className="h-12 rounded-xl bg-ozmaksan-accent px-5 font-semibold text-white"
+              >
+                + Yeni Ürün
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditingProduct(emptySacProduct())}
+                className="h-12 rounded-xl border-2 border-ozmaksan-accent px-5 font-semibold text-ozmaksan-accent hover:bg-ozmaksan-accent hover:text-white"
+              >
+                + Yeni Sac
+              </button>
+            </div>
 
             {editingProduct && (
               <div className="rounded-2xl border-2 border-ozmaksan-border bg-ozmaksan-surface-elevated p-6">
                 <h3 className="mb-4 text-lg font-bold text-ozmaksan-text">
-                  {editingProduct.id ? "Ürün Düzenle" : "Yeni Ürün"}
+                  {editingProduct.id
+                    ? "Ürün Düzenle"
+                    : editingProduct.product_type === "sac"
+                      ? "Yeni Sac"
+                      : "Yeni Ürün"}
                 </h3>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <input
@@ -382,7 +455,11 @@ export default function AdminDashboard() {
                     type="number"
                     step="0.01"
                     min="0"
-                    placeholder="Maliyet"
+                    placeholder={
+                      editingProduct.product_type === "sac"
+                        ? "Kg başı maliyet (TRY)"
+                        : "Maliyet"
+                    }
                     value={
                       editingProduct.unit_cost != null
                         ? editingProduct.unit_cost
@@ -399,43 +476,115 @@ export default function AdminDashboard() {
                     }
                     className={inputClass}
                   />
-                  <input
-                    type="number"
-                    step="0.001"
-                    min="0"
-                    placeholder="Stok"
-                    value={
-                      editingProduct.stock_quantity != null
-                        ? editingProduct.stock_quantity
-                        : ""
-                    }
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        stock_quantity:
-                          e.target.value === ""
-                            ? undefined
-                            : parseFloat(e.target.value) || 0,
-                      })
-                    }
-                    className={inputClass}
-                  />
-                  <select
-                    value={editingProduct.default_unit}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        default_unit: e.target.value as Unit,
-                      })
-                    }
-                    className={inputClass}
-                  >
-                    {UNITS.map((u) => (
-                      <option key={u} value={u}>
-                        {u}
-                      </option>
-                    ))}
-                  </select>
+
+                  {editingProduct.product_type === "sac" ? (
+                    <>
+                      <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        placeholder="En (mm)"
+                        value={editingProduct.sac_en_mm ?? ""}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            sac_en_mm:
+                              e.target.value === ""
+                                ? undefined
+                                : parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        className={inputClass}
+                      />
+                      <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        placeholder="Boy (mm)"
+                        value={editingProduct.sac_boy_mm ?? ""}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            sac_boy_mm:
+                              e.target.value === ""
+                                ? undefined
+                                : parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        className={inputClass}
+                      />
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        placeholder="Kalınlık / derinlik (mm)"
+                        value={editingProduct.sac_derinlik_mm ?? ""}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            sac_derinlik_mm:
+                              e.target.value === ""
+                                ? undefined
+                                : parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        className={inputClass}
+                      />
+                      <div className="flex h-12 items-center rounded-xl border-2 border-ozmaksan-accent/30 bg-ozmaksan-accent/10 px-4 text-ozmaksan-text">
+                        <span className="text-sm">
+                          Hesaplanan ağırlık:{" "}
+                          <strong className="text-ozmaksan-accent">
+                            {editingSacKg != null
+                              ? formatWeightKg(editingSacKg)
+                              : "—"}
+                          </strong>
+                          <span className="ml-2 text-xs text-ozmaksan-muted">
+                            (ρ = 7,85 g/cm³)
+                          </span>
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <input
+                        type="number"
+                        step="0.001"
+                        min="0"
+                        placeholder="Stok"
+                        value={
+                          editingProduct.stock_quantity != null
+                            ? editingProduct.stock_quantity
+                            : ""
+                        }
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            stock_quantity:
+                              e.target.value === ""
+                                ? undefined
+                                : parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        className={inputClass}
+                      />
+                      <select
+                        value={editingProduct.default_unit}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            default_unit: e.target.value as Unit,
+                          })
+                        }
+                        className={inputClass}
+                      >
+                        {UNITS.map((u) => (
+                          <option key={u} value={u}>
+                            {u}
+                          </option>
+                        ))}
+                      </select>
+                    </>
+                  )}
 
                   <QrCodePreview
                     value={editingProduct.qr_code}
@@ -467,6 +616,7 @@ export default function AdminDashboard() {
                   <tr>
                     <th className="px-4 py-3">QR</th>
                     <th className="px-4 py-3">Ürün</th>
+                    <th className="px-4 py-3">Tip / Ölçü</th>
                     <th className="px-4 py-3">Stok</th>
                     <th className="px-4 py-3">Maliyet</th>
                     <th className="px-4 py-3">İşlem</th>
@@ -482,14 +632,38 @@ export default function AdminDashboard() {
                         {p.qr_code}
                       </td>
                       <td className="px-4 py-3 font-medium">{p.name}</td>
+                      <td className="px-4 py-3 text-sm text-ozmaksan-muted">
+                        {p.product_type === "sac" &&
+                        p.sac_en_mm &&
+                        p.sac_boy_mm &&
+                        p.sac_derinlik_mm ? (
+                          <span>
+                            <span className="font-semibold text-ozmaksan-accent">
+                              Sac
+                            </span>
+                            <br />
+                            {formatSacDimensions(
+                              p.sac_en_mm,
+                              p.sac_boy_mm,
+                              p.sac_derinlik_mm
+                            )}
+                          </span>
+                        ) : (
+                          "Standart"
+                        )}
+                      </td>
                       <td className="px-4 py-3">
-                        {p.stock_quantity} {p.default_unit}
+                        {p.stock_quantity}{" "}
+                        {p.product_type === "sac" ? "kg" : p.default_unit}
                       </td>
                       <td className="px-4 py-3">
                         {Number(p.unit_cost).toLocaleString("tr-TR", {
                           style: "currency",
                           currency: "TRY",
                         })}
+                        {p.product_type === "sac" && (
+                          <span className="text-xs text-ozmaksan-muted"> /kg</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex flex-wrap gap-2">

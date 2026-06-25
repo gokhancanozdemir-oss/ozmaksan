@@ -126,6 +126,8 @@ export default function ProductionTracker() {
         projeId: data.projeId,
         miktar: data.miktar,
         birim: data.birim,
+        sacUsedEnMm: data.sacUsedEnMm,
+        sacUsedBoyMm: data.sacUsedBoyMm,
       });
 
       console.log("Sarfiyat kaydı:", { ...data, result });

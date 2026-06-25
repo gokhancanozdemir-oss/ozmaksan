@@ -1,5 +1,6 @@
 export type Unit = "kg" | "m" | "adet";
 export type UserRole = "admin" | "okutucu";
+export type ProductType = "standard" | "sac";
 
 export type Profile = {
   id: string;
@@ -21,9 +22,13 @@ export type Product = {
   id: string;
   qr_code: string;
   name: string;
+  product_type: ProductType;
   unit_cost: number;
   default_unit: Unit;
   stock_quantity: number;
+  sac_en_mm: number | null;
+  sac_boy_mm: number | null;
+  sac_derinlik_mm: number | null;
 };
 
 export type ConsumptionRecord = {
@@ -36,7 +41,9 @@ export type ConsumptionRecord = {
   unit_cost: number;
   total_cost: number;
   created_at: string;
-  products?: { name: string; qr_code: string } | null;
+  sac_used_en_mm: number | null;
+  sac_used_boy_mm: number | null;
+  products?: { name: string; qr_code: string; product_type?: ProductType } | null;
   projects?: { name: string } | null;
   profiles?: { email: string; full_name: string | null } | null;
 };
@@ -56,6 +63,8 @@ export type ConsumptionData = {
   birim: Unit;
   projeId: string;
   projeAdi: string;
+  sacUsedEnMm?: number;
+  sacUsedBoyMm?: number;
 };
 
 export type Database = {
@@ -111,27 +120,39 @@ export type Database = {
           id: string;
           qr_code: string;
           name: string;
+          product_type: ProductType;
           unit_cost: number;
           default_unit: Unit;
           stock_quantity: number;
+          sac_en_mm: number | null;
+          sac_boy_mm: number | null;
+          sac_derinlik_mm: number | null;
           created_at: string;
         };
         Insert: {
           id?: string;
           qr_code: string;
           name: string;
+          product_type?: ProductType;
           unit_cost?: number;
           default_unit: Unit;
           stock_quantity?: number;
+          sac_en_mm?: number | null;
+          sac_boy_mm?: number | null;
+          sac_derinlik_mm?: number | null;
           created_at?: string;
         };
         Update: {
           id?: string;
           qr_code?: string;
           name?: string;
+          product_type?: ProductType;
           unit_cost?: number;
           default_unit?: Unit;
           stock_quantity?: number;
+          sac_en_mm?: number | null;
+          sac_boy_mm?: number | null;
+          sac_derinlik_mm?: number | null;
           created_at?: string;
         };
         Relationships: [];
@@ -169,6 +190,8 @@ export type Database = {
           p_project_id: string;
           p_quantity: number;
           p_unit: string;
+          p_sac_used_en_mm?: number | null;
+          p_sac_used_boy_mm?: number | null;
         };
         Returns: ConsumptionResult;
       };
