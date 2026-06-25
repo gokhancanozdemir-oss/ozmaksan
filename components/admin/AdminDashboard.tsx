@@ -25,7 +25,24 @@ import {
 type Tab = "projects" | "products" | "consumption";
 
 const inputClass =
-  "h-12 rounded-xl border-2 border-ozmaksan-border bg-ozmaksan-bg px-4 text-ozmaksan-text placeholder:text-ozmaksan-muted/35 focus:border-ozmaksan-accent focus:outline-none";
+  "h-12 w-full rounded-xl border-2 border-ozmaksan-border bg-ozmaksan-bg px-4 text-ozmaksan-text placeholder:text-ozmaksan-muted/35 focus:border-ozmaksan-accent focus:outline-none";
+
+function FormField({
+  label,
+  children,
+  className,
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={`flex flex-col gap-1.5 ${className ?? ""}`}>
+      <span className="text-sm font-semibold text-ozmaksan-text">{label}</span>
+      {children}
+    </div>
+  );
+}
 
 const emptyProject = (): Partial<Project> & { name: string } => ({
   name: "",
@@ -56,6 +73,7 @@ const emptySacProduct = (): Partial<Product> & {
   name: "Sac",
   product_type: "sac",
   default_unit: "kg",
+  sac_adet: 1,
 });
 
 export default function AdminDashboard() {
@@ -79,7 +97,7 @@ export default function AdminDashboard() {
     }) | null
   >(null);
 
-  const editingSacKg =
+  const editingSacSheetKg =
     editingProduct?.product_type === "sac" &&
     editingProduct.sac_en_mm &&
     editingProduct.sac_boy_mm &&
@@ -90,6 +108,10 @@ export default function AdminDashboard() {
           editingProduct.sac_derinlik_mm
         )
       : null;
+
+  const editingSacAdet = editingProduct?.sac_adet ?? 1;
+  const editingSacTotalKg =
+    editingSacSheetKg != null ? editingSacSheetKg * editingSacAdet : null;
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -154,18 +176,22 @@ export default function AdminDashboard() {
       if (
         !editingProduct.sac_en_mm ||
         !editingProduct.sac_boy_mm ||
-        !editingProduct.sac_derinlik_mm
+        !editingProduct.sac_derinlik_mm ||
+        !editingProduct.sac_adet ||
+        editingProduct.sac_adet <= 0
       ) {
-        setError("Sac için en, boy ve kalınlık (mm) zorunludur.");
+        setError("Sac için en, boy, kalınlık (mm) ve adet zorunludur.");
         return;
       }
+      const perSheet = calcSacWeightKg(
+        editingProduct.sac_en_mm,
+        editingProduct.sac_boy_mm,
+        editingProduct.sac_derinlik_mm
+      );
       payload = {
         ...payload,
-        stock_quantity: calcSacWeightKg(
-          editingProduct.sac_en_mm,
-          editingProduct.sac_boy_mm,
-          editingProduct.sac_derinlik_mm
-        ),
+        sac_adet: editingProduct.sac_adet,
+        stock_quantity: perSheet * editingProduct.sac_adet,
       };
     }
 
@@ -279,36 +305,42 @@ export default function AdminDashboard() {
                   {editingProject.id ? "Proje Düzenle" : "Yeni Proje"}
                 </h3>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <input
-                    placeholder="Proje adı"
-                    value={editingProject.name}
-                    onChange={(e) =>
-                      setEditingProject({ ...editingProject, name: e.target.value })
-                    }
-                    className={inputClass}
-                  />
-                  <input
-                    placeholder="Müşteri"
-                    value={editingProject.customer ?? ""}
-                    onChange={(e) =>
-                      setEditingProject({
-                        ...editingProject,
-                        customer: e.target.value,
-                      })
-                    }
-                    className={inputClass}
-                  />
-                  <input
-                    placeholder="Açıklama"
-                    value={editingProject.description ?? ""}
-                    onChange={(e) =>
-                      setEditingProject({
-                        ...editingProject,
-                        description: e.target.value,
-                      })
-                    }
-                    className={`${inputClass} sm:col-span-2`}
-                  />
+                  <FormField label="Proje adı">
+                    <input
+                      placeholder="Örn. STEAMAx Boiler"
+                      value={editingProject.name}
+                      onChange={(e) =>
+                        setEditingProject({ ...editingProject, name: e.target.value })
+                      }
+                      className={inputClass}
+                    />
+                  </FormField>
+                  <FormField label="Müşteri">
+                    <input
+                      placeholder="Örn. Mercedes Benz"
+                      value={editingProject.customer ?? ""}
+                      onChange={(e) =>
+                        setEditingProject({
+                          ...editingProject,
+                          customer: e.target.value,
+                        })
+                      }
+                      className={inputClass}
+                    />
+                  </FormField>
+                  <FormField label="Açıklama" className="sm:col-span-2">
+                    <input
+                      placeholder="Proje açıklaması"
+                      value={editingProject.description ?? ""}
+                      onChange={(e) =>
+                        setEditingProject({
+                          ...editingProject,
+                          description: e.target.value,
+                        })
+                      }
+                      className={inputClass}
+                    />
+                  </FormField>
                   <label className="flex h-12 items-center gap-3 text-ozmaksan-text">
                     <input
                       type="checkbox"
@@ -440,149 +472,192 @@ export default function AdminDashboard() {
                       : "Yeni Ürün"}
                 </h3>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <input
-                    placeholder="Ürün adı"
-                    value={editingProduct.name}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        name: e.target.value,
-                      })
-                    }
-                    className={inputClass}
-                  />
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder={
+                  <FormField label="Ürün adı">
+                    <input
+                      placeholder="Ürün veya sac adı"
+                      value={editingProduct.name}
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          name: e.target.value,
+                        })
+                      }
+                      className={inputClass}
+                    />
+                  </FormField>
+                  <FormField
+                    label={
                       editingProduct.product_type === "sac"
                         ? "Kg başı maliyet (TRY)"
-                        : "Maliyet"
+                        : "Birim maliyet (TRY)"
                     }
-                    value={
-                      editingProduct.unit_cost != null
-                        ? editingProduct.unit_cost
-                        : ""
-                    }
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        unit_cost:
-                          e.target.value === ""
-                            ? undefined
-                            : parseFloat(e.target.value) || 0,
-                      })
-                    }
-                    className={inputClass}
-                  />
+                  >
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                      value={
+                        editingProduct.unit_cost != null
+                          ? editingProduct.unit_cost
+                          : ""
+                      }
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          unit_cost:
+                            e.target.value === ""
+                              ? undefined
+                              : parseFloat(e.target.value) || 0,
+                        })
+                      }
+                      className={inputClass}
+                    />
+                  </FormField>
 
                   {editingProduct.product_type === "sac" ? (
                     <>
-                      <input
-                        type="number"
-                        min="0"
-                        step="1"
-                        placeholder="En (mm)"
-                        value={editingProduct.sac_en_mm ?? ""}
-                        onChange={(e) =>
-                          setEditingProduct({
-                            ...editingProduct,
-                            sac_en_mm:
-                              e.target.value === ""
-                                ? undefined
-                                : parseFloat(e.target.value) || 0,
-                          })
-                        }
-                        className={inputClass}
-                      />
-                      <input
-                        type="number"
-                        min="0"
-                        step="1"
-                        placeholder="Boy (mm)"
-                        value={editingProduct.sac_boy_mm ?? ""}
-                        onChange={(e) =>
-                          setEditingProduct({
-                            ...editingProduct,
-                            sac_boy_mm:
-                              e.target.value === ""
-                                ? undefined
-                                : parseFloat(e.target.value) || 0,
-                          })
-                        }
-                        className={inputClass}
-                      />
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        placeholder="Kalınlık / derinlik (mm)"
-                        value={editingProduct.sac_derinlik_mm ?? ""}
-                        onChange={(e) =>
-                          setEditingProduct({
-                            ...editingProduct,
-                            sac_derinlik_mm:
-                              e.target.value === ""
-                                ? undefined
-                                : parseFloat(e.target.value) || 0,
-                          })
-                        }
-                        className={inputClass}
-                      />
-                      <div className="flex h-12 items-center rounded-xl border-2 border-ozmaksan-accent/30 bg-ozmaksan-accent/10 px-4 text-ozmaksan-text">
-                        <span className="text-sm">
-                          Hesaplanan ağırlık:{" "}
+                      <FormField label="En (mm)">
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          placeholder="2000"
+                          value={editingProduct.sac_en_mm ?? ""}
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              sac_en_mm:
+                                e.target.value === ""
+                                  ? undefined
+                                  : parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className={inputClass}
+                        />
+                      </FormField>
+                      <FormField label="Boy (mm)">
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          placeholder="1000"
+                          value={editingProduct.sac_boy_mm ?? ""}
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              sac_boy_mm:
+                                e.target.value === ""
+                                  ? undefined
+                                  : parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className={inputClass}
+                        />
+                      </FormField>
+                      <FormField label="Kalınlık (mm)">
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.1"
+                          placeholder="5"
+                          value={editingProduct.sac_derinlik_mm ?? ""}
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              sac_derinlik_mm:
+                                e.target.value === ""
+                                  ? undefined
+                                  : parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className={inputClass}
+                        />
+                      </FormField>
+                      <FormField label="Adet (levha sayısı)">
+                        <input
+                          type="number"
+                          min="1"
+                          step="1"
+                          placeholder="1"
+                          value={editingProduct.sac_adet ?? ""}
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              sac_adet:
+                                e.target.value === ""
+                                  ? undefined
+                                  : parseInt(e.target.value, 10) || 1,
+                            })
+                          }
+                          className={inputClass}
+                        />
+                      </FormField>
+                      <div className="sm:col-span-2 rounded-xl border-2 border-ozmaksan-accent/30 bg-ozmaksan-accent/10 px-4 py-3 text-sm text-ozmaksan-text">
+                        <p>
+                          Levha başı:{" "}
                           <strong className="text-ozmaksan-accent">
-                            {editingSacKg != null
-                              ? formatWeightKg(editingSacKg)
+                            {editingSacSheetKg != null
+                              ? formatWeightKg(editingSacSheetKg)
+                              : "—"}
+                          </strong>
+                        </p>
+                        <p className="mt-1">
+                          Toplam stok ({editingSacAdet} adet):{" "}
+                          <strong className="text-ozmaksan-accent">
+                            {editingSacTotalKg != null
+                              ? formatWeightKg(editingSacTotalKg)
                               : "—"}
                           </strong>
                           <span className="ml-2 text-xs text-ozmaksan-muted">
-                            (ρ = 7,85 g/cm³)
+                            (yoğunluk 7,85 g/cm³)
                           </span>
-                        </span>
+                        </p>
                       </div>
                     </>
                   ) : (
                     <>
-                      <input
-                        type="number"
-                        step="0.001"
-                        min="0"
-                        placeholder="Stok"
-                        value={
-                          editingProduct.stock_quantity != null
-                            ? editingProduct.stock_quantity
-                            : ""
-                        }
-                        onChange={(e) =>
-                          setEditingProduct({
-                            ...editingProduct,
-                            stock_quantity:
-                              e.target.value === ""
-                                ? undefined
-                                : parseFloat(e.target.value) || 0,
-                          })
-                        }
-                        className={inputClass}
-                      />
-                      <select
-                        value={editingProduct.default_unit}
-                        onChange={(e) =>
-                          setEditingProduct({
-                            ...editingProduct,
-                            default_unit: e.target.value as Unit,
-                          })
-                        }
-                        className={inputClass}
-                      >
-                        {UNITS.map((u) => (
-                          <option key={u} value={u}>
-                            {u}
-                          </option>
-                        ))}
-                      </select>
+                      <FormField label="Stok miktarı">
+                        <input
+                          type="number"
+                          step="0.001"
+                          min="0"
+                          placeholder="0"
+                          value={
+                            editingProduct.stock_quantity != null
+                              ? editingProduct.stock_quantity
+                              : ""
+                          }
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              stock_quantity:
+                                e.target.value === ""
+                                  ? undefined
+                                  : parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className={inputClass}
+                        />
+                      </FormField>
+                      <FormField label="Birim">
+                        <select
+                          value={editingProduct.default_unit}
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              default_unit: e.target.value as Unit,
+                            })
+                          }
+                          className={inputClass}
+                        >
+                          {UNITS.map((u) => (
+                            <option key={u} value={u}>
+                              {u}
+                            </option>
+                          ))}
+                        </select>
+                      </FormField>
                     </>
                   )}
 
@@ -646,6 +721,12 @@ export default function AdminDashboard() {
                               p.sac_en_mm,
                               p.sac_boy_mm,
                               p.sac_derinlik_mm
+                            )}
+                            {p.sac_adet && p.sac_adet > 1 && (
+                              <>
+                                <br />
+                                {p.sac_adet} adet levha
+                              </>
                             )}
                           </span>
                         ) : (

@@ -50,6 +50,7 @@ CREATE TABLE public.products (
   sac_en_mm NUMERIC,
   sac_boy_mm NUMERIC,
   sac_derinlik_mm NUMERIC,
+  sac_adet NUMERIC DEFAULT 1 CHECK (sac_adet IS NULL OR sac_adet > 0),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   CONSTRAINT products_sac_dims_check CHECK (
     product_type = 'standard'

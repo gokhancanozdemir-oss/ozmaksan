@@ -29,6 +29,7 @@ export type Product = {
   sac_en_mm: number | null;
   sac_boy_mm: number | null;
   sac_derinlik_mm: number | null;
+  sac_adet: number | null;
 };
 
 export type ConsumptionRecord = {
@@ -127,6 +128,7 @@ export type Database = {
           sac_en_mm: number | null;
           sac_boy_mm: number | null;
           sac_derinlik_mm: number | null;
+          sac_adet: number | null;
           created_at: string;
         };
         Insert: {
@@ -140,6 +142,7 @@ export type Database = {
           sac_en_mm?: number | null;
           sac_boy_mm?: number | null;
           sac_derinlik_mm?: number | null;
+          sac_adet?: number | null;
           created_at?: string;
         };
         Update: {
@@ -153,6 +156,7 @@ export type Database = {
           sac_en_mm?: number | null;
           sac_boy_mm?: number | null;
           sac_derinlik_mm?: number | null;
+          sac_adet?: number | null;
           created_at?: string;
         };
         Relationships: [];
