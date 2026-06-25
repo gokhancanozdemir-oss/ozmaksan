@@ -22,9 +22,7 @@ import {
   formatWeightKg,
 } from "@/lib/sac";
 
-import DashboardPanelLoader from "@/components/DashboardPanelLoader";
-
-type Tab = "overview" | "projects" | "products" | "consumption";
+type Tab = "projects" | "products" | "consumption";
 
 const inputClass =
   "h-12 w-full rounded-xl border-2 border-ozmaksan-border bg-ozmaksan-bg px-4 text-ozmaksan-text placeholder:text-ozmaksan-muted/35 focus:border-ozmaksan-accent focus:outline-none";
@@ -78,19 +76,8 @@ const emptySacProduct = (): Partial<Product> & {
   sac_adet: 1,
 });
 
-const PRODUCT_CATEGORIES = [
-  "Sac & Levha",
-  "Boru & Profil",
-  "Bağlantı Elemanı",
-  "Refrakter & İzolasyon",
-  "Elektrik & Elektronik",
-  "Kaynak Malzemesi",
-  "Conta & Salmastra",
-  "Diğer",
-];
-
 export default function AdminDashboard() {
-  const [tab, setTab] = useState<Tab>("overview");
+  const [tab, setTab] = useState<Tab>("projects");
   const [projects, setProjects] = useState<Project[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [records, setRecords] = useState<ConsumptionRecord[]>([]);
@@ -240,18 +227,11 @@ export default function AdminDashboard() {
     }
   }
 
-  const tabs: { id: Tab; label: string; icon: string }[] = [
-    { id: "overview", label: "Genel Bakış", icon: "📊" },
-    { id: "projects", label: "Projeler", icon: "🏭" },
-    { id: "products", label: "Ürünler", icon: "📦" },
-    { id: "consumption", label: "Sarfiyat Kayıtları", icon: "📋" },
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "projects", label: "Projeler" },
+    { id: "products", label: "Ürünler" },
+    { id: "consumption", label: "Sarfiyat Kayıtları" },
   ];
-
-  const lowStockProducts = products.filter((p) => {
-    const threshold = p.min_stock_threshold ?? 0;
-    return threshold > 0 && Number(p.stock_quantity) <= threshold;
-  });
-  const zeroStockProducts = products.filter((p) => Number(p.stock_quantity) <= 0);
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-ozmaksan-bg">
@@ -286,28 +266,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Low stock banner */}
-        {!loading && (lowStockProducts.length > 0 || zeroStockProducts.length > 0) && (
-          <div
-            className="mb-4 flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-amber-500/40 bg-amber-950/25 px-5 py-4"
-            onClick={() => setTab("products")}
-          >
-            <span className="text-2xl shrink-0">⚠️</span>
-            <div>
-              <p className="font-bold text-amber-300">Stok Uyarısı</p>
-              <p className="text-sm text-amber-200/80">
-                {zeroStockProducts.length > 0 && (
-                  <span>{zeroStockProducts.length} ürünün stoğu tükendi. </span>
-                )}
-                {lowStockProducts.length > 0 && (
-                  <span>{lowStockProducts.length} ürün minimum stok seviyesinin altında. </span>
-                )}
-                <span className="underline">Ürünler sekmesinde görüntüleyin →</span>
-              </p>
-            </div>
-          </div>
-        )}
-
         <div className="mb-6 flex flex-wrap gap-2">
           {tabs.map((t) => (
             <button
@@ -318,13 +276,12 @@ export default function AdminDashboard() {
                 setSuccess(null);
                 setError(null);
               }}
-              className={`h-12 rounded-xl px-5 text-base font-semibold transition-colors flex items-center gap-2 ${
+              className={`h-12 rounded-xl px-5 text-base font-semibold transition-colors ${
                 tab === t.id
                   ? "bg-ozmaksan-accent text-white"
                   : "border-2 border-ozmaksan-border text-ozmaksan-muted hover:text-ozmaksan-text"
               }`}
             >
-              <span>{t.icon}</span>
               {t.label}
             </button>
           ))}
@@ -332,8 +289,6 @@ export default function AdminDashboard() {
 
         {loading ? (
           <p className="text-ozmaksan-muted">Yükleniyor…</p>
-        ) : tab === "overview" ? (
-          <DashboardPanelLoader />
         ) : tab === "projects" ? (
           <div className="space-y-4">
             <button
@@ -706,58 +661,6 @@ export default function AdminDashboard() {
                     </>
                   )}
 
-                  <FormField label="Kategori">
-                    <select
-                      value={editingProduct.category ?? ""}
-                      onChange={(e) =>
-                        setEditingProduct({
-                          ...editingProduct,
-                          category: e.target.value || null,
-                        })
-                      }
-                      className={inputClass}
-                    >
-                      <option value="">Kategori seçin…</option>
-                      {PRODUCT_CATEGORIES.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                  </FormField>
-
-                  <FormField label="Min. stok eşiği (uyarı için)">
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder="0"
-                      value={editingProduct.min_stock_threshold ?? ""}
-                      onChange={(e) =>
-                        setEditingProduct({
-                          ...editingProduct,
-                          min_stock_threshold:
-                            e.target.value === ""
-                              ? null
-                              : parseFloat(e.target.value) || 0,
-                        })
-                      }
-                      className={inputClass}
-                    />
-                  </FormField>
-
-                  <FormField label="Not" className="sm:col-span-2">
-                    <input
-                      placeholder="Malzeme notu, sertifika no, tedarikçi…"
-                      value={editingProduct.notes ?? ""}
-                      onChange={(e) =>
-                        setEditingProduct({
-                          ...editingProduct,
-                          notes: e.target.value || null,
-                        })
-                      }
-                      className={inputClass}
-                    />
-                  </FormField>
-
                   <QrCodePreview
                     value={editingProduct.qr_code}
                     productName={editingProduct.name || editingProduct.qr_code}
@@ -788,38 +691,23 @@ export default function AdminDashboard() {
                   <tr>
                     <th className="px-4 py-3">QR</th>
                     <th className="px-4 py-3">Ürün</th>
-                    <th className="px-4 py-3">Kategori / Tip</th>
+                    <th className="px-4 py-3">Tip / Ölçü</th>
                     <th className="px-4 py-3">Stok</th>
                     <th className="px-4 py-3">Maliyet</th>
                     <th className="px-4 py-3">İşlem</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((p) => {
-                    const isLow =
-                      (p.min_stock_threshold ?? 0) > 0 &&
-                      Number(p.stock_quantity) <= (p.min_stock_threshold ?? 0);
-                    const isZero = Number(p.stock_quantity) <= 0;
-                    return (
+                  {products.map((p) => (
                     <tr
                       key={p.id}
-                      className={`border-t border-ozmaksan-border text-ozmaksan-text ${isZero ? "bg-red-950/10" : isLow ? "bg-amber-950/10" : ""}`}
+                      className="border-t border-ozmaksan-border text-ozmaksan-text"
                     >
                       <td className="px-4 py-3 font-mono text-xs text-ozmaksan-accent">
                         {p.qr_code}
                       </td>
-                      <td className="px-4 py-3 font-medium">
-                        {p.name}
-                        {p.notes && (
-                          <p className="text-xs text-ozmaksan-muted mt-0.5 truncate max-w-[180px]">{p.notes}</p>
-                        )}
-                      </td>
+                      <td className="px-4 py-3 font-medium">{p.name}</td>
                       <td className="px-4 py-3 text-sm text-ozmaksan-muted">
-                        {p.category && (
-                          <span className="mb-1 block rounded bg-ozmaksan-steel/20 px-1.5 py-0.5 text-xs font-semibold text-ozmaksan-muted w-fit">
-                            {p.category}
-                          </span>
-                        )}
                         {p.product_type === "sac" &&
                         p.sac_en_mm &&
                         p.sac_boy_mm &&
@@ -846,14 +734,8 @@ export default function AdminDashboard() {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <span className={isZero ? "text-red-400 font-bold" : isLow ? "text-amber-300 font-bold" : ""}>
-                            {p.stock_quantity}{" "}
-                            {p.product_type === "sac" ? "kg" : p.default_unit}
-                          </span>
-                          {isZero && <span className="rounded bg-red-950/50 px-1.5 py-0.5 text-xs font-bold text-red-400">TÜKENDİ</span>}
-                          {!isZero && isLow && <span className="rounded bg-amber-950/50 px-1.5 py-0.5 text-xs font-bold text-amber-400">DÜŞÜK</span>}
-                        </div>
+                        {p.stock_quantity}{" "}
+                        {p.product_type === "sac" ? "kg" : p.default_unit}
                       </td>
                       <td className="px-4 py-3">
                         {Number(p.unit_cost).toLocaleString("tr-TR", {
@@ -896,8 +778,7 @@ export default function AdminDashboard() {
                         </div>
                       </td>
                     </tr>
-                    );
-                  })}
+                  ))}
                 </tbody>
               </table>
             </div>
