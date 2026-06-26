@@ -5,6 +5,7 @@
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 
 DROP TABLE IF EXISTS public.consumption_records CASCADE;
+DROP TABLE IF EXISTS public.project_items CASCADE;
 DROP TABLE IF EXISTS public.products CASCADE;
 DROP TABLE IF EXISTS public.projects CASCADE;
 DROP TABLE IF EXISTS public.profiles CASCADE;
@@ -32,12 +33,38 @@ CREATE TABLE public.profiles (
 
 CREATE TABLE public.projects (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
   customer TEXT,
   description TEXT,
+  order_number TEXT,
+  order_year INTEGER,
+  status TEXT NOT NULL DEFAULT 'not_started'
+    CHECK (status IN ('not_started', 'active', 'completed')),
   is_active BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+CREATE UNIQUE INDEX projects_order_year_number_uidx
+  ON public.projects (order_year, order_number)
+  WHERE order_number IS NOT NULL AND order_year IS NOT NULL;
+
+CREATE TABLE public.project_items (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID NOT NULL REFERENCES public.projects(id) ON DELETE CASCADE,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  spec TEXT,
+  product_name TEXT NOT NULL,
+  quantity NUMERIC CHECK (quantity IS NULL OR quantity > 0),
+  status TEXT NOT NULL DEFAULT 'not_started'
+    CHECK (status IN ('not_started', 'active', 'completed')),
+  order_delivery TEXT,
+  factory_delivery TEXT,
+  notes TEXT,
+  destination TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_project_items_project ON public.project_items(project_id, sort_order);
 
 CREATE TABLE public.products (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -273,6 +300,19 @@ CREATE POLICY "projects_admin_delete"
   TO authenticated
   USING (public.is_admin());
 
+ALTER TABLE public.project_items ENABLE ROW LEVEL SECURITY;
+
+-- project_items
+CREATE POLICY "project_items_select"
+  ON public.project_items FOR SELECT
+  TO authenticated USING (true);
+
+CREATE POLICY "project_items_admin_all"
+  ON public.project_items FOR ALL
+  TO authenticated
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
+
 -- products
 CREATE POLICY "products_select_authenticated"
   ON public.products FOR SELECT
@@ -304,9 +344,11 @@ CREATE POLICY "consumption_admin_select"
 GRANT USAGE ON SCHEMA public TO authenticated;
 GRANT SELECT ON public.profiles TO authenticated;
 GRANT SELECT ON public.projects TO authenticated;
+GRANT SELECT ON public.project_items TO authenticated;
 GRANT SELECT ON public.products TO authenticated;
 GRANT SELECT ON public.consumption_records TO authenticated;
 GRANT INSERT, UPDATE, DELETE ON public.projects TO authenticated;
+GRANT INSERT, UPDATE, DELETE ON public.project_items TO authenticated;
 GRANT INSERT, UPDATE, DELETE ON public.products TO authenticated;
 GRANT EXECUTE ON FUNCTION public.calc_sac_kg TO authenticated;
 GRANT EXECUTE ON FUNCTION public.record_consumption TO authenticated;

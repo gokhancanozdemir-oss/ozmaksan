@@ -9,6 +9,12 @@ import {
 import type { ConsumptionRecord, Project } from "@/lib/types/database";
 import { exportProjectToExcel } from "@/lib/export/projectExcel";
 import AppHeader from "@/components/AppHeader";
+import {
+  ProjectStatusBadge,
+  ProjectStatusLegend,
+  itemRowClass,
+} from "@/components/admin/ProjectStatusBadge";
+import { formatProjectLabel } from "@/lib/projectStatus";
 
 type ProjectDetailProps = {
   projectId: string;
@@ -94,10 +100,10 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
               ← Yönetim Paneli
             </Link>
             <h2 className="text-2xl font-bold text-ozmaksan-text">
-              {project.name}
+              {formatProjectLabel(project)}
             </h2>
             <p className="mt-1 text-ozmaksan-muted">
-              Malzeme kullanım raporu ve proje detayları
+              Sipariş kalemleri ve malzeme kullanım raporu
             </p>
           </div>
           <button
@@ -112,8 +118,15 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
         <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { label: "Müşteri", value: project.customer ?? "—" },
-            { label: "Durum", value: project.is_active !== false ? "Aktif" : "Pasif" },
-            { label: "Toplam Kayıt", value: String(records.length) },
+            {
+              label: "Durum",
+              value: (
+                <ProjectStatusBadge
+                  status={project.status ?? "not_started"}
+                />
+              ),
+            },
+            { label: "Kalem Sayısı", value: String(project.items?.length ?? 0) },
             {
               label: "Toplam Maliyet",
               value: totalCost.toLocaleString("tr-TR", {
@@ -135,6 +148,50 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
             </div>
           ))}
         </div>
+
+        {project.items && project.items.length > 0 && (
+          <div className="mb-8 overflow-x-auto rounded-2xl border-2 border-ozmaksan-border">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ozmaksan-border bg-ozmaksan-surface px-4 py-3">
+              <h3 className="font-bold text-ozmaksan-text">Sipariş Kalemleri</h3>
+              <ProjectStatusLegend />
+            </div>
+            <table className="w-full min-w-[800px] text-left text-sm">
+              <thead className="bg-ozmaksan-surface text-ozmaksan-muted">
+                <tr>
+                  <th className="px-4 py-3">İmalat</th>
+                  <th className="px-4 py-3">Cins</th>
+                  <th className="px-4 py-3">Adet</th>
+                  <th className="px-4 py-3">Durum</th>
+                  <th className="px-4 py-3">Sip. Teslim</th>
+                  <th className="px-4 py-3">Fabr. Teslim</th>
+                  <th className="px-4 py-3">ATÜ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {project.items.map((item) => (
+                  <tr
+                    key={item.id}
+                    className={`border-t border-ozmaksan-border ${itemRowClass(item.status)}`}
+                  >
+                    <td className="px-4 py-3">{item.spec || "—"}</td>
+                    <td className="px-4 py-3 font-medium">{item.product_name}</td>
+                    <td className="px-4 py-3">{item.quantity ?? "—"}</td>
+                    <td className="px-4 py-3">
+                      <ProjectStatusBadge status={item.status} />
+                    </td>
+                    <td className="px-4 py-3 text-ozmaksan-muted">
+                      {item.order_delivery || "—"}
+                    </td>
+                    <td className="px-4 py-3 text-ozmaksan-muted">
+                      {item.factory_delivery || "—"}
+                    </td>
+                    <td className="px-4 py-3">{item.destination || "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         {project.description && (
           <p className="mb-6 rounded-xl border border-ozmaksan-border bg-ozmaksan-surface px-4 py-3 text-ozmaksan-muted">

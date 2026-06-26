@@ -4,16 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   adminDeleteProduct,
-  adminDeleteProject,
   adminFetchAllProducts,
   adminFetchAllProjects,
   adminFetchConsumptionRecords,
   adminUpsertProduct,
-  adminUpsertProject,
   UNITS,
 } from "@/lib/supabase/consumption";
 import type { ConsumptionRecord, Product, ProductType, Project, Unit } from "@/lib/types/database";
 import AppHeader from "@/components/AppHeader";
+import ProjectsPanel from "@/components/admin/ProjectsPanel";
 import QrCodePreview from "@/components/admin/QrCodePreview";
 import StockAlertBanner from "@/components/admin/StockAlertBanner";
 import { downloadQrPng, generateProductQrCode } from "@/lib/qr";
@@ -50,13 +49,6 @@ function FormField({
   );
 }
 
-const emptyProject = (): Partial<Project> & { name: string } => ({
-  name: "",
-  customer: "",
-  description: "",
-  is_active: true,
-});
-
 const emptyProduct = (): Partial<Product> & {
   qr_code: string;
   name: string;
@@ -92,9 +84,6 @@ export default function AdminDashboard() {
   const [success, setSuccess] = useState<string | null>(null);
   const [stockAlertDismissed, setStockAlertDismissed] = useState(false);
 
-  const [editingProject, setEditingProject] = useState<
-    (Partial<Project> & { name: string }) | null
-  >(null);
   const [editingProduct, setEditingProduct] = useState<
     (Partial<Product> & {
       qr_code: string;
@@ -142,29 +131,6 @@ export default function AdminDashboard() {
   useEffect(() => {
     void loadData();
   }, [loadData]);
-
-  async function handleSaveProject() {
-    if (!editingProject?.name.trim() || !editingProject?.customer?.trim()) return;
-    try {
-      await adminUpsertProject(editingProject);
-      setEditingProject(null);
-      setSuccess("Proje kaydedildi.");
-      await loadData();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kayıt başarısız.");
-    }
-  }
-
-  async function handleDeleteProject(id: string) {
-    if (!confirm("Bu projeyi silmek istediğinize emin misiniz?")) return;
-    try {
-      await adminDeleteProject(id);
-      setSuccess("Proje silindi.");
-      await loadData();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Silme başarısız.");
-    }
-  }
 
   async function handleSaveProduct() {
     if (!editingProduct?.qr_code.trim() || !editingProduct.name.trim()) return;
@@ -316,159 +282,19 @@ export default function AdminDashboard() {
         {loading ? (
           <p className="text-ozmaksan-muted">Yükleniyor…</p>
         ) : tab === "projects" ? (
-          <div className="space-y-4">
-            <button
-              type="button"
-              onClick={() => setEditingProject(emptyProject())}
-              className="h-12 rounded-xl bg-ozmaksan-accent px-5 font-semibold text-white"
-            >
-              + Yeni Proje
-            </button>
-
-            {editingProject && (
-              <div className="rounded-2xl border-2 border-ozmaksan-border bg-ozmaksan-surface-elevated p-6">
-                <h3 className="mb-4 text-lg font-bold text-ozmaksan-text">
-                  {editingProject.id ? "Proje Düzenle" : "Yeni Proje"}
-                </h3>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <FormField label="Proje adı">
-                    <input
-                      placeholder="Örn. STEAMAx Boiler"
-                      value={editingProject.name}
-                      onChange={(e) =>
-                        setEditingProject({ ...editingProject, name: e.target.value })
-                      }
-                      className={inputClass}
-                    />
-                  </FormField>
-                  <FormField label="Müşteri">
-                    <input
-                      placeholder="Örn. Mercedes Benz"
-                      value={editingProject.customer ?? ""}
-                      onChange={(e) =>
-                        setEditingProject({
-                          ...editingProject,
-                          customer: e.target.value,
-                        })
-                      }
-                      className={inputClass}
-                    />
-                  </FormField>
-                  <FormField label="Açıklama" className="sm:col-span-2">
-                    <input
-                      placeholder="Proje açıklaması"
-                      value={editingProject.description ?? ""}
-                      onChange={(e) =>
-                        setEditingProject({
-                          ...editingProject,
-                          description: e.target.value,
-                        })
-                      }
-                      className={inputClass}
-                    />
-                  </FormField>
-                  <label className="flex h-12 items-center gap-3 text-ozmaksan-text">
-                    <input
-                      type="checkbox"
-                      checked={editingProject.is_active ?? true}
-                      onChange={(e) =>
-                        setEditingProject({
-                          ...editingProject,
-                          is_active: e.target.checked,
-                        })
-                      }
-                      className="h-5 w-5"
-                    />
-                    Aktif proje
-                  </label>
-                </div>
-                <div className="mt-4 flex gap-3">
-                  <button
-                    type="button"
-                    onClick={handleSaveProject}
-                    className="h-12 rounded-xl bg-ozmaksan-accent px-6 font-semibold text-white"
-                  >
-                    Kaydet
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditingProject(null)}
-                    className="h-12 rounded-xl border-2 border-ozmaksan-border px-6 text-ozmaksan-muted"
-                  >
-                    İptal
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div className="overflow-x-auto rounded-2xl border-2 border-ozmaksan-border">
-              <table className="w-full min-w-[600px] text-left text-sm">
-                <thead className="bg-ozmaksan-surface text-ozmaksan-muted">
-                  <tr>
-                    <th className="px-4 py-3">Proje</th>
-                    <th className="px-4 py-3">Müşteri</th>
-                    <th className="px-4 py-3">Açıklama</th>
-                    <th className="px-4 py-3">Durum</th>
-                    <th className="px-4 py-3">İşlem</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {projects.map((p) => (
-                    <tr
-                      key={p.id}
-                      className="border-t border-ozmaksan-border text-ozmaksan-text"
-                    >
-                      <td className="px-4 py-3 font-medium">
-                        <Link
-                          href={`/admin/projects/${p.id}`}
-                          className="text-ozmaksan-text hover:text-ozmaksan-accent hover:underline"
-                        >
-                          {p.name}
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3 text-ozmaksan-accent">
-                        {p.customer || "—"}
-                      </td>
-                      <td className="px-4 py-3 text-ozmaksan-muted">
-                        {p.description || "—"}
-                      </td>
-                      <td className="px-4 py-3">
-                        {p.is_active ? (
-                          <span className="text-emerald-400">Aktif</span>
-                        ) : (
-                          <span className="text-ozmaksan-muted">Pasif</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex flex-wrap gap-2">
-                          <Link
-                            href={`/admin/projects/${p.id}`}
-                            className="rounded-lg border border-emerald-600/50 px-3 py-1.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-950/40"
-                          >
-                            Detay
-                          </Link>
-                          <button
-                            type="button"
-                            onClick={() => setEditingProject(p)}
-                            className="rounded-lg border border-ozmaksan-border px-3 py-1.5 text-xs font-semibold hover:border-ozmaksan-accent"
-                          >
-                            Düzenle
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteProject(p.id)}
-                            className="rounded-lg border border-red-500/40 px-3 py-1.5 text-xs font-semibold text-red-400"
-                          >
-                            Sil
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <ProjectsPanel
+            projects={projects}
+            onRefresh={loadData}
+            onMessage={(msg) => {
+              if (msg.type === "success") {
+                setSuccess(msg.text);
+                setError(null);
+              } else {
+                setError(msg.text);
+                setSuccess(null);
+              }
+            }}
+          />
         ) : tab === "products" ? (
           <div className="space-y-4">
             <div className="flex flex-wrap gap-3">

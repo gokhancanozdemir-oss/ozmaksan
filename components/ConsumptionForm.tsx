@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import type { Product, Project, Unit } from "@/lib/types/database";
 import { UNITS } from "@/lib/supabase/consumption";
+import { formatProjectLabel } from "@/lib/projectStatus";
 import {
   calcSacWeightKg,
   formatSacDimensions,
@@ -337,7 +338,7 @@ export default function ConsumptionForm({
           >
             {projects.map((proje) => (
               <option key={proje.id} value={proje.id}>
-                {proje.name}
+                {formatProjectLabel(proje)}
               </option>
             ))}
           </select>

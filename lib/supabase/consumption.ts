@@ -13,12 +13,15 @@ export async function fetchProjects(): Promise<Project[]> {
 
   const { data, error } = await supabase
     .from("projects")
-    .select("id, name, customer, description, is_active")
+    .select(
+      "id, name, customer, description, is_active, order_number, order_year, status"
+    )
     .eq("is_active", true)
-    .order("name");
+    .order("order_year", { ascending: false })
+    .order("order_number", { ascending: true });
 
   if (error) throw new Error(error.message);
-  return data ?? [];
+  return (data ?? []) as Project[];
 }
 
 export async function fetchProductByQrCode(
@@ -64,45 +67,8 @@ export const UNITS: Unit[] = ["kg", "m", "adet"];
 // --- Admin API ---
 
 export async function adminFetchAllProjects(): Promise<Project[]> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("projects")
-    .select("id, name, customer, description, is_active")
-    .order("name");
-  if (error) throw new Error(error.message);
-  return data ?? [];
-}
-
-export async function adminUpsertProject(
-  project: Partial<Project> & { name: string }
-): Promise<void> {
-  const supabase = createClient();
-  if (project.id) {
-    const { error } = await supabase
-      .from("projects")
-      .update({
-        name: project.name,
-        customer: project.customer ?? null,
-        description: project.description ?? null,
-        is_active: project.is_active ?? true,
-      })
-      .eq("id", project.id);
-    if (error) throw new Error(error.message);
-  } else {
-    const { error } = await supabase.from("projects").insert({
-      name: project.name,
-      customer: project.customer ?? null,
-      description: project.description ?? null,
-      is_active: project.is_active ?? true,
-    });
-    if (error) throw new Error(error.message);
-  }
-}
-
-export async function adminDeleteProject(id: string): Promise<void> {
-  const supabase = createClient();
-  const { error } = await supabase.from("projects").delete().eq("id", id);
-  if (error) throw new Error(error.message);
+  const { adminFetchAllProjectsWithItems } = await import("./projects");
+  return adminFetchAllProjectsWithItems();
 }
 
 export async function adminFetchAllProducts(): Promise<Product[]> {
@@ -173,14 +139,8 @@ export async function adminDeleteProduct(id: string): Promise<void> {
 export async function adminFetchProjectById(
   id: string
 ): Promise<Project | null> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("projects")
-    .select("id, name, customer, description, is_active")
-    .eq("id", id)
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  return data;
+  const { adminFetchProjectWithItems } = await import("./projects");
+  return adminFetchProjectWithItems(id);
 }
 
 export async function adminFetchConsumptionByProjectId(

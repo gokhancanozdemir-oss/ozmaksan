@@ -1,6 +1,7 @@
 export type Unit = "kg" | "m" | "adet";
 export type UserRole = "admin" | "okutucu";
 export type ProductType = "standard" | "sac";
+export type ProjectItemStatus = "not_started" | "active" | "completed";
 
 export type Profile = {
   id: string;
@@ -16,6 +17,24 @@ export type Project = {
   customer: string | null;
   description: string | null;
   is_active?: boolean;
+  order_number: string | null;
+  order_year: number | null;
+  status?: ProjectItemStatus;
+  items?: ProjectItem[];
+};
+
+export type ProjectItem = {
+  id: string;
+  project_id: string;
+  sort_order: number;
+  spec: string | null;
+  product_name: string;
+  quantity: number | null;
+  status: ProjectItemStatus;
+  order_delivery: string | null;
+  factory_delivery: string | null;
+  notes: string | null;
+  destination: string | null;
 };
 
 export type Product = {
@@ -97,6 +116,9 @@ export type Database = {
           customer: string | null;
           description: string | null;
           is_active: boolean;
+          order_number: string | null;
+          order_year: number | null;
+          status: ProjectItemStatus;
           created_at: string;
         };
         Insert: {
@@ -105,6 +127,9 @@ export type Database = {
           customer?: string | null;
           description?: string | null;
           is_active?: boolean;
+          order_number?: string | null;
+          order_year?: number | null;
+          status?: ProjectItemStatus;
           created_at?: string;
         };
         Update: {
@@ -113,6 +138,41 @@ export type Database = {
           customer?: string | null;
           description?: string | null;
           is_active?: boolean;
+          order_number?: string | null;
+          order_year?: number | null;
+          status?: ProjectItemStatus;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      project_items: {
+        Row: ProjectItem & { created_at: string };
+        Insert: {
+          id?: string;
+          project_id: string;
+          sort_order?: number;
+          spec?: string | null;
+          product_name: string;
+          quantity?: number | null;
+          status?: ProjectItemStatus;
+          order_delivery?: string | null;
+          factory_delivery?: string | null;
+          notes?: string | null;
+          destination?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          project_id?: string;
+          sort_order?: number;
+          spec?: string | null;
+          product_name?: string;
+          quantity?: number | null;
+          status?: ProjectItemStatus;
+          order_delivery?: string | null;
+          factory_delivery?: string | null;
+          notes?: string | null;
+          destination?: string | null;
           created_at?: string;
         };
         Relationships: [];
