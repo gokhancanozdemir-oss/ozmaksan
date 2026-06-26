@@ -203,6 +203,21 @@ export type Database = {
         Args: Record<string, never>;
         Returns: boolean;
       };
+      add_stock_by_qr: {
+        Args: {
+          p_qr_code: string;
+          p_quantity: number;
+          p_unit: string;
+          p_notes?: string | null;
+        };
+        Returns: {
+          product_id: string;
+          product_name: string;
+          added: number;
+          unit: string;
+          new_stock: number;
+        };
+      };
     };
     Enums: {
       user_role: UserRole;

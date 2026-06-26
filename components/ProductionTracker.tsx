@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import ConsumptionForm from "./ConsumptionForm";
+import StockAddForm from "./StockAddForm";
 import QrScanner from "./QrScanner";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import {
@@ -9,9 +10,14 @@ import {
   fetchProjects,
   saveConsumption,
 } from "@/lib/supabase/consumption";
-import type { ConsumptionData, Product, Project } from "@/lib/types/database";
+import { addStockByQrCode } from "@/lib/supabase/stock";
+import type { ConsumptionData, Product, Project, Unit } from "@/lib/types/database";
+
+type Mode = "sarfiyat" | "stok";
 
 export default function ProductionTracker() {
+  const [mode, setMode] = useState<Mode>("sarfiyat");
+
   const [scannedCode, setScannedCode] = useState<string | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
   const [productLoading, setProductLoading] = useState(false);
@@ -106,7 +112,8 @@ export default function ProductionTracker() {
     setErrorMessage(null);
   }, []);
 
-  const handleSave = useCallback(async (data: ConsumptionData) => {
+  // Sarfiyat kaydet
+  const handleSaveConsumption = useCallback(async (data: ConsumptionData) => {
     if (!isSupabaseConfigured()) {
       console.log("Sarfiyat kaydı (offline):", data);
       setSavedMessage(
@@ -130,10 +137,8 @@ export default function ProductionTracker() {
         sacUsedBoyMm: data.sacUsedBoyMm,
       });
 
-      console.log("Sarfiyat kaydı:", { ...data, result });
-
       setSavedMessage(
-        `${data.miktar} ${data.birim} ${data.productName} — ${data.projeAdi} projesine kaydedildi. Maliyet: ${Number(result.total_cost).toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}`
+        `✓ ${data.miktar} ${data.birim} ${data.productName} — ${data.projeAdi} projesine kaydedildi. Maliyet: ${Number(result.total_cost).toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}`
       );
       setScannedCode(null);
       setProduct(null);
@@ -146,10 +151,92 @@ export default function ProductionTracker() {
     }
   }, []);
 
+  // Stok ekle
+  const handleSaveStock = useCallback(
+    async (data: { qrCode: string; quantity: number; unit: Unit; notes: string }) => {
+      if (!isSupabaseConfigured()) {
+        setSavedMessage(`${data.quantity} ${data.unit} stok eklendi (yerel log)`);
+        setScannedCode(null);
+        setProduct(null);
+        return;
+      }
+
+      setIsSaving(true);
+      setErrorMessage(null);
+
+      try {
+        const result = await addStockByQrCode(
+          data.qrCode,
+          data.quantity,
+          data.unit,
+          data.notes || undefined
+        );
+
+        setSavedMessage(
+          `✓ ${result.product_name} ürününe ${result.added} ${result.unit} eklendi. Yeni stok: ${result.new_stock} ${result.unit}`
+        );
+        setScannedCode(null);
+        setProduct(null);
+      } catch (err) {
+        setErrorMessage(
+          err instanceof Error ? err.message : "Stok eklenirken hata oluştu."
+        );
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    []
+  );
+
+  function handleModeChange(newMode: Mode) {
+    setMode(newMode);
+    setScannedCode(null);
+    setProduct(null);
+    setSavedMessage(null);
+    setErrorMessage(null);
+  }
+
   return (
-    <div className="flex w-full max-w-2xl flex-col items-center gap-8">
+    <div className="flex w-full max-w-2xl flex-col items-center gap-6">
+      {/* Mode selector */}
+      {!scannedCode && (
+        <div className="flex w-full overflow-hidden rounded-2xl border-2 border-ozmaksan-border">
+          <button
+            type="button"
+            onClick={() => handleModeChange("sarfiyat")}
+            className={`flex h-14 flex-1 items-center justify-center gap-2 text-base font-bold transition-colors ${
+              mode === "sarfiyat"
+                ? "bg-ozmaksan-accent text-white"
+                : "bg-ozmaksan-surface text-ozmaksan-muted hover:text-ozmaksan-text"
+            }`}
+          >
+            <span>📤</span>
+            Sarfiyat Girişi
+          </button>
+          <div className="w-px bg-ozmaksan-border" />
+          <button
+            type="button"
+            onClick={() => handleModeChange("stok")}
+            className={`flex h-14 flex-1 items-center justify-center gap-2 text-base font-bold transition-colors ${
+              mode === "stok"
+                ? "bg-emerald-600 text-white"
+                : "bg-ozmaksan-surface text-ozmaksan-muted hover:text-ozmaksan-text"
+            }`}
+          >
+            <span>📥</span>
+            Stok Ekle
+          </button>
+        </div>
+      )}
+
       {savedMessage && (
-        <div className="w-full rounded-xl border border-emerald-500/40 bg-emerald-950/40 px-5 py-4 text-center text-base text-emerald-300">
+        <div
+          className={`w-full rounded-xl border px-5 py-4 text-center text-base ${
+            mode === "stok"
+              ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300"
+              : "border-emerald-500/40 bg-emerald-950/40 text-emerald-300"
+          }`}
+        >
           {savedMessage}
         </div>
       )}
@@ -161,16 +248,27 @@ export default function ProductionTracker() {
       )}
 
       {scannedCode ? (
-        <ConsumptionForm
-          qrCode={scannedCode}
-          product={product}
-          productLoading={productLoading}
-          projects={projects}
-          projectsLoading={projectsLoading}
-          isSaving={isSaving}
-          onSave={handleSave}
-          onCancel={handleCancel}
-        />
+        mode === "stok" ? (
+          <StockAddForm
+            qrCode={scannedCode}
+            product={product}
+            productLoading={productLoading}
+            isSaving={isSaving}
+            onSave={handleSaveStock}
+            onCancel={handleCancel}
+          />
+        ) : (
+          <ConsumptionForm
+            qrCode={scannedCode}
+            product={product}
+            productLoading={productLoading}
+            projects={projects}
+            projectsLoading={projectsLoading}
+            isSaving={isSaving}
+            onSave={handleSaveConsumption}
+            onCancel={handleCancel}
+          />
+        )
       ) : (
         <QrScanner onScan={handleScan} />
       )}
