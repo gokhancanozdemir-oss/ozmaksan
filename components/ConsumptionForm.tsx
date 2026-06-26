@@ -8,6 +8,7 @@ import {
   formatSacDimensions,
   formatWeightKg,
 } from "@/lib/sac";
+import { getStockUnit, isLowStock } from "@/lib/stockAlert";
 
 export type { ConsumptionData } from "@/lib/types/database";
 
@@ -160,12 +161,30 @@ export default function ConsumptionForm({
                   </span>
                 </p>
               )}
-            <p className="mt-2 text-sm text-ozmaksan-muted">
-              Stok:{" "}
-              <span className="font-semibold text-ozmaksan-text">
-                {product.stock_quantity} kg
+            <div className="mt-2 flex items-center gap-3 rounded-xl border border-ozmaksan-border bg-ozmaksan-bg px-4 py-2 text-sm">
+              <span className="text-ozmaksan-muted">Mevcut stok:</span>
+              <span className="font-bold text-ozmaksan-text">
+                {product.stock_quantity}{" "}
+                {isSac ? "kg" : product.default_unit}
               </span>
-              {" · "}
+            </div>
+            {isLowStock(product) && (
+              <div
+                role="status"
+                className="mt-3 rounded-xl border border-amber-500/30 bg-amber-950/20 px-4 py-3 text-sm text-amber-200/90"
+              >
+                <p className="font-semibold text-amber-300">
+                  Stok düşük seviyede
+                </p>
+                <p className="mt-1 text-amber-200/75">
+                  Mevcut stok ({product.stock_quantity}{" "}
+                  {getStockUnit(product)}), minimum seviyenin (
+                  {product.min_stock_threshold} {getStockUnit(product)}) altında
+                  veya eşit. İşleminize devam edebilirsiniz.
+                </p>
+              </div>
+            )}
+            <p className="mt-2 text-sm text-ozmaksan-muted">
               {isSac ? "Kg başı maliyet: " : "Birim maliyet: "}
               <span className="font-semibold text-ozmaksan-text">
                 {product.unit_cost.toLocaleString("tr-TR", {

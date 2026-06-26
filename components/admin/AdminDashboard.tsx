@@ -15,7 +15,13 @@ import {
 import type { ConsumptionRecord, Product, ProductType, Project, Unit } from "@/lib/types/database";
 import AppHeader from "@/components/AppHeader";
 import QrCodePreview from "@/components/admin/QrCodePreview";
+import StockAlertBanner from "@/components/admin/StockAlertBanner";
 import { downloadQrPng, generateProductQrCode } from "@/lib/qr";
+import {
+  getLowStockProducts,
+  getStockUnit,
+  isLowStock,
+} from "@/lib/stockAlert";
 import {
   calcSacWeightKg,
   formatSacDimensions,
@@ -84,6 +90,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [stockAlertDismissed, setStockAlertDismissed] = useState(false);
 
   const [editingProject, setEditingProject] = useState<
     (Partial<Project> & { name: string }) | null
@@ -227,9 +234,17 @@ export default function AdminDashboard() {
     }
   }
 
+  const lowStockProducts = getLowStockProducts(products);
+
   const tabs: { id: Tab; label: string }[] = [
     { id: "projects", label: "Projeler" },
-    { id: "products", label: "Ürünler" },
+    {
+      id: "products",
+      label:
+        lowStockProducts.length > 0
+          ? `Ürünler · ${lowStockProducts.length} düşük stok`
+          : "Ürünler",
+    },
     { id: "consumption", label: "Sarfiyat Kayıtları" },
   ];
 
@@ -264,6 +279,17 @@ export default function AdminDashboard() {
           <div className="mb-4 rounded-xl border border-emerald-500/40 bg-emerald-950/40 px-4 py-3 text-emerald-300">
             {success}
           </div>
+        )}
+
+        {!loading && !stockAlertDismissed && lowStockProducts.length > 0 && (
+          <StockAlertBanner
+            products={products}
+            onViewProducts={() => {
+              setTab("products");
+              setStockAlertDismissed(false);
+            }}
+            onDismiss={() => setStockAlertDismissed(true)}
+          />
         )}
 
         <div className="mb-6 flex flex-wrap gap-2">
@@ -661,6 +687,36 @@ export default function AdminDashboard() {
                     </>
                   )}
 
+                  <div className="sm:col-span-2 rounded-xl border border-ozmaksan-border bg-ozmaksan-bg/50 p-4">
+                    <p className="mb-3 text-sm font-bold text-ozmaksan-blue-light">
+                      Alt stok uyarısı
+                    </p>
+                    <FormField label="Minimum stok seviyesi">
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.001"
+                        placeholder="Örn. 10 — boş bırakılırsa uyarı verilmez"
+                        value={editingProduct.min_stock_threshold ?? ""}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            min_stock_threshold:
+                              e.target.value === ""
+                                ? null
+                                : parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        className={inputClass}
+                      />
+                    </FormField>
+                    <p className="mt-2 text-xs leading-relaxed text-ozmaksan-muted">
+                      Stok bu değere veya altına düştüğünde yönetici panelinde
+                      bilgilendirme gösterilir. Sarfiyat ve stok girişi{" "}
+                      <strong className="text-ozmaksan-text">engellenmez</strong>.
+                    </p>
+                  </div>
+
                   <QrCodePreview
                     value={editingProduct.qr_code}
                     productName={editingProduct.name || editingProduct.qr_code}
@@ -698,10 +754,15 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((p) => (
+                  {products.map((p) => {
+                    const unit = getStockUnit(p);
+                    const low = isLowStock(p);
+                    return (
                     <tr
                       key={p.id}
-                      className="border-t border-ozmaksan-border text-ozmaksan-text"
+                      className={`border-t border-ozmaksan-border text-ozmaksan-text ${
+                        low ? "bg-amber-950/10" : ""
+                      }`}
                     >
                       <td className="px-4 py-3 font-mono text-xs text-ozmaksan-accent">
                         {p.qr_code}
@@ -734,8 +795,22 @@ export default function AdminDashboard() {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        {p.stock_quantity}{" "}
-                        {p.product_type === "sac" ? "kg" : p.default_unit}
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className={low ? "font-semibold text-amber-300" : ""}>
+                            {p.stock_quantity} {unit}
+                          </span>
+                          {low && (
+                            <span className="rounded-md bg-amber-950/40 px-2 py-0.5 text-xs font-semibold text-amber-300">
+                              Düşük stok
+                            </span>
+                          )}
+                          {p.min_stock_threshold != null &&
+                            Number(p.min_stock_threshold) > 0 && (
+                              <span className="text-xs text-ozmaksan-muted">
+                                min. {p.min_stock_threshold} {unit}
+                              </span>
+                            )}
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         {Number(p.unit_cost).toLocaleString("tr-TR", {
@@ -778,7 +853,8 @@ export default function AdminDashboard() {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
