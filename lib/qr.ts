@@ -69,20 +69,27 @@ export async function createLabeledQrDataUrl({
   ctx.lineWidth = 2;
   ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
 
-  ctx.fillStyle = "#e85d04";
+  ctx.fillStyle = "#1a5490";
   ctx.font = "bold 11px system-ui, sans-serif";
   ctx.textAlign = "center";
   ctx.fillText("ÖZMAKSAN", canvas.width / 2, padding + 12);
 
-  ctx.fillStyle = "#0c1117";
-  ctx.font = "bold 17px ui-monospace, Consolas, monospace";
-  ctx.fillText(qrCode, canvas.width / 2, padding + 36);
+  ctx.strokeStyle = "#d71920";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(padding + 20, padding + 18);
+  ctx.lineTo(canvas.width - padding - 20, padding + 18);
+  ctx.stroke();
+
+  ctx.fillStyle = "#1a5490";
+  ctx.font = "bold 15px ui-monospace, Consolas, monospace";
+  ctx.fillText(qrCode, canvas.width / 2, padding + 38);
 
   const img = await loadImage(qrDataUrl);
   const qrY = padding + topSection;
   ctx.drawImage(img, padding, qrY, qrSize, qrSize);
 
-  ctx.fillStyle = "#1a2535";
+  ctx.fillStyle = "#1a5490";
   ctx.font = "bold 20px system-ui, -apple-system, sans-serif";
   const nameStartY = qrY + qrSize + 28;
   nameLines.forEach((line, i) => {

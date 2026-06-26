@@ -1,14 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --ozmaksan-bg: #0c1117;
-  --ozmaksan-surface: #141c27;
-  --ozmaksan-surface-elevated: #1a2535;
-  --ozmaksan-border: #2a3d52;
+  --ozmaksan-bg: #0a0a0a;
+  --ozmaksan-surface: #111111;
+  --ozmaksan-surface-elevated: #1a1a1a;
+  --ozmaksan-border: #2d2d2d;
   --ozmaksan-text: #e8edf2;
-  --ozmaksan-muted: #8fa3b8;
-  --ozmaksan-accent: #e85d04;
-  --ozmaksan-accent-hover: #f97316;
+  --ozmaksan-muted: #9ca3af;
+  /* Marka mavisi — logodaki ÖZMAKSAN yazısı */
+  --ozmaksan-blue: #1a5490;
+  --ozmaksan-blue-hover: #2168b0;
+  --ozmaksan-blue-light: #3d7ab8;
+  /* Marka kırmızısı — logodaki halka ve çizgi */
+  --ozmaksan-red: #d71920;
+  --ozmaksan-red-hover: #e82a31;
+  /* Birincil vurgu: mavi */
+  --ozmaksan-accent: var(--ozmaksan-blue);
+  --ozmaksan-accent-hover: var(--ozmaksan-blue-hover);
   --ozmaksan-steel: #3d5a80;
   --background: var(--ozmaksan-bg);
   --foreground: var(--ozmaksan-text);
@@ -23,6 +31,11 @@
   --color-ozmaksan-border: var(--ozmaksan-border);
   --color-ozmaksan-text: var(--ozmaksan-text);
   --color-ozmaksan-muted: var(--ozmaksan-muted);
+  --color-ozmaksan-blue: var(--ozmaksan-blue);
+  --color-ozmaksan-blue-hover: var(--ozmaksan-blue-hover);
+  --color-ozmaksan-blue-light: var(--ozmaksan-blue-light);
+  --color-ozmaksan-red: var(--ozmaksan-red);
+  --color-ozmaksan-red-hover: var(--ozmaksan-red-hover);
   --color-ozmaksan-accent: var(--ozmaksan-accent);
   --color-ozmaksan-accent-hover: var(--ozmaksan-accent-hover);
   --color-ozmaksan-steel: var(--ozmaksan-steel);

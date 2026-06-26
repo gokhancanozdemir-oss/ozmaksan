@@ -84,7 +84,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="h-16 rounded-xl bg-ozmaksan-accent text-lg font-bold text-white hover:bg-ozmaksan-accent-hover disabled:opacity-50"
+        className="h-16 rounded-xl bg-ozmaksan-red text-lg font-bold text-white hover:bg-ozmaksan-red-hover disabled:opacity-50"
       >
         {loading ? "Giriş yapılıyor…" : "Giriş Yap"}
       </button>

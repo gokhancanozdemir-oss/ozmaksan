@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/lib/types/database";
+import OzmaksanLogo from "@/components/OzmaksanLogo";
 
 type AppHeaderProps = {
   subtitle?: string;
@@ -12,6 +13,7 @@ type AppHeaderProps = {
 
 export default function AppHeader({ subtitle }: AppHeaderProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
@@ -42,47 +44,55 @@ export default function AppHeader({ subtitle }: AppHeaderProps) {
     router.refresh();
   }
 
-  return (
-    <header className="border-b border-ozmaksan-border bg-ozmaksan-surface px-4 py-5 sm:px-8">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-ozmaksan-accent font-bold text-white">
-            Ö
-          </div>
-          <div>
-            <h1 className="text-xl font-bold tracking-tight text-ozmaksan-text sm:text-2xl">
-              ÖZMAKSAN
-            </h1>
-            <p className="text-xs font-medium uppercase tracking-widest text-ozmaksan-muted sm:text-sm">
-              {subtitle ?? "Akıllı Depo & Üretim Takip"}
-            </p>
-          </div>
-        </div>
+  const isAdmin = profile?.role === "admin";
 
-        <div className="flex items-center gap-3">
-          {profile?.role === "admin" && (
-            <Link
-              href="/admin"
-              className="hidden h-12 items-center rounded-xl border-2 border-ozmaksan-border px-4 text-sm font-semibold text-ozmaksan-text hover:border-ozmaksan-accent sm:flex"
-            >
-              Yönetim Paneli
-            </Link>
-          )}
-          {profile && (
-            <span className="hidden text-sm text-ozmaksan-muted md:inline">
-              {profile.full_name || profile.email}
-              <span className="ml-2 rounded bg-ozmaksan-bg px-2 py-0.5 text-xs uppercase text-ozmaksan-accent">
-                {profile.role}
+  return (
+    <header className="border-b border-ozmaksan-border bg-ozmaksan-surface">
+      {/* Kırmızı marka çizgisi — logodaki alt çizgi */}
+      <div className="h-1 bg-ozmaksan-red" />
+
+      <div className="px-4 py-4 sm:px-8">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-4">
+            <OzmaksanLogo size="sm" />
+            {subtitle && (
+              <div className="hidden border-l-2 border-ozmaksan-red pl-4 sm:block">
+                <p className="text-xs font-semibold uppercase tracking-widest text-ozmaksan-blue-light">
+                  {subtitle}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className={`hidden h-11 items-center rounded-xl px-4 text-sm font-semibold transition-colors sm:flex ${
+                  pathname === "/admin"
+                    ? "bg-ozmaksan-blue text-white"
+                    : "border-2 border-ozmaksan-border text-ozmaksan-text hover:border-ozmaksan-blue hover:text-ozmaksan-blue-light"
+                }`}
+              >
+                Yönetim Paneli
+              </Link>
+            )}
+            {profile && (
+              <span className="hidden text-sm text-ozmaksan-muted md:inline">
+                {profile.full_name || profile.email}
+                <span className="ml-2 rounded bg-ozmaksan-blue/20 px-2 py-0.5 text-xs font-bold uppercase text-ozmaksan-blue-light">
+                  {profile.role === "admin" ? "Yönetici" : "Okutucu"}
+                </span>
               </span>
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="h-12 rounded-xl border-2 border-ozmaksan-border px-4 text-sm font-semibold text-ozmaksan-muted hover:border-ozmaksan-steel hover:text-ozmaksan-text"
-          >
-            Çıkış
-          </button>
+            )}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="h-11 rounded-xl border-2 border-ozmaksan-border px-4 text-sm font-semibold text-ozmaksan-muted transition-colors hover:border-ozmaksan-red hover:text-ozmaksan-red"
+            >
+              Çıkış
+            </button>
+          </div>
         </div>
       </div>
     </header>

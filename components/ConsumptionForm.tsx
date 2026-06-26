@@ -337,7 +337,7 @@ export default function ConsumptionForm({
         <button
           type="submit"
           disabled={formDisabled || (isSac && !calculatedSacKg)}
-          className="h-16 flex-1 rounded-xl bg-ozmaksan-accent text-lg font-bold text-white transition-colors hover:bg-ozmaksan-accent-hover active:scale-[0.98] disabled:opacity-50"
+          className="h-16 flex-1 rounded-xl bg-ozmaksan-red text-lg font-bold text-white transition-colors hover:bg-ozmaksan-red-hover active:scale-[0.98] disabled:opacity-50"
         >
           {isSaving ? "Kaydediliyor…" : "Kaydet"}
         </button>
