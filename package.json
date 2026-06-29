@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed:users": "node scripts/seed-users.mjs",
-    "import:sip": "node scripts/import-sip-projects.mjs"
+    "import:sip": "node scripts/import-sip-projects.mjs",
+    "import:stock": "node scripts/import-stock-excel.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
