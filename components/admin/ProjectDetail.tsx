@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
+  adminDeleteConsumptionRecord,
   adminFetchConsumptionByProjectId,
   adminFetchProjectById,
 } from "@/lib/supabase/consumption";
@@ -56,6 +57,21 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
   function handleExport() {
     if (!project) return;
     exportProjectToExcel(project, records);
+  }
+
+  async function handleDeleteConsumption(id: string) {
+    if (
+      !confirm(
+        "Bu sarfiyat kaydını silmek istiyor musunuz? Silinen miktar ürün stoğuna geri eklenecek."
+      )
+    )
+      return;
+    try {
+      await adminDeleteConsumptionRecord(id);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Silme başarısız.");
+    }
   }
 
   if (loading) {
@@ -223,6 +239,7 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
                     "Birim Maliyet",
                     "Toplam",
                     "Personel",
+                    "İşlem",
                   ].map((h) => (
                     <th
                       key={h}
@@ -237,7 +254,7 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
                 {records.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={9}
+                      colSpan={10}
                       className="border border-gray-200 px-4 py-12 text-center text-gray-500"
                     >
                       Bu projede henüz malzeme kullanımı kaydı yok
@@ -284,6 +301,15 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
                       <td className="border border-gray-200 px-3 py-2 text-gray-600">
                         {r.profiles?.full_name || r.profiles?.email || "—"}
                       </td>
+                      <td className="border border-gray-200 px-3 py-2">
+                        <button
+                          type="button"
+                          onClick={() => void handleDeleteConsumption(r.id)}
+                          className="rounded border border-red-400 px-2 py-1 text-xs font-semibold text-red-600 hover:bg-red-50"
+                        >
+                          Sil
+                        </button>
+                      </td>
                     </tr>
                   ))
                 )}
@@ -292,7 +318,7 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
                 <tfoot>
                   <tr className="bg-[#3D5A80] font-bold text-white">
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="border border-gray-400 px-3 py-3 text-right uppercase tracking-wide"
                     >
                       Genel Toplam
@@ -303,6 +329,7 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
                         currency: "TRY",
                       })}
                     </td>
+                    <td className="border border-gray-400" />
                     <td className="border border-gray-400" />
                   </tr>
                 </tfoot>

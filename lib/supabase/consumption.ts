@@ -320,3 +320,11 @@ export async function adminFetchConsumptionRecords(): Promise<
     profiles: r.user_id ? profileMap.get(r.user_id) ?? null : null,
   }));
 }
+
+export async function adminDeleteConsumptionRecord(id: string): Promise<void> {
+  const supabase = createClient();
+  const { error } = await supabase.rpc("delete_consumption_record", {
+    p_record_id: id,
+  });
+  if (error) throw new Error(error.message);
+}

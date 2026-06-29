@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   adminActivateProduct,
   adminDeactivateProduct,
+  adminDeleteConsumptionRecord,
   adminFetchAllProducts,
   adminFetchAllProjects,
   adminFetchConsumptionRecords,
@@ -219,6 +220,24 @@ export default function AdminDashboard() {
       await loadData();
     } catch (err) {
       setError(err instanceof Error ? err.message : "İşlem başarısız.");
+    }
+  }
+
+  async function handleDeleteConsumption(id: string) {
+    if (
+      !confirm(
+        "Bu sarfiyat kaydını silmek istiyor musunuz? Silinen miktar ürün stoğuna geri eklenecek."
+      )
+    )
+      return;
+    try {
+      await adminDeleteConsumptionRecord(id);
+      setSuccess("Sarfiyat kaydı silindi, stok güncellendi.");
+      setError(null);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Silme başarısız.");
+      setSuccess(null);
     }
   }
 
@@ -904,6 +923,13 @@ export default function AdminDashboard() {
                     <p className="mt-1 text-xs text-ozmaksan-muted">
                       {r.profiles?.full_name || r.profiles?.email || "—"}
                     </p>
+                    <button
+                      type="button"
+                      onClick={() => void handleDeleteConsumption(r.id)}
+                      className="mt-3 rounded-lg border border-red-500/40 px-3 py-2 text-xs font-semibold text-red-400"
+                    >
+                      Sil
+                    </button>
                   </div>
                 ))
               )}
@@ -920,13 +946,14 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3">Miktar</th>
                   <th className="px-4 py-3">Maliyet</th>
                   <th className="px-4 py-3">Personel</th>
+                  <th className="px-4 py-3">İşlem</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredRecords.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="px-4 py-8 text-center text-ozmaksan-muted"
                     >
                       {records.length === 0
@@ -961,6 +988,15 @@ export default function AdminDashboard() {
                       </td>
                       <td className="px-4 py-3 text-ozmaksan-muted">
                         {r.profiles?.full_name || r.profiles?.email || "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          type="button"
+                          onClick={() => void handleDeleteConsumption(r.id)}
+                          className="rounded-lg border border-red-500/40 px-3 py-1.5 text-xs font-semibold text-red-400"
+                        >
+                          Sil
+                        </button>
                       </td>
                     </tr>
                   ))

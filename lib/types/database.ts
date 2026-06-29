@@ -296,6 +296,18 @@ export type Database = {
           new_stock: number;
         };
       };
+      delete_consumption_record: {
+        Args: {
+          p_record_id: string;
+        };
+        Returns: {
+          id: string;
+          product_name: string;
+          restored_quantity: number;
+          unit: string;
+          new_stock: number;
+        };
+      };
     };
     Enums: {
       user_role: UserRole;
