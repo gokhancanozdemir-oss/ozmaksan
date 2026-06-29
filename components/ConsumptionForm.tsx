@@ -115,14 +115,15 @@ export default function ConsumptionForm({
   const selectedProject = projects.find((p) => p.id === projeId);
   const selectedItem = projectItems.find((i) => i.id === projectItemId);
   const kalemRequired = projectItems.length > 0;
-  const formDisabled =
+  const baseDisabled =
     isSaving ||
     productLoading ||
     projectsLoading ||
     itemsLoading ||
     !product ||
-    !projeId ||
-    (kalemRequired && !projectItemId);
+    !projeId;
+  const submitDisabled =
+    baseDisabled || (kalemRequired && !projectItemId);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -282,7 +283,7 @@ export default function ConsumptionForm({
                 min="0"
                 step="1"
                 required
-                disabled={formDisabled}
+                disabled={baseDisabled}
                 placeholder="En (mm)"
                 value={sacUsedEn}
                 onChange={(e) => setSacUsedEn(e.target.value)}
@@ -299,7 +300,7 @@ export default function ConsumptionForm({
                 min="0"
                 step="1"
                 required
-                disabled={formDisabled}
+                disabled={baseDisabled}
                 placeholder="Boy (mm)"
                 value={sacUsedBoy}
                 onChange={(e) => setSacUsedBoy(e.target.value)}
@@ -339,7 +340,7 @@ export default function ConsumptionForm({
               step="any"
               min="0"
               required
-              disabled={formDisabled}
+              disabled={baseDisabled}
               placeholder="0.00"
               value={miktar}
               onChange={(e) => setMiktar(e.target.value)}
@@ -354,7 +355,7 @@ export default function ConsumptionForm({
                 <button
                   key={unit}
                   type="button"
-                  disabled={formDisabled}
+                  disabled={baseDisabled}
                   onClick={() => setBirim(unit)}
                   className={`h-14 rounded-xl border-2 text-lg font-semibold transition-colors disabled:opacity-50 ${
                     birim === unit
@@ -386,7 +387,7 @@ export default function ConsumptionForm({
           <select
             id="proje"
             required
-            disabled={formDisabled}
+            disabled={baseDisabled}
             value={projeId}
             onChange={(e) => setProjeId(e.target.value)}
             className="h-14 w-full appearance-none rounded-xl border-2 border-ozmaksan-border bg-ozmaksan-bg px-4 text-lg text-ozmaksan-text focus:border-ozmaksan-accent focus:outline-none disabled:opacity-50"
@@ -422,7 +423,7 @@ export default function ConsumptionForm({
             <select
               id="kalem"
               required={kalemRequired}
-              disabled={formDisabled}
+              disabled={baseDisabled}
               value={projectItemId}
               onChange={(e) => setProjectItemId(e.target.value)}
               className="h-14 w-full appearance-none rounded-xl border-2 border-ozmaksan-border bg-ozmaksan-bg px-4 text-lg text-ozmaksan-text focus:border-ozmaksan-accent focus:outline-none disabled:opacity-50"
@@ -449,7 +450,7 @@ export default function ConsumptionForm({
         </button>
         <button
           type="submit"
-          disabled={formDisabled || (isSac && !calculatedSacKg)}
+          disabled={submitDisabled || (isSac && !calculatedSacKg)}
           className="h-16 flex-1 rounded-xl bg-ozmaksan-red text-lg font-bold text-white transition-colors hover:bg-ozmaksan-red-hover active:scale-[0.98] disabled:opacity-50"
         >
           {isSaving ? "Kaydediliyor…" : "Kaydet"}
