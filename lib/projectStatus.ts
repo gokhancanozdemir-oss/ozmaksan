@@ -59,3 +59,15 @@ export function formatProjectLabel(project: {
   }
   return project.name;
 }
+
+export function formatProjectItemLabel(item: {
+  spec?: string | null;
+  product_name: string;
+  quantity?: number | null;
+}): string {
+  const parts: string[] = [];
+  if (item.spec?.trim()) parts.push(item.spec.trim());
+  parts.push(item.product_name);
+  if (item.quantity != null) parts.push(`${item.quantity} adet`);
+  return parts.join(" · ");
+}

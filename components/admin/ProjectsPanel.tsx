@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, Fragment } from "react";
+import { useRef, useState, Fragment, useMemo } from "react";
 import Link from "next/link";
 import type { Project, ProjectItem, ProjectItemStatus } from "@/lib/types/database";
 import {
@@ -9,6 +9,8 @@ import {
   type ProjectInput,
 } from "@/lib/supabase/projects";
 import { parseSipFile } from "@/lib/import/parseSipExcel";
+import { matchesSearch } from "@/lib/search";
+import SearchInput from "@/components/admin/SearchInput";
 import {
   ProjectStatusBadge,
   ProjectStatusLegend,
@@ -98,7 +100,31 @@ export default function ProjectsPanel({
   const [editing, setEditing] = useState<DraftProject | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const filteredProjects = useMemo(() => {
+    if (!searchQuery.trim()) return projects;
+    return projects.filter((p) => {
+      const orderLabel =
+        p.order_number && p.order_year
+          ? `${p.order_number}/${p.order_year}`
+          : p.name;
+      const itemFields =
+        p.items?.flatMap((i) => [
+          i.spec,
+          i.product_name,
+          i.destination,
+        ]) ?? [];
+      return matchesSearch(
+        searchQuery,
+        orderLabel,
+        p.customer,
+        p.name,
+        ...itemFields
+      );
+    });
+  }, [projects, searchQuery]);
 
   async function handleSave() {
     if (!editing?.order_number.trim() || !editing.customer.trim()) {
@@ -417,6 +443,12 @@ export default function ProjectsPanel({
         </div>
       )}
 
+      <SearchInput
+        value={searchQuery}
+        onChange={setSearchQuery}
+        placeholder="Sipariş no, müşteri veya kalem ara…"
+      />
+
       <div className="overflow-x-auto rounded-2xl border-2 border-ozmaksan-border">
         <table className="w-full min-w-[900px] text-left text-sm">
           <thead className="bg-ozmaksan-surface text-ozmaksan-muted">
@@ -429,7 +461,17 @@ export default function ProjectsPanel({
             </tr>
           </thead>
           <tbody>
-            {projects.map((p) => {
+            {filteredProjects.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="px-4 py-8 text-center text-ozmaksan-muted"
+                >
+                  Sonuç bulunamadı
+                </td>
+              </tr>
+            ) : (
+            filteredProjects.map((p) => {
               const status = p.status ?? "not_started";
               const itemCount = p.items?.length ?? 0;
               const expanded = expandedId === p.id;
@@ -530,7 +572,8 @@ export default function ProjectsPanel({
                   )}
                 </Fragment>
               );
-            })}
+            })
+            )}
           </tbody>
         </table>
       </div>

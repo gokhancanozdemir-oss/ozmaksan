@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
-  adminDeleteProduct,
+  adminActivateProduct,
+  adminDeactivateProduct,
   adminFetchAllProducts,
   adminFetchAllProjects,
   adminFetchConsumptionRecords,
@@ -14,8 +15,11 @@ import type { ConsumptionRecord, Product, ProductType, Project, Unit } from "@/l
 import AppHeader from "@/components/AppHeader";
 import ProjectsPanel from "@/components/admin/ProjectsPanel";
 import QrCodePreview from "@/components/admin/QrCodePreview";
+import SearchInput from "@/components/admin/SearchInput";
 import StockAlertBanner from "@/components/admin/StockAlertBanner";
 import { downloadQrPng, generateProductQrCode } from "@/lib/qr";
+import { formatProjectItemLabel } from "@/lib/projectStatus";
+import { matchesSearch } from "@/lib/search";
 import {
   getLowStockProducts,
   getStockUnit,
@@ -83,6 +87,9 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [stockAlertDismissed, setStockAlertDismissed] = useState(false);
+  const [showInactiveProducts, setShowInactiveProducts] = useState(false);
+  const [productSearch, setProductSearch] = useState("");
+  const [consumptionSearch, setConsumptionSearch] = useState("");
 
   const [editingProduct, setEditingProduct] = useState<
     (Partial<Product> & {
@@ -115,7 +122,7 @@ export default function AdminDashboard() {
     try {
       const [p, pr, r] = await Promise.all([
         adminFetchAllProjects(),
-        adminFetchAllProducts(),
+        adminFetchAllProducts(showInactiveProducts),
         adminFetchConsumptionRecords(),
       ]);
       setProjects(p);
@@ -126,7 +133,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showInactiveProducts]);
 
   useEffect(() => {
     void loadData();
@@ -189,18 +196,66 @@ export default function AdminDashboard() {
     }
   }
 
-  async function handleDeleteProduct(id: string) {
-    if (!confirm("Bu ürünü silmek istediğinize emin misiniz?")) return;
+  async function handleDeactivateProduct(id: string) {
+    if (
+      !confirm(
+        "Bu ürünü pasife almak istiyor musunuz? Sarfiyat kayıtları korunur; QR kodu artık okutulamaz."
+      )
+    )
+      return;
     try {
-      await adminDeleteProduct(id);
-      setSuccess("Ürün silindi.");
+      await adminDeactivateProduct(id);
+      setSuccess("Ürün pasife alındı.");
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Silme başarısız.");
+      setError(err instanceof Error ? err.message : "İşlem başarısız.");
     }
   }
 
-  const lowStockProducts = getLowStockProducts(products);
+  async function handleActivateProduct(id: string) {
+    try {
+      await adminActivateProduct(id);
+      setSuccess("Ürün tekrar aktifleştirildi.");
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "İşlem başarısız.");
+    }
+  }
+
+  const activeProducts = useMemo(
+    () => products.filter((p) => p.is_active !== false),
+    [products]
+  );
+
+  const filteredProducts = useMemo(() => {
+    if (!productSearch.trim()) return products;
+    return products.filter((p) =>
+      matchesSearch(
+        productSearch,
+        p.name,
+        p.qr_code,
+        p.product_type === "sac" ? "sac" : "standart"
+      )
+    );
+  }, [products, productSearch]);
+
+  const filteredRecords = useMemo(() => {
+    if (!consumptionSearch.trim()) return records;
+    return records.filter((r) =>
+      matchesSearch(
+        consumptionSearch,
+        r.products?.name,
+        r.projects?.name,
+        r.project_items
+          ? formatProjectItemLabel(r.project_items)
+          : null,
+        r.profiles?.full_name,
+        r.profiles?.email
+      )
+    );
+  }, [records, consumptionSearch]);
+
+  const lowStockProducts = getLowStockProducts(activeProducts);
 
   const tabs: { id: Tab; label: string }[] = [
     { id: "projects", label: "Projeler" },
@@ -249,7 +304,7 @@ export default function AdminDashboard() {
 
         {!loading && !stockAlertDismissed && lowStockProducts.length > 0 && (
           <StockAlertBanner
-            products={products}
+            products={activeProducts}
             onViewProducts={() => {
               setTab("products");
               setStockAlertDismissed(false);
@@ -258,7 +313,7 @@ export default function AdminDashboard() {
           />
         )}
 
-        <div className="mb-6 flex flex-wrap gap-2">
+        <div className="mb-6 grid grid-cols-3 gap-2 sm:flex sm:flex-wrap">
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -268,7 +323,7 @@ export default function AdminDashboard() {
                 setSuccess(null);
                 setError(null);
               }}
-              className={`h-12 rounded-xl px-5 text-base font-semibold transition-colors ${
+              className={`min-h-12 rounded-xl px-2 text-xs font-semibold transition-colors sm:h-12 sm:px-5 sm:text-base ${
                 tab === t.id
                   ? "bg-ozmaksan-accent text-white"
                   : "border-2 border-ozmaksan-border text-ozmaksan-muted hover:text-ozmaksan-text"
@@ -297,7 +352,13 @@ export default function AdminDashboard() {
           />
         ) : tab === "products" ? (
           <div className="space-y-4">
-            <div className="flex flex-wrap gap-3">
+            <SearchInput
+              value={productSearch}
+              onChange={setProductSearch}
+              placeholder="Ürün adı, QR veya tip ara…"
+            />
+
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={() => setEditingProduct(emptyProduct())}
@@ -312,6 +373,15 @@ export default function AdminDashboard() {
               >
                 + Yeni Sac
               </button>
+              <label className="flex cursor-pointer items-center gap-2 text-sm text-ozmaksan-muted">
+                <input
+                  type="checkbox"
+                  checked={showInactiveProducts}
+                  onChange={(e) => setShowInactiveProducts(e.target.checked)}
+                  className="h-4 w-4 rounded border-ozmaksan-border"
+                />
+                Pasif ürünleri göster
+              </label>
             </div>
 
             {editingProduct && (
@@ -567,7 +637,82 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            <div className="overflow-x-auto rounded-2xl border-2 border-ozmaksan-border">
+            {/* Mobil kart görünümü */}
+            <div className="space-y-3 sm:hidden">
+              {filteredProducts.length === 0 ? (
+                <p className="rounded-xl border border-ozmaksan-border px-4 py-8 text-center text-ozmaksan-muted">
+                  Sonuç bulunamadı
+                </p>
+              ) : (
+                filteredProducts.map((p) => {
+                  const unit = getStockUnit(p);
+                  const low = isLowStock(p);
+                  const inactive = p.is_active === false;
+                  return (
+                    <div
+                      key={p.id}
+                      className={`rounded-xl border-2 border-ozmaksan-border p-4 ${
+                        inactive ? "opacity-60" : ""
+                      } ${low ? "border-amber-500/30" : ""}`}
+                    >
+                      <p className="font-semibold text-ozmaksan-text">{p.name}</p>
+                      <p className="mt-1 font-mono text-xs text-ozmaksan-accent">
+                        {p.qr_code}
+                      </p>
+                      <p className="mt-2 text-sm text-ozmaksan-muted">
+                        Stok: {p.stock_quantity} {unit}
+                        {inactive && (
+                          <span className="ml-2 rounded bg-ozmaksan-muted/20 px-2 py-0.5 text-xs font-semibold text-ozmaksan-muted">
+                            Pasif
+                          </span>
+                        )}
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            void downloadQrPng(
+                              p.qr_code,
+                              p.name,
+                              `etiket-${p.name.replace(/\s+/g, "-").toLowerCase()}`
+                            )
+                          }
+                          className="rounded-lg border border-ozmaksan-accent/50 px-3 py-2 text-xs font-semibold text-ozmaksan-accent"
+                        >
+                          PNG
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingProduct(p)}
+                          className="rounded-lg border border-ozmaksan-border px-3 py-2 text-xs font-semibold"
+                        >
+                          Düzenle
+                        </button>
+                        {inactive ? (
+                          <button
+                            type="button"
+                            onClick={() => void handleActivateProduct(p.id)}
+                            className="rounded-lg border border-emerald-500/40 px-3 py-2 text-xs font-semibold text-emerald-400"
+                          >
+                            Aktifleştir
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => void handleDeactivateProduct(p.id)}
+                            className="rounded-lg border border-red-500/40 px-3 py-2 text-xs font-semibold text-red-400"
+                          >
+                            Pasife Al
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="hidden overflow-x-auto rounded-2xl border-2 border-ozmaksan-border sm:block">
               <table className="w-full min-w-[700px] text-left text-sm">
                 <thead className="bg-ozmaksan-surface text-ozmaksan-muted">
                   <tr>
@@ -580,20 +725,38 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((p) => {
+                  {filteredProducts.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={6}
+                        className="px-4 py-8 text-center text-ozmaksan-muted"
+                      >
+                        Sonuç bulunamadı
+                      </td>
+                    </tr>
+                  ) : (
+                  filteredProducts.map((p) => {
                     const unit = getStockUnit(p);
                     const low = isLowStock(p);
+                    const inactive = p.is_active === false;
                     return (
                     <tr
                       key={p.id}
                       className={`border-t border-ozmaksan-border text-ozmaksan-text ${
                         low ? "bg-amber-950/10" : ""
-                      }`}
+                      } ${inactive ? "opacity-60" : ""}`}
                     >
                       <td className="px-4 py-3 font-mono text-xs text-ozmaksan-accent">
                         {p.qr_code}
                       </td>
-                      <td className="px-4 py-3 font-medium">{p.name}</td>
+                      <td className="px-4 py-3 font-medium">
+                        {p.name}
+                        {inactive && (
+                          <span className="ml-2 rounded bg-ozmaksan-muted/20 px-2 py-0.5 text-xs font-semibold text-ozmaksan-muted">
+                            Pasif
+                          </span>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-sm text-ozmaksan-muted">
                         {p.product_type === "sac" &&
                         p.sac_en_mm &&
@@ -669,47 +832,110 @@ export default function AdminDashboard() {
                           >
                             Düzenle
                           </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteProduct(p.id)}
-                            className="rounded-lg border border-red-500/40 px-3 py-1.5 text-xs font-semibold text-red-400"
-                          >
-                            Sil
-                          </button>
+                          {inactive ? (
+                            <button
+                              type="button"
+                              onClick={() => void handleActivateProduct(p.id)}
+                              className="rounded-lg border border-emerald-500/40 px-3 py-1.5 text-xs font-semibold text-emerald-400"
+                            >
+                              Aktifleştir
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => void handleDeactivateProduct(p.id)}
+                              className="rounded-lg border border-red-500/40 px-3 py-1.5 text-xs font-semibold text-red-400"
+                            >
+                              Pasife Al
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
                     );
-                  })}
+                  })
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border-2 border-ozmaksan-border">
-            <table className="w-full min-w-[800px] text-left text-sm">
+          <div className="space-y-4">
+            <SearchInput
+              value={consumptionSearch}
+              onChange={setConsumptionSearch}
+              placeholder="Ürün, proje, kalem veya personel ara…"
+            />
+
+            <div className="space-y-3 sm:hidden">
+              {filteredRecords.length === 0 ? (
+                <p className="rounded-xl border border-ozmaksan-border px-4 py-8 text-center text-ozmaksan-muted">
+                  {records.length === 0
+                    ? "Henüz sarfiyat kaydı yok"
+                    : "Sonuç bulunamadı"}
+                </p>
+              ) : (
+                filteredRecords.map((r) => (
+                  <div
+                    key={r.id}
+                    className="rounded-xl border-2 border-ozmaksan-border p-4"
+                  >
+                    <p className="text-xs text-ozmaksan-muted">
+                      {new Date(r.created_at).toLocaleString("tr-TR")}
+                    </p>
+                    <p className="mt-1 font-semibold text-ozmaksan-text">
+                      {r.products?.name ?? "—"}
+                    </p>
+                    <p className="text-sm text-ozmaksan-muted">
+                      {r.projects?.name ?? "—"}
+                    </p>
+                    {r.project_items && (
+                      <p className="mt-1 text-sm text-ozmaksan-blue-light">
+                        {formatProjectItemLabel(r.project_items)}
+                      </p>
+                    )}
+                    <p className="mt-2 text-sm">
+                      {r.quantity} {r.unit} ·{" "}
+                      {Number(r.total_cost).toLocaleString("tr-TR", {
+                        style: "currency",
+                        currency: "TRY",
+                      })}
+                    </p>
+                    <p className="mt-1 text-xs text-ozmaksan-muted">
+                      {r.profiles?.full_name || r.profiles?.email || "—"}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="hidden overflow-x-auto rounded-2xl border-2 border-ozmaksan-border sm:block">
+            <table className="w-full min-w-[900px] text-left text-sm">
               <thead className="bg-ozmaksan-surface text-ozmaksan-muted">
                 <tr>
                   <th className="px-4 py-3">Tarih</th>
                   <th className="px-4 py-3">Ürün</th>
                   <th className="px-4 py-3">Proje</th>
+                  <th className="px-4 py-3">Kalem</th>
                   <th className="px-4 py-3">Miktar</th>
                   <th className="px-4 py-3">Maliyet</th>
                   <th className="px-4 py-3">Personel</th>
                 </tr>
               </thead>
               <tbody>
-                {records.length === 0 ? (
+                {filteredRecords.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={6}
+                      colSpan={7}
                       className="px-4 py-8 text-center text-ozmaksan-muted"
                     >
-                      Henüz sarfiyat kaydı yok
+                      {records.length === 0
+                        ? "Henüz sarfiyat kaydı yok"
+                        : "Sonuç bulunamadı"}
                     </td>
                   </tr>
                 ) : (
-                  records.map((r) => (
+                  filteredRecords.map((r) => (
                     <tr
                       key={r.id}
                       className="border-t border-ozmaksan-border text-ozmaksan-text"
@@ -719,6 +945,11 @@ export default function AdminDashboard() {
                       </td>
                       <td className="px-4 py-3">{r.products?.name ?? "—"}</td>
                       <td className="px-4 py-3">{r.projects?.name ?? "—"}</td>
+                      <td className="px-4 py-3 text-sm text-ozmaksan-blue-light">
+                        {r.project_items
+                          ? formatProjectItemLabel(r.project_items)
+                          : "—"}
+                      </td>
                       <td className="px-4 py-3">
                         {r.quantity} {r.unit}
                       </td>
@@ -736,6 +967,7 @@ export default function AdminDashboard() {
                 )}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </main>

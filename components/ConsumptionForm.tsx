@@ -1,9 +1,9 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import type { Product, Project, Unit } from "@/lib/types/database";
-import { UNITS } from "@/lib/supabase/consumption";
-import { formatProjectLabel } from "@/lib/projectStatus";
+import type { Product, Project, ProjectItem, Unit } from "@/lib/types/database";
+import { UNITS, fetchProjectItems } from "@/lib/supabase/consumption";
+import { formatProjectItemLabel, formatProjectLabel } from "@/lib/projectStatus";
 import {
   calcSacWeightKg,
   formatSacDimensions,
@@ -28,6 +28,8 @@ type ConsumptionFormProps = {
     birim: Unit;
     projeId: string;
     projeAdi: string;
+    projectItemId?: string;
+    kalemLabel?: string;
     sacUsedEnMm?: number;
     sacUsedBoyMm?: number;
   }) => void;
@@ -47,6 +49,9 @@ export default function ConsumptionForm({
   const [miktar, setMiktar] = useState("");
   const [birim, setBirim] = useState<Unit>("kg");
   const [projeId, setProjeId] = useState("");
+  const [projectItems, setProjectItems] = useState<ProjectItem[]>([]);
+  const [itemsLoading, setItemsLoading] = useState(false);
+  const [projectItemId, setProjectItemId] = useState("");
   const [sacUsedEn, setSacUsedEn] = useState("");
   const [sacUsedBoy, setSacUsedBoy] = useState("");
 
@@ -75,13 +80,61 @@ export default function ConsumptionForm({
     }
   }, [projects, projeId]);
 
+  useEffect(() => {
+    if (!projeId) {
+      setProjectItems([]);
+      setProjectItemId("");
+      return;
+    }
+
+    let cancelled = false;
+    setItemsLoading(true);
+    setProjectItemId("");
+
+    void fetchProjectItems(projeId)
+      .then((items) => {
+        if (!cancelled) {
+          setProjectItems(items);
+          if (items.length === 1) {
+            setProjectItemId(items[0].id);
+          }
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setProjectItems([]);
+      })
+      .finally(() => {
+        if (!cancelled) setItemsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [projeId]);
+
   const selectedProject = projects.find((p) => p.id === projeId);
+  const selectedItem = projectItems.find((i) => i.id === projectItemId);
+  const kalemRequired = projectItems.length > 0;
   const formDisabled =
-    isSaving || productLoading || projectsLoading || !product || !projeId;
+    isSaving ||
+    productLoading ||
+    projectsLoading ||
+    itemsLoading ||
+    !product ||
+    !projeId ||
+    (kalemRequired && !projectItemId);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!product || !selectedProject) return;
+    if (kalemRequired && !projectItemId) return;
+
+    const kalemLabel = selectedItem
+      ? formatProjectItemLabel(selectedItem)
+      : undefined;
+    const itemPayload = projectItemId
+      ? { projectItemId, kalemLabel }
+      : {};
 
     if (isSac) {
       const en = parseFloat(sacUsedEn);
@@ -96,6 +149,7 @@ export default function ConsumptionForm({
         birim: "kg",
         projeId: selectedProject.id,
         projeAdi: selectedProject.name,
+        ...itemPayload,
         sacUsedEnMm: en,
         sacUsedBoyMm: boy,
       });
@@ -113,6 +167,7 @@ export default function ConsumptionForm({
       birim,
       projeId: selectedProject.id,
       projeAdi: selectedProject.name,
+      ...itemPayload,
     });
   }
 
@@ -317,7 +372,7 @@ export default function ConsumptionForm({
 
       <div className="flex flex-col gap-2">
         <label htmlFor="proje" className="text-base font-semibold text-ozmaksan-text">
-          Kullanılan Proje Adı
+          Sipariş / Proje
         </label>
         {projectsLoading ? (
           <div className="flex h-14 items-center rounded-xl border-2 border-ozmaksan-border bg-ozmaksan-bg px-4 text-ozmaksan-muted">
@@ -344,6 +399,44 @@ export default function ConsumptionForm({
           </select>
         )}
       </div>
+
+      {projeId && (
+        <div className="flex flex-col gap-2">
+          <label htmlFor="kalem" className="text-base font-semibold text-ozmaksan-text">
+            Sipariş Kalemi
+            {kalemRequired && (
+              <span className="ml-1 text-sm font-normal text-ozmaksan-muted">
+                (zorunlu)
+              </span>
+            )}
+          </label>
+          {itemsLoading ? (
+            <div className="flex h-14 items-center rounded-xl border-2 border-ozmaksan-border bg-ozmaksan-bg px-4 text-ozmaksan-muted">
+              Kalemler yükleniyor…
+            </div>
+          ) : projectItems.length === 0 ? (
+            <div className="rounded-xl border border-ozmaksan-border bg-ozmaksan-bg px-4 py-3 text-sm text-ozmaksan-muted">
+              Bu siparişte tanımlı kalem yok.
+            </div>
+          ) : (
+            <select
+              id="kalem"
+              required={kalemRequired}
+              disabled={formDisabled}
+              value={projectItemId}
+              onChange={(e) => setProjectItemId(e.target.value)}
+              className="h-14 w-full appearance-none rounded-xl border-2 border-ozmaksan-border bg-ozmaksan-bg px-4 text-lg text-ozmaksan-text focus:border-ozmaksan-accent focus:outline-none disabled:opacity-50"
+            >
+              <option value="">Kalem seçin…</option>
+              {projectItems.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {formatProjectItemLabel(item)}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+      )}
 
       <div className="mt-2 flex flex-col gap-3 sm:flex-row">
         <button

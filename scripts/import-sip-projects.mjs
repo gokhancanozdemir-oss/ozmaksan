@@ -1,16 +1,44 @@
 /**
  * sip.xlsx dosyasını Supabase'e aktarır.
- * Kullanım: node scripts/import-sip-projects.mjs [dosya-yolu]
+ *
+ * Önkoşul:
+ * 1. supabase/migrations/008_project_items.sql çalıştırılmış olmalı
+ * 2. .env.local içinde NEXT_PUBLIC_SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY
+ *
+ * Kullanım: npm run import:sip [dosya-yolu]
  */
-import { readFileSync } from "fs";
+import { readFileSync, existsSync } from "fs";
+import { resolve } from "path";
 import { createClient } from "@supabase/supabase-js";
 import XLSX from "xlsx-js-style";
+
+function loadEnv() {
+  const envPath = resolve(process.cwd(), ".env.local");
+  if (!existsSync(envPath)) {
+    console.error(".env.local bulunamadı.");
+    process.exit(1);
+  }
+  const lines = readFileSync(envPath, "utf8").split("\n");
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) continue;
+    const key = trimmed.slice(0, eq).trim();
+    const value = trimmed.slice(eq + 1).trim();
+    if (!process.env[key]) process.env[key] = value;
+  }
+}
+
+loadEnv();
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!url || !key) {
-  console.error("NEXT_PUBLIC_SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY gerekli.");
+  console.error(
+    ".env.local içinde NEXT_PUBLIC_SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY tanımlı olmalı."
+  );
   process.exit(1);
 }
 

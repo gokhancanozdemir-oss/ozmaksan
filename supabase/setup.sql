@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS public.profiles CASCADE;
 DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
 DROP FUNCTION IF EXISTS public.record_consumption(TEXT, UUID, NUMERIC, TEXT) CASCADE;
 DROP FUNCTION IF EXISTS public.record_consumption(TEXT, UUID, NUMERIC, TEXT, NUMERIC, NUMERIC) CASCADE;
+DROP FUNCTION IF EXISTS public.record_consumption(TEXT, UUID, NUMERIC, TEXT, NUMERIC, NUMERIC, UUID) CASCADE;
 DROP FUNCTION IF EXISTS public.calc_sac_kg(NUMERIC, NUMERIC, NUMERIC) CASCADE;
 DROP FUNCTION IF EXISTS public.is_admin() CASCADE;
 DROP FUNCTION IF EXISTS public.is_authenticated_user() CASCADE;
@@ -79,6 +80,7 @@ CREATE TABLE public.products (
   sac_derinlik_mm NUMERIC,
   sac_adet NUMERIC DEFAULT 1 CHECK (sac_adet IS NULL OR sac_adet > 0),
   min_stock_threshold NUMERIC CHECK (min_stock_threshold IS NULL OR min_stock_threshold >= 0),
+  is_active BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   CONSTRAINT products_sac_dims_check CHECK (
     product_type = 'standard'
@@ -90,6 +92,7 @@ CREATE TABLE public.consumption_records (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id UUID NOT NULL REFERENCES public.products(id) ON DELETE RESTRICT,
   project_id UUID NOT NULL REFERENCES public.projects(id) ON DELETE RESTRICT,
+  project_item_id UUID REFERENCES public.project_items(id) ON DELETE SET NULL,
   user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
   quantity NUMERIC(12, 3) NOT NULL CHECK (quantity > 0),
   unit TEXT NOT NULL CHECK (unit IN ('kg', 'm', 'adet')),
@@ -105,6 +108,7 @@ CREATE INDEX idx_products_qr_code ON public.products(qr_code);
 CREATE INDEX idx_consumption_project ON public.consumption_records(project_id);
 CREATE INDEX idx_consumption_product ON public.consumption_records(product_id);
 CREATE INDEX idx_consumption_user ON public.consumption_records(user_id);
+CREATE INDEX idx_consumption_project_item ON public.consumption_records(project_item_id);
 CREATE INDEX idx_consumption_created ON public.consumption_records(created_at DESC);
 
 CREATE OR REPLACE FUNCTION public.is_admin()
@@ -170,7 +174,8 @@ CREATE OR REPLACE FUNCTION public.record_consumption(
   p_quantity NUMERIC,
   p_unit TEXT,
   p_sac_used_en_mm NUMERIC DEFAULT NULL,
-  p_sac_used_boy_mm NUMERIC DEFAULT NULL
+  p_sac_used_boy_mm NUMERIC DEFAULT NULL,
+  p_project_item_id UUID DEFAULT NULL
 )
 RETURNS JSON
 LANGUAGE plpgsql
@@ -183,6 +188,7 @@ DECLARE
   v_remaining NUMERIC(12, 3);
   v_qty NUMERIC(12, 3);
   v_unit TEXT;
+  v_item_count INTEGER;
 BEGIN
   IF auth.uid() IS NULL THEN
     RAISE EXCEPTION 'Giriş yapmanız gerekiyor';
@@ -201,13 +207,30 @@ BEGIN
     RAISE EXCEPTION 'Proje bulunamadı veya pasif';
   END IF;
 
+  SELECT COUNT(*)::INTEGER INTO v_item_count
+  FROM public.project_items
+  WHERE project_id = p_project_id;
+
+  IF v_item_count > 0 AND p_project_item_id IS NULL THEN
+    RAISE EXCEPTION 'Bu sipariş için kalem seçimi zorunludur';
+  END IF;
+
+  IF p_project_item_id IS NOT NULL THEN
+    IF NOT EXISTS (
+      SELECT 1 FROM public.project_items
+      WHERE id = p_project_item_id AND project_id = p_project_id
+    ) THEN
+      RAISE EXCEPTION 'Seçilen kalem bu projeye ait değil';
+    END IF;
+  END IF;
+
   SELECT * INTO v_product
   FROM public.products
-  WHERE qr_code = p_qr_code
+  WHERE qr_code = p_qr_code AND is_active = true
   FOR UPDATE;
 
   IF NOT FOUND THEN
-    RAISE EXCEPTION 'Ürün bulunamadı: %', p_qr_code;
+    RAISE EXCEPTION 'Ürün bulunamadı veya pasif: %', p_qr_code;
   END IF;
 
   IF v_product.product_type = 'sac' THEN
@@ -236,11 +259,11 @@ BEGIN
   END IF;
 
   INSERT INTO public.consumption_records (
-    product_id, project_id, quantity, unit, unit_cost, user_id,
+    product_id, project_id, project_item_id, quantity, unit, unit_cost, user_id,
     sac_used_en_mm, sac_used_boy_mm
   )
   VALUES (
-    v_product.id, p_project_id, v_qty, v_unit, v_product.unit_cost, auth.uid(),
+    v_product.id, p_project_id, p_project_item_id, v_qty, v_unit, v_product.unit_cost, auth.uid(),
     CASE WHEN v_product.product_type = 'sac' THEN p_sac_used_en_mm ELSE NULL END,
     CASE WHEN v_product.product_type = 'sac' THEN p_sac_used_boy_mm ELSE NULL END
   )
@@ -317,7 +340,7 @@ CREATE POLICY "project_items_admin_all"
 CREATE POLICY "products_select_authenticated"
   ON public.products FOR SELECT
   TO authenticated
-  USING (true);
+  USING (is_active = true OR public.is_admin());
 
 CREATE POLICY "products_admin_insert"
   ON public.products FOR INSERT

@@ -50,12 +50,14 @@ export type Product = {
   sac_derinlik_mm: number | null;
   sac_adet: number | null;
   min_stock_threshold: number | null;
+  is_active?: boolean;
 };
 
 export type ConsumptionRecord = {
   id: string;
   product_id: string;
   project_id: string;
+  project_item_id: string | null;
   user_id: string | null;
   quantity: number;
   unit: Unit;
@@ -66,6 +68,10 @@ export type ConsumptionRecord = {
   sac_used_boy_mm: number | null;
   products?: { name: string; qr_code: string; product_type?: ProductType } | null;
   projects?: { name: string } | null;
+  project_items?: {
+    spec: string | null;
+    product_name: string;
+  } | null;
   profiles?: { email: string; full_name: string | null } | null;
 };
 
@@ -84,6 +90,8 @@ export type ConsumptionData = {
   birim: Unit;
   projeId: string;
   projeAdi: string;
+  projectItemId?: string;
+  kalemLabel?: string;
   sacUsedEnMm?: number;
   sacUsedBoyMm?: number;
 };
@@ -191,6 +199,7 @@ export type Database = {
           sac_derinlik_mm: number | null;
           sac_adet: number | null;
           min_stock_threshold: number | null;
+          is_active: boolean;
           created_at: string;
         };
         Insert: {
@@ -206,6 +215,7 @@ export type Database = {
           sac_derinlik_mm?: number | null;
           sac_adet?: number | null;
           min_stock_threshold?: number | null;
+          is_active?: boolean;
           created_at?: string;
         };
         Update: {
@@ -221,6 +231,7 @@ export type Database = {
           sac_derinlik_mm?: number | null;
           sac_adet?: number | null;
           min_stock_threshold?: number | null;
+          is_active?: boolean;
           created_at?: string;
         };
         Relationships: [];
@@ -231,6 +242,7 @@ export type Database = {
           id?: string;
           product_id: string;
           project_id: string;
+          project_item_id?: string | null;
           user_id?: string | null;
           quantity: number;
           unit: Unit;
@@ -241,6 +253,7 @@ export type Database = {
           id?: string;
           product_id?: string;
           project_id?: string;
+          project_item_id?: string | null;
           user_id?: string | null;
           quantity?: number;
           unit?: Unit;
@@ -260,6 +273,7 @@ export type Database = {
           p_unit: string;
           p_sac_used_en_mm?: number | null;
           p_sac_used_boy_mm?: number | null;
+          p_project_item_id?: string | null;
         };
         Returns: ConsumptionResult;
       };

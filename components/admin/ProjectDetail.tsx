@@ -14,7 +14,7 @@ import {
   ProjectStatusLegend,
   itemRowClass,
 } from "@/components/admin/ProjectStatusBadge";
-import { formatProjectLabel } from "@/lib/projectStatus";
+import { formatProjectItemLabel, formatProjectLabel } from "@/lib/projectStatus";
 
 type ProjectDetailProps = {
   projectId: string;
@@ -215,6 +215,7 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
                 <tr className="bg-[#E85D04] text-white">
                   {[
                     "Tarih",
+                    "Kalem",
                     "Malzeme",
                     "QR Kod",
                     "Miktar",
@@ -236,7 +237,7 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
                 {records.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={8}
+                      colSpan={9}
                       className="border border-gray-200 px-4 py-12 text-center text-gray-500"
                     >
                       Bu projede henüz malzeme kullanımı kaydı yok
@@ -250,6 +251,11 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
                     >
                       <td className="border border-gray-200 px-3 py-2 text-gray-600">
                         {new Date(r.created_at).toLocaleString("tr-TR")}
+                      </td>
+                      <td className="border border-gray-200 px-3 py-2 text-gray-700">
+                        {r.project_items
+                          ? formatProjectItemLabel(r.project_items)
+                          : "—"}
                       </td>
                       <td className="border border-gray-200 px-3 py-2 font-medium">
                         {r.products?.name ?? "—"}
@@ -286,7 +292,7 @@ export default function ProjectDetail({ projectId }: ProjectDetailProps) {
                 <tfoot>
                   <tr className="bg-[#3D5A80] font-bold text-white">
                     <td
-                      colSpan={6}
+                      colSpan={7}
                       className="border border-gray-400 px-3 py-3 text-right uppercase tracking-wide"
                     >
                       Genel Toplam

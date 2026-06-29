@@ -135,10 +135,12 @@ export default function ProductionTracker() {
         birim: data.birim,
         sacUsedEnMm: data.sacUsedEnMm,
         sacUsedBoyMm: data.sacUsedBoyMm,
+        projectItemId: data.projectItemId,
       });
 
+      const kalemPart = data.kalemLabel ? ` · ${data.kalemLabel}` : "";
       setSavedMessage(
-        `✓ ${data.miktar} ${data.birim} ${data.productName} — ${data.projeAdi} projesine kaydedildi. Maliyet: ${Number(result.total_cost).toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}`
+        `✓ ${data.miktar} ${data.birim} ${data.productName} — ${data.projeAdi}${kalemPart} kaydedildi. Maliyet: ${Number(result.total_cost).toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}`
       );
       setScannedCode(null);
       setProduct(null);
