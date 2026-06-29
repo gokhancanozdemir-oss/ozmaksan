@@ -159,6 +159,8 @@ export async function adminUpsertProjectWithItems(
 
 export async function adminDeleteProject(id: string): Promise<void> {
   const supabase = createClient();
-  const { error } = await supabase.from("projects").delete().eq("id", id);
+  const { error } = await supabase.rpc("delete_project", {
+    p_project_id: id,
+  });
   if (error) throw new Error(error.message);
 }

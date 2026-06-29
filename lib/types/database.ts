@@ -308,6 +308,15 @@ export type Database = {
           new_stock: number;
         };
       };
+      delete_project: {
+        Args: {
+          p_project_id: string;
+        };
+        Returns: {
+          project_id: string;
+          deleted_consumption_count: number;
+        };
+      };
     };
     Enums: {
       user_role: UserRole;

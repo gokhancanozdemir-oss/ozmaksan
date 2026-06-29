@@ -168,7 +168,11 @@ export default function ProjectsPanel({
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Bu siparişi ve tüm kalemlerini silmek istiyor musunuz?"))
+    if (
+      !confirm(
+        "Bu siparişi ve tüm kalemlerini silmek istiyor musunuz? Bağlı sarfiyat kayıtları da silinir ve kullanılan miktarlar ürün stoğuna geri eklenir."
+      )
+    )
       return;
     try {
       await adminDeleteProject(id);
