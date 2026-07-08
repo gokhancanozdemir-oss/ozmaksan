@@ -1,31 +1,64 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  company, nav, categories, products, auxiliaries, certs, sectors,
-  references, faq, about, exportCountries, news,
-} from "./content-loader.mjs";
+import { loadLocalizedData } from "./i18n-loader.mjs";
+import { LOCALES, getLocale } from "./locales.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
+
+const localeCode = process.env.BUILD_LOCALE || "tr";
+const locale = getLocale(localeCode);
+const {
+  company, nav, categories, products, auxiliaries, certs, sectors,
+  references, faq, about, exportCountries, news, t, trText,
+} = loadLocalizedData(localeCode);
+const relRoot = localeCode === "tr" ? "" : "..";
+const outRoot = localeCode === "tr" ? ROOT : path.join(ROOT, localeCode);
+if (localeCode !== "tr") fs.mkdirSync(outRoot, { recursive: true });
 
 const exportSvg = fs.readFileSync(path.join(ROOT, "export-map-generated.svg"), "utf8")
   .replace(/<\?xml[^>]*\?>\s*/i, "");
 
 /* ---------- helpers ---------- */
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-/** Statik site + Netlify: göreli varlık yolu (Decap "/assets/..." yazsa da normalize edilir) */
-const asset = (_mode, p) => String(p || "").replace(/^\/+/, "");
+/** Statik site: göreli varlık yolu; alt dil klasörlerinde ../ ile köke çıkar */
+const asset = (_mode, p) => {
+  const clean = String(p || "").replace(/^\/+/, "");
+  return relRoot ? `${relRoot}/${clean}` : clean;
+};
 function link(_mode, slug) {
-  return slug === "index" ? "index.html" : `${slug}.html`;
+  const file = slug === "index" ? "index.html" : `${slug}.html`;
+  return relRoot ? `${relRoot}/${file}` : file;
+}
+function langHref(targetLocale, slug) {
+  const file = slug === "index" ? "index.html" : `${slug}.html`;
+  if (targetLocale === "tr") return localeCode === "tr" ? file : `../${file}`;
+  if (localeCode === "tr") return `${targetLocale}/${file}`;
+  if (targetLocale === localeCode) return file;
+  if (targetLocale === "tr") return `../${file}`;
+  return `../${targetLocale}/${file}`;
+}
+function langSwitcher(pageSlug) {
+  return LOCALES.map((loc) => {
+    const href = langHref(loc.code, pageSlug);
+    const active = loc.code === localeCode ? ' class="active" aria-current="true"' : "";
+    return `<a href="${href}" hreflang="${loc.htmlLang}" lang="${loc.htmlLang}"${active}>${loc.label}</a>`;
+  }).join("\n        ");
 }
 const productSlug = (p) => `urun-${p.slug}`;
 const newsSlug = (n) => `haber-${n.slug}`;
 
-const MONTH_TR = ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"];
+const MONTH_NAMES = {
+  tr: ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"],
+  en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  ru: ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"],
+  ar: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"],
+};
 function formatNewsDate(iso) {
   const [y, m, d] = iso.split("-");
-  return `${Number(d)} ${MONTH_TR[Number(m) - 1]} ${y}`;
+  const months = MONTH_NAMES[localeCode] || MONTH_NAMES.tr;
+  return `${Number(d)} ${months[Number(m) - 1]} ${y}`;
 }
 
 const ICON = {
@@ -51,7 +84,7 @@ function sectionHead(label, titleHtml, desc = "", center = true) {
 }
 
 /* ---------- chrome ---------- */
-function header(mode, active) {
+function header(mode, active, pageSlug = active) {
   const links = nav
     .map((n) => `<a href="${link(mode, n.href)}"${n.href === active ? ' class="active"' : ""}>${esc(n.label)}</a>`)
     .join("\n        ");
@@ -60,11 +93,14 @@ function header(mode, active) {
       <a href="${link(mode, "index")}" class="logo">
         <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)} — ${esc(company.slogan)}" width="240" height="143" />
       </a>
-      <nav class="main-nav" aria-label="Ana menü">
+      <nav class="main-nav" aria-label="${esc(t("aria.mainNav"))}">
         ${links}
       </nav>
-      <a href="${link(mode, "iletisim")}" class="btn btn-primary btn-sm">Teklif Al</a>
-      <button class="menu-toggle" aria-label="Menü" aria-expanded="false"><span></span><span></span><span></span></button>
+      <div class="lang-switcher" aria-label="${esc(t("lang.switch"))}">
+        ${langSwitcher(pageSlug)}
+      </div>
+      <a href="${link(mode, "iletisim")}" class="btn btn-primary btn-sm">${esc(t("cta.quote"))}</a>
+      <button class="menu-toggle" aria-label="${esc(t("aria.menu"))}" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </header>
   <div class="nav-overlay" aria-hidden="true"></div>`;
@@ -88,19 +124,19 @@ function footer(mode) {
     <div class="container footer-grid">
       <div class="footer-brand">
         <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)}" width="170" height="68" style="filter:brightness(0) invert(1)" />
-        <p>${company.founded}'dan beri Gaziantep'te yüksek basınçlı buhar, kızgın su, kızgın yağ kazanları ve enerji geri kazanım ekipmanları üretiyoruz.</p>
+        <p>${t("footer.blurb", { founded: company.founded })}</p>
         ${social}
       </div>
       <div>
-        <h4>Kurumsal</h4>
+        <h4>${esc(t("footer.corporate"))}</h4>
         <ul>${quick}</ul>
       </div>
       <div>
-        <h4>Ürün Grupları</h4>
+        <h4>${esc(t("footer.productGroups"))}</h4>
         <ul>${catLinks}</ul>
       </div>
       <div>
-        <h4>İletişim</h4>
+        <h4>${esc(t("footer.contact"))}</h4>
         <ul class="footer-contact">
           <li>${ICON.pin}<span>${esc(company.address)}</span></li>
           <li>${ICON.phone}<a href="tel:${company.phones[0].replace(/\s/g, "")}">${esc(company.phones[0])}</a></li>
@@ -110,17 +146,17 @@ function footer(mode) {
     </div>
     <div class="footer-bottom">
       <div class="container">
-        <p>© ${new Date().getFullYear()} ${esc(company.legalName)} — Tüm hakları saklıdır.</p>
+        <p>© ${new Date().getFullYear()} ${esc(company.legalName)} — ${esc(t("footer.rights"))}</p>
         <p>${esc(company.slogan)} · <span>${esc(company.sloganEn)}</span></p>
       </div>
     </div>
   </footer>`;
 }
 
-function bodyInner(mode, active, main) {
+function bodyInner(mode, active, main, pageSlug = active) {
   return `<div class="cursor-dot" aria-hidden="true"></div>
   <div class="cursor-ring" aria-hidden="true"></div>
-  ${header(mode, active)}
+  ${header(mode, active, pageSlug)}
   <main>
 ${main}
   </main>
@@ -140,8 +176,8 @@ function productCard(mode, p) {
           <p>${esc(p.tagline)}</p>
           <div class="product-chips">${chips}</div>
           <div class="product-card-actions">
-            <a href="${link(mode, productSlug(p))}" class="product-link">İncele ${ICON.arrow}</a>
-            ${p.pdf ? `<a href="${asset(mode, p.pdf)}" target="_blank" rel="noopener" class="product-pdf">Katalog (PDF)</a>` : ""}
+            <a href="${link(mode, productSlug(p))}" class="product-link">${esc(t("product.view"))} ${ICON.arrow}</a>
+            ${p.pdf ? `<a href="${asset(mode, p.pdf)}" target="_blank" rel="noopener" class="product-pdf">${esc(t("product.catalog"))}</a>` : ""}
           </div>
         </div>
       </article>`;
@@ -157,7 +193,7 @@ function newsCard(mode, n, featured = false) {
           <time class="news-date" datetime="${esc(n.date)}">${esc(n.dateLabel || formatNewsDate(n.date))}</time>
           <h3><a href="${link(mode, newsSlug(n))}">${esc(n.title)}</a></h3>
           <p>${esc(n.excerpt)}</p>
-          <a href="${link(mode, newsSlug(n))}" class="news-link">Devamını Oku ${ICON.arrow}</a>
+          <a href="${link(mode, newsSlug(n))}" class="news-link">${esc(t("news.readMore"))} ${ICON.arrow}</a>
         </div>
       </article>`;
 }
@@ -168,14 +204,14 @@ function specTable(p) {
   const rows = p.specs.rows
     .map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("\n            ");
   return `<div class="spec-table-wrap reveal">
-        <h3 class="block-title">Model & Kapasite Tablosu</h3>
+        <h3 class="block-title">${esc(t("product.specTable"))}</h3>
         <table class="spec-table">
           <thead><tr>${head}</tr></thead>
           <tbody>
             ${rows}
           </tbody>
         </table>
-        <p class="spec-note">* Tabloda örnek modeller gösterilmiştir. Tam kapasite ve boyut listesi için ürün kataloğunu inceleyin.</p>
+        <p class="spec-note">${esc(t("product.specNote"))}</p>
       </div>`;
 }
 
@@ -190,7 +226,7 @@ function homeMain(mode) {
     .map((c) => `<a class="cat-card reveal" href="${link(mode, "urunler")}#${c.key}">
           <h3>${esc(c.label)}</h3>
           <p>${esc(c.desc)}</p>
-          <span class="cat-more">Ürünleri Gör ${ICON.arrow}</span>
+          <span class="cat-more">${esc(t("cat.viewProducts"))} ${ICON.arrow}</span>
         </a>`).join("\n        ");
   const sectorPills = sectors.map((s) => `<span class="sector-pill">${esc(s)}</span>`).join("\n          ");
   const refItems = references.slice(0, 22)
@@ -213,12 +249,12 @@ function homeMain(mode) {
       </div>
       <div class="container hero-inner">
         <div class="hero-text reveal">
-          <div class="hero-badge"><span class="hero-badge-dot"></span> Gaziantep · ${company.founded}'dan Beri · ${company.years}. Yıl</div>
-          <h1>Basınçlı Kap &amp;<br /><span>Buhar Sistemleri</span> Lideri</h1>
-          <p class="hero-desc">Yüksek basınçlı buhar, kızgın su ve kızgın yağ kazanları, atık ısı ve enerji geri kazanım ekipmanları. Güneydoğu Anadolu'nun en geniş üretim kapasitesine sahip 14.000 m² tesisimizde.</p>
+          <div class="hero-badge"><span class="hero-badge-dot"></span> ${t("hero.badge", { founded: company.founded, years: company.years })}</div>
+          <h1>${t("hero.title")}</h1>
+          <p class="hero-desc">${esc(t("hero.desc"))}</p>
           <div class="hero-actions">
-            <a href="${link(mode, "urunler")}" class="btn btn-primary btn-lg">Ürünlerimiz ${ICON.arrow}</a>
-            <a href="${link(mode, "iletisim")}" class="btn btn-outline btn-lg">Teklif Alın</a>
+            <a href="${link(mode, "urunler")}" class="btn btn-primary btn-lg">${esc(t("hero.products"))} ${ICON.arrow}</a>
+            <a href="${link(mode, "iletisim")}" class="btn btn-outline btn-lg">${esc(t("cta.quoteFull"))}</a>
           </div>
         </div>
       </div>
@@ -228,34 +264,34 @@ function homeMain(mode) {
       <div class="container about-grid">
         <div class="about-visual reveal-left">
           <div class="about-img-stack"><img src="${asset(mode, "assets/products/factory-plant.jpg")}" alt="${esc(company.brand)} Gaziantep üretim tesisi" loading="lazy" /></div>
-          <div class="about-float-card"><strong>${company.years}+</strong><span>Yıllık Deneyim</span></div>
+          <div class="about-float-card"><strong>${company.years}+</strong><span>${esc(t("home.experience"))}</span></div>
         </div>
         <div class="about-text reveal-right">
-          <span class="section-label">Hakkımızda</span>
-          <h2 class="section-title">Gaziantep'te <em>Isı &amp; Buhar</em> Teknolojisi Lideri</h2>
+          <span class="section-label">${esc(t("home.aboutLabel"))}</span>
+          <h2 class="section-title">${t("home.aboutTitle")}</h2>
           <p>${esc(about.intro[0])}</p>
           <p>${esc(about.intro[1])}</p>
           <div class="about-stats">${stats}</div>
-          <a href="${link(mode, "kurumsal")}" class="btn btn-blue">Kurumsal ${ICON.arrow}</a>
+          <a href="${link(mode, "kurumsal")}" class="btn btn-blue">${esc(t("nav.corporate"))} ${ICON.arrow}</a>
         </div>
       </div>
     </section>
 
     <section class="section" id="urunler">
       <div class="container">
-        ${sectionHead("Ürün Gruplarımız", 'Basınçlı Kap &amp; <em>Enerji</em> Ekipmanları', "Endüstriyel ve domestik kullanım için geniş ürün yelpazesi.")}
+        ${sectionHead(t("home.productGroups"), t("home.productGroupsTitle"), t("home.productGroupsDesc"))}
         <div class="cat-grid stagger-children reveal">
         ${catCards}
         </div>
         <div class="products-grid stagger-children reveal" style="margin-top:2rem">
         ${featured.map((p) => productCard(mode, p)).join("\n        ")}
         </div>
-        <div class="center-cta reveal"><a href="${link(mode, "urunler")}" class="btn btn-primary btn-lg">Tüm Ürünleri Gör ${ICON.arrow}</a></div>
+        <div class="center-cta reveal"><a href="${link(mode, "urunler")}" class="btn btn-primary btn-lg">${esc(t("home.allProducts"))} ${ICON.arrow}</a></div>
       </div>
     </section>
 
     <section class="section sectors">
-      <div class="container">${sectionHead("Sektörler", 'Isınma ve Buhar İhtiyacı Olan <em>Her Alanda</em>')}</div>
+      <div class="container">${sectionHead(t("home.sectors"), t("home.sectorsTitle"))}</div>
       <div class="sectors-marquee reveal">
         <div class="sectors-marquee-wrap"><div class="sectors-marquee-track">
           ${sectorPills}
@@ -265,52 +301,52 @@ function homeMain(mode) {
 
     <section class="cta-band">
       <div class="container cta-inner reveal">
-        <div><h2>Projeniz için mühendislik desteği alın</h2><p>Tüm proje ve hesaplar, yüksek makine mühendislerinden oluşan ekibimizce uluslararası standartlara uygun hazırlanır.</p></div>
-        <a href="${link(mode, "iletisim")}" class="btn btn-ghost btn-lg">Teklif Talep Et ${ICON.arrow}</a>
+        <div><h2>${esc(t("home.engineering"))}</h2><p>${esc(t("home.engineeringDesc"))}</p></div>
+        <a href="${link(mode, "iletisim")}" class="btn btn-ghost btn-lg">${esc(t("cta.quoteRequest"))} ${ICON.arrow}</a>
       </div>
     </section>
 
     <section class="section">
       <div class="container">
-        ${sectionHead("Referanslarımız", "Türkiye'nin Dev <em>Sanayi</em> Kuruluşları", "Mercedes-Benz, Coca-Cola, Aygaz, Emirates, Weatherford, TPAO, TOKİ ve daha fazlası.")}
+        ${sectionHead(t("home.references"), t("home.referencesTitle"), t("home.referencesDesc"))}
         <div class="refs-marquee reveal"><div class="refs-marquee-wrap"><div class="refs-marquee-track">
             ${refItems}
         </div></div></div>
-        <div class="center-cta reveal"><a href="${link(mode, "referanslar")}" class="btn btn-outline">Tüm Referanslar ${ICON.arrow}</a></div>
+        <div class="center-cta reveal"><a href="${link(mode, "referanslar")}" class="btn btn-outline">${esc(t("home.allReferences"))} ${ICON.arrow}</a></div>
       </div>
     </section>
 
     <section class="section news-home">
       <div class="container">
-        ${sectionHead("Haberler", "ÖZMAKSAN'dan <em>Güncel</em> Haberler", "Projeler, etkinlikler ve sektörel gelişmeler.")}
+        ${sectionHead(t("home.news"), t("home.newsTitle"), t("home.newsDesc"))}
         <div class="news-grid stagger-children reveal">
         ${news.slice(0, 4).map((n) => newsCard(mode, n)).join("\n        ")}
         </div>
-        <div class="center-cta reveal"><a href="${link(mode, "haberler")}" class="btn btn-outline">Tüm Haberler ${ICON.arrow}</a></div>
+        <div class="center-cta reveal"><a href="${link(mode, "haberler")}" class="btn btn-outline">${esc(t("home.allNews"))} ${ICON.arrow}</a></div>
       </div>
     </section>
 
     <section class="section sectors">
       <div class="container">
-        ${sectionHead("Sertifikalar", "Uluslararası <em>Standartlar</em>")}
+        ${sectionHead(t("home.certs"), t("home.certsTitle"))}
         <div class="certs-grid stagger-children reveal">
         ${certItems}
         </div>
-        <div class="center-cta reveal"><a href="${link(mode, "sertifikalar")}" class="btn btn-outline">Tüm Sertifikalar ${ICON.arrow}</a></div>
+        <div class="center-cta reveal"><a href="${link(mode, "sertifikalar")}" class="btn btn-outline">${esc(t("home.allCerts"))} ${ICON.arrow}</a></div>
       </div>
     </section>
 
     <section class="section export" id="ihracat">
       <div class="container">
-        ${sectionHead("Global Erişim", `${exportCountries.length} Ülkeye <em>Doğrudan</em> İhracat`, "Gaziantep merkezli üretimimiz Ortadoğu, Kuzey Afrika, Orta Asya ve daha ötesine ulaşıyor.")}
+        ${sectionHead(t("home.export"), t("home.exportTitle", { count: exportCountries.length }), t("home.exportDesc"))}
         <div class="export-map-wrap reveal-scale">
           <div id="export-map" class="export-map" role="img" aria-label="${esc(company.brand)} ihracat haritası">
             ${exportSvg}
           </div>
           <div class="export-map-legend">
-            <span class="export-legend-item export-legend-hub"><i></i> Gaziantep — Merkez</span>
-            <span class="export-legend-item export-legend-country"><i></i> İhracat Ülkesi</span>
-            <span class="export-legend-item export-legend-route"><i></i> İhracat Hattı</span>
+            <span class="export-legend-item export-legend-hub"><i></i> ${esc(t("home.exportHub"))}</span>
+            <span class="export-legend-item export-legend-country"><i></i> ${esc(t("home.exportCountry"))}</span>
+            <span class="export-legend-item export-legend-route"><i></i> ${esc(t("home.exportRoute"))}</span>
           </div>
         </div>
         <div class="export-countries stagger-children reveal">
@@ -351,7 +387,7 @@ function urunlerMain(mode) {
     </div>`;
   }).join("\n      ");
 
-  return `    ${pageHero("Ürünler", "Tüm <em>Ürün</em> Grubumuz", "Buhar, kızgın su, sıcak su ve kızgın yağ kazanları ile enerji geri kazanım ekipmanları.")}
+  return `    ${pageHero(t("page.products"), t("page.productsTitle"), t("page.productsDesc"))}
     <section class="section">
       <div class="container">
       ${byCat}
@@ -364,23 +400,23 @@ function urunlerMain(mode) {
 function productMain(mode, p) {
   const related = products.filter((r) => r.category === p.category && r.slug !== p.slug).slice(0, 3);
   const quick = [
-    ["Yakıt", p.fuel], ["Tip", p.type], ["Kapasite", p.capacity],
-    ["Sıcaklık / Basınç", p.pressure], ["Verim", p.efficiency], ["Seri", p.series],
+    [t("spec.fuel"), p.fuel], [t("spec.type"), p.type], [t("spec.capacity"), p.capacity],
+    [t("spec.pressure"), p.pressure], [t("spec.efficiency"), p.efficiency], [t("spec.series"), p.series],
   ].filter(([, v]) => v && v !== "—")
     .map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("");
   const features = p.features.map((f) => `<li>${ICON.check}<span>${esc(f)}</span></li>`).join("\n          ");
   const usage = p.usage
-    ? `<div class="usage-block reveal"><h3 class="block-title">Kullanım Alanları</h3><div class="usage-chips">${p.usage.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>`
+    ? `<div class="usage-block reveal"><h3 class="block-title">${esc(t("product.usage"))}</h3><div class="usage-chips">${p.usage.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>`
     : "";
   const relatedHtml = related.length
     ? `<section class="section sectors"><div class="container">
-        ${sectionHead("Benzer Ürünler", `${esc(categories.find((c) => c.key === p.category).label)}`)}
+        ${sectionHead(t("product.similar"), `${esc(categories.find((c) => c.key === p.category).label)}`)}
         <div class="products-grid stagger-children reveal">${related.map((r) => productCard(mode, r)).join("")}</div>
       </div></section>`
     : "";
   const intro = p.intro.map((t) => `<p>${esc(t)}</p>`).join("\n          ");
 
-  return `    <nav class="breadcrumb"><div class="container"><a href="${link(mode, "index")}">Anasayfa</a> ${ICON.arrow} <a href="${link(mode, "urunler")}">Ürünler</a> ${ICON.arrow} <span>${esc(p.name)}</span></div></nav>
+  return `    <nav class="breadcrumb"><div class="container"><a href="${link(mode, "index")}">${esc(t("breadcrumb.home"))}</a> ${ICON.arrow} <a href="${link(mode, "urunler")}">${esc(t("breadcrumb.products"))}</a> ${ICON.arrow} <span>${esc(p.name)}</span></div></nav>
     <section class="section product-hero-sec">
       <div class="container product-hero">
         <div class="product-hero-media reveal-left"><img src="${asset(mode, p.image)}" alt="${esc(p.name)}" /></div>
@@ -390,8 +426,8 @@ function productMain(mode, p) {
           <p class="product-tagline">${esc(p.tagline)}</p>
           <dl class="quick-specs">${quick}</dl>
           <div class="product-hero-actions">
-            <a href="${link(mode, "iletisim")}" class="btn btn-primary btn-lg">Teklif Al ${ICON.arrow}</a>
-            ${p.pdf ? `<a href="${asset(mode, p.pdf)}" target="_blank" rel="noopener" class="btn btn-outline btn-lg">Katalog İndir (PDF)</a>` : ""}
+            <a href="${link(mode, "iletisim")}" class="btn btn-primary btn-lg">${esc(t("cta.quote"))} ${ICON.arrow}</a>
+            ${p.pdf ? `<a href="${asset(mode, p.pdf)}" target="_blank" rel="noopener" class="btn btn-outline btn-lg">${esc(t("product.catalogDownload"))}</a>` : ""}
           </div>
         </div>
       </div>
@@ -399,12 +435,12 @@ function productMain(mode, p) {
     <section class="section product-detail">
       <div class="container product-detail-grid">
         <div class="product-desc reveal">
-          <h2 class="section-title">Ürün Açıklaması</h2>
+          <h2 class="section-title">${esc(t("product.description"))}</h2>
           ${intro}
           ${usage}
         </div>
         <aside class="product-features reveal">
-          <h3 class="block-title">Öne Çıkan Özellikler</h3>
+          <h3 class="block-title">${esc(t("product.features"))}</h3>
           <ul class="feature-list">
           ${features}
           </ul>
@@ -421,19 +457,19 @@ function kurumsalMain(mode) {
   const stats = about.stats
     .map((s) => `<div class="stat"><strong data-count="${s.value}"${s.prefix ? ` data-prefix="${s.prefix}"` : ""} data-suffix="${s.suffix || ""}">0</strong><span>${esc(s.label)}</span></div>`).join("");
   const values = [
-    ["Mühendislik", "Yüksek makine mühendislerinden oluşan ekiple uluslararası standartlarda proje ve hesap."],
-    ["Kalite", "97/23/EC, EN 12953/303-5, AD 2000, ASME ve TSE normlarına uygun üretim, bağımsız test."],
-    ["İzlenebilirlik", "Hammaddeden markalamaya, LLOYD sertifikalı kaynakçılar ve onaylı WPS/PQR."],
-    ["Sürdürülebilirlik", "Enerji geri kazanım, yoğuşmalı teknoloji ve TÜBİTAK destekli AR-GE."],
-  ].map(([t, d]) => `<div class="value-card reveal"><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join("\n        ");
+    [t("value.engineering"), t("value.engineeringDesc")],
+    [t("value.quality"), t("value.qualityDesc")],
+    [t("value.traceability"), t("value.traceabilityDesc")],
+    [t("value.sustainability"), t("value.sustainabilityDesc")],
+  ].map(([title, desc]) => `<div class="value-card reveal"><h3>${esc(title)}</h3><p>${esc(desc)}</p></div>`).join("\n        ");
   const steps = [
-    ["01", "Proje & Mühendislik", "ASME ve AD Merkblatt 2000 standartlarına uygun proje ve hesaplar."],
-    ["02", "Kesim, Büküm & Kaynak", "LLOYD sertifikalı kaynakçılar. Hammaddeden markalamaya izlenebilirlik."],
-    ["03", "Basınç & Güvenlik Testi", "Bağımsız gözetimde testler; verim oranları belgelendirilir."],
-    ["04", "Montaj & Devreye Alma", "EPDK sertifikalı doğalgaz dönüşümü ve devreye alma hizmeti."],
-  ].map(([n, t, d]) => `<div class="process-step"><div class="process-num">${n}</div><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join("\n        ");
+    ["01", t("process.1.title"), t("process.1.desc")],
+    ["02", t("process.2.title"), t("process.2.desc")],
+    ["03", t("process.3.title"), t("process.3.desc")],
+    ["04", t("process.4.title"), t("process.4.desc")],
+  ].map(([n, title, desc]) => `<div class="process-step"><div class="process-num">${n}</div><h3>${esc(title)}</h3><p>${esc(desc)}</p></div>`).join("\n        ");
 
-  return `    ${pageHero("Kurumsal", "1976'dan Beri <em>Yüksek Isı</em> Teknolojisi", "Gaziantep merkezli, Güneydoğu Anadolu'nun en geniş üretim kapasitelerinden biri.")}
+  return `    ${pageHero(t("page.corporate"), t("page.corporateTitle"), t("page.corporateDesc"))}
     <section class="section about">
       <div class="container about-grid">
         <div class="about-visual reveal-left">
@@ -441,16 +477,16 @@ function kurumsalMain(mode) {
           <div class="about-float-card"><strong>14.000</strong><span>m² Üretim Alanı</span></div>
         </div>
         <div class="about-text reveal-right">
-          <span class="section-label">Hakkımızda</span>
-          <h2 class="section-title">Kurumsal <em>Profil</em></h2>
-          ${about.intro.map((t) => `<p>${esc(t)}</p>`).join("\n          ")}
+          <span class="section-label">${esc(t("home.aboutLabel"))}</span>
+          <h2 class="section-title">${t("page.corporateProfile")}</h2>
+          ${about.intro.map((para) => `<p>${esc(para)}</p>`).join("\n          ")}
           <div class="about-stats">${stats}</div>
         </div>
       </div>
     </section>
     <section class="section sectors">
       <div class="container">
-        ${sectionHead("Değerlerimiz", "Neden <em>ÖZMAKSAN?</em>")}
+        ${sectionHead(t("page.values"), t("page.valuesTitle"))}
         <div class="value-grid stagger-children reveal">
         ${values}
         </div>
@@ -458,7 +494,7 @@ function kurumsalMain(mode) {
     </section>
     <section class="section process">
       <div class="container">
-        ${sectionHead("Üretim Süreci", "Kalite Kontrollü <em>4 Adım</em>")}
+        ${sectionHead(t("page.process"), t("page.processTitle"))}
         <div class="process-timeline stagger-children reveal">
         ${steps}
         </div>
@@ -470,7 +506,7 @@ function kurumsalMain(mode) {
 /* ---------- page: haberler ---------- */
 function haberlerMain(mode) {
   const cards = news.map((n) => newsCard(mode, n)).join("\n        ");
-  return `    ${pageHero("Haberler", "ÖZMAKSAN'dan <em>Haberler</em> & Duyurular", "Projelerimiz, etkinliklerimiz ve sektörel gelişmeler hakkında güncel bilgiler.")}
+  return `    ${pageHero(t("page.news"), t("page.newsTitle"), t("page.newsDesc"))}
     <section class="section">
       <div class="container">
         <div class="news-grid news-grid-all stagger-children reveal">
@@ -491,8 +527,8 @@ function newsDetailMain(mode, n) {
   return `    <article class="news-detail">
       <div class="container news-detail-inner">
         <nav class="breadcrumb reveal" aria-label="Konum">
-          <a href="${link(mode, "index")}">Anasayfa</a><span>/</span>
-          <a href="${link(mode, "haberler")}">Haberler</a><span>/</span>
+          <a href="${link(mode, "index")}">${esc(t("breadcrumb.home"))}</a><span>/</span>
+          <a href="${link(mode, "haberler")}">${esc(t("breadcrumb.news"))}</a><span>/</span>
           <span>${esc(n.title.length > 50 ? `${n.title.slice(0, 50)}…` : n.title)}</span>
         </nav>
         <header class="news-detail-head reveal">
@@ -504,12 +540,12 @@ function newsDetailMain(mode, n) {
           ${bodyHtml}
         </div>
         ${related.length ? `<section class="news-related reveal">
-          <h2 class="block-title">Diğer Haberler</h2>
+          <h2 class="block-title">${esc(t("news.other"))}</h2>
           <div class="news-grid news-grid-compact">
           ${related.map((r) => newsCard(mode, r)).join("\n          ")}
           </div>
         </section>` : ""}
-        <div class="news-back reveal"><a href="${link(mode, "haberler")}" class="btn btn-outline">← Tüm Haberlere Dön</a></div>
+        <div class="news-back reveal"><a href="${link(mode, "haberler")}" class="btn btn-outline">${esc(t("news.allBack"))}</a></div>
       </div>
     </article>
     ${ctaBand(mode)}`;
@@ -518,7 +554,7 @@ function newsDetailMain(mode, n) {
 /* ---------- page: referanslar ---------- */
 function referanslarMain(mode) {
   const grid = references.map((r) => `<div class="ref-cell reveal">${esc(r)}</div>`).join("\n        ");
-  return `    ${pageHero("Referanslar", "Yurt İçi ve Yurt Dışında <em>Güvenilir Çözüm Ortağı</em>", "Kamu ve özel sektörde çok sayıda üretim tesisinin basınçlı ekipman imalatını ve kazan dairesi kurulumunu gerçekleştirdik.")}
+  return `    ${pageHero(t("nav.references"), t("page.referencesTitle"), t("page.referencesDesc"))}
     <section class="section">
       <div class="container">
         <div class="ref-grid stagger-children reveal">
@@ -532,7 +568,7 @@ function referanslarMain(mode) {
 /* ---------- page: sertifikalar ---------- */
 function sertifikalarMain(mode) {
   const grid = certs.map((c) => `<div class="cert-card lg reveal"><strong>${esc(c.code)}</strong><span>${esc(c.note)}</span></div>`).join("\n        ");
-  return `    ${pageHero("Sertifikalar", "Uluslararası <em>Kalite Belgeleri</em>", "Tüm dünyada kabul gören güncel standartlara uygun üretimin kanıtı.")}
+  return `    ${pageHero(t("nav.certs"), t("page.certsTitle"), t("page.certsDesc"))}
     <section class="section">
       <div class="container">
         <p class="lead reveal">Kuruluşumuz; üretim kalitesini etkileyen her koşulu sürekli iyileştirmeyi amaç edinir. Kalite belgelerimizi ve sertifikalarımızı aşağıda bulabilirsiniz.</p>
@@ -548,7 +584,7 @@ function sertifikalarMain(mode) {
 function iletisimMain(mode) {
   const phones = company.phones.map((p) => `<a href="tel:${p.replace(/\s/g, "")}">${esc(p)}</a>`).join("<br />");
   const s = company.social;
-  return `    ${pageHero("İletişim", "Bize <em>Ulaşın</em>", "Proje ve teklif talepleriniz için ekibimiz yanınızda.")}
+  return `    ${pageHero(t("nav.contact"), t("page.contactTitle"), t("page.contactDesc"))}
     <section class="section contact">
       <div class="container contact-grid">
         <div class="contact-info reveal-left">
@@ -567,7 +603,7 @@ function iletisimMain(mode) {
           </div>
         </div>
         <form class="contact-form reveal-right" action="#" method="post">
-          <h3>Teklif Formu</h3>
+          <h3>${esc(t("contact.form"))}</h3>
           <div class="form-row">
             <label>Ad Soyad<input type="text" name="name" required placeholder="Adınız Soyadınız" /></label>
             <label>Firma<input type="text" name="company" placeholder="Firma adı" /></label>
@@ -600,25 +636,33 @@ function pageHero(label, titleHtml, desc) {
 function ctaBand(mode) {
   return `<section class="cta-band">
       <div class="container cta-inner reveal">
-        <div><h2>Doğru kazan çözümü için bize danışın</h2><p>Kapasite, yakıt türü ve proses ihtiyacınıza göre en uygun çözümü birlikte belirleyelim.</p></div>
-        <a href="${link(mode, "iletisim")}" class="btn btn-ghost btn-lg">Teklif Talep Et ${ICON.arrow}</a>
+        <div><h2>${esc(t("cta.title"))}</h2><p>${esc(t("cta.desc"))}</p></div>
+        <a href="${link(mode, "iletisim")}" class="btn btn-ghost btn-lg">${esc(t("cta.quoteRequest"))} ${ICON.arrow}</a>
       </div>
     </section>`;
 }
 
 /* ---------- static HTML doc wrapper ---------- */
-function staticDoc({ title, description, active, main }) {
+function staticDoc({ title, description, active, main, pageSlug = active }) {
+  const cssHref = relRoot ? `${relRoot}/ozmaksan-corporate.css` : "ozmaksan-corporate.css";
+  const animHref = relRoot ? `${relRoot}/ozmaksan-animations.js` : "ozmaksan-animations.js";
+  const mapHref = relRoot ? `${relRoot}/ozmaksan-export-map.js` : "ozmaksan-export-map.js";
+  const hreflangs = LOCALES.map((loc) => {
+    const href = langHref(loc.code, pageSlug);
+    return `<link rel="alternate" hreflang="${loc.htmlLang}" href="/${href.replace(/^\.\.\//, "").replace(/^index\.html$/, "")}" />`;
+  }).join("\n  ");
   return `<!DOCTYPE html>
-<html lang="tr">
+<html lang="${locale.htmlLang}" dir="${locale.dir}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}" />
+  ${hreflangs}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="ozmaksan-corporate.css" />
+  <link rel="stylesheet" href="${cssHref}" />
   <script>
     (function () {
       var h = location.hash || "";
@@ -629,28 +673,28 @@ function staticDoc({ title, description, active, main }) {
   </script>
 </head>
 <body>
-  ${bodyInner("static", active, main)}
-  <script src="ozmaksan-animations.js"></script>
-  <script src="ozmaksan-export-map.js"></script>
+  ${bodyInner("static", active, main, pageSlug)}
+  <script src="${animHref}"></script>
+  <script src="${mapHref}"></script>
 </body>
 </html>`;
 }
 
 /* ---------- page registry ---------- */
 const pages = [
-  { slug: "index", wpSlug: "anasayfa", title: `${company.brand} | Yüksek Isı Teknolojisi — Buhar, Kızgın Su & Kızgın Yağ Kazanları`, description: "1976'dan beri Gaziantep'te yüksek basınçlı buhar kazanları, kızgın su/yağ kazanları ve enerji geri kazanım ekipmanları. CE, ISO 9001, ASME, TSE.", active: "index", main: homeMain, front: true },
-  { slug: "kurumsal", wpSlug: "kurumsal", title: `Kurumsal | ${company.brand}`, description: "ÖZMAKSAN kurumsal: 1976'dan beri Gaziantep'te basınçlı kap ve kazan üretimi, 14.000 m² tesis, uzman mühendis kadrosu.", active: "kurumsal", main: kurumsalMain },
-  { slug: "urunler", wpSlug: "urunler", title: `Ürünler | ${company.brand}`, description: "Buhar kazanları, kızgın su ve kızgın yağ kazanları, sıcak su kazanları ve enerji geri kazanım ekipmanları.", active: "urunler", main: urunlerMain },
-  { slug: "haberler", wpSlug: "haberler", title: `Haberler | ${company.brand}`, description: "ÖZMAKSAN haberleri: projeler, etkinlikler, AR-GE çalışmaları ve sektörel duyurular.", active: "haberler", main: haberlerMain },
-  { slug: "referanslar", wpSlug: "referanslar", title: `Referanslar | ${company.brand}`, description: "Mercedes-Benz, Coca-Cola, Aygaz, Emirates, Weatherford, TPAO, TOKİ ve daha fazlası — yurt içi ve yurt dışı referanslar.", active: "referanslar", main: referanslarMain },
-  { slug: "sertifikalar", wpSlug: "sertifikalar", title: `Sertifikalar | ${company.brand}`, description: "CE, ISO 9001, TSE, ASME, AD 2000 Merkblatt, TÜV, EPDK, Türk Loydu ve daha fazlası.", active: "sertifikalar", main: sertifikalarMain },
-  { slug: "iletisim", wpSlug: "iletisim", title: `İletişim | ${company.brand}`, description: "ÖZMAKSAN Gaziantep: 4. OSB Başpınar. Telefon, e-posta ve teklif formu.", active: "iletisim", main: iletisimMain },
+  { slug: "index", title: t("meta.indexTitle", { brand: company.brand }), description: t("meta.indexDesc"), active: "index", main: homeMain, front: true },
+  { slug: "kurumsal", title: `${t("nav.corporate")} | ${company.brand}`, description: trText("ÖZMAKSAN kurumsal: 1976'dan beri Gaziantep'te basınçlı kap ve kazan üretimi, 14.000 m² tesis, uzman mühendis kadrosu."), active: "kurumsal", main: kurumsalMain },
+  { slug: "urunler", title: `${t("nav.products")} | ${company.brand}`, description: trText("Buhar kazanları, kızgın su ve kızgın yağ kazanları, sıcak su kazanları ve enerji geri kazanım ekipmanları."), active: "urunler", main: urunlerMain },
+  { slug: "haberler", title: `${t("nav.news")} | ${company.brand}`, description: trText("ÖZMAKSAN haberleri: projeler, etkinlikler, AR-GE çalışmaları ve sektörel duyurular."), active: "haberler", main: haberlerMain },
+  { slug: "referanslar", title: `${t("nav.references")} | ${company.brand}`, description: trText("Mercedes-Benz, Coca-Cola, Aygaz, Emirates, Weatherford, TPAO, TOKİ ve daha fazlası — yurt içi ve yurt dışı referanslar."), active: "referanslar", main: referanslarMain },
+  { slug: "sertifikalar", title: `${t("nav.certs")} | ${company.brand}`, description: trText("CE, ISO 9001, TSE, ASME, AD 2000 Merkblatt, TÜV, EPDK, Türk Loydu ve daha fazlası."), active: "sertifikalar", main: sertifikalarMain },
+  { slug: "iletisim", title: `${t("nav.contact")} | ${company.brand}`, description: trText("ÖZMAKSAN Gaziantep: 4. OSB Başpınar. Telefon, e-posta ve teklif formu."), active: "iletisim", main: iletisimMain },
 ];
 
 /* ---------- write static site ---------- */
 for (const pg of pages) {
-  const html = staticDoc({ title: pg.title, description: pg.description, active: pg.active, main: pg.main("static") });
-  fs.writeFileSync(path.join(ROOT, `${pg.slug}.html`), html);
+  const html = staticDoc({ title: pg.title, description: pg.description, active: pg.active, main: pg.main("static"), pageSlug: pg.slug });
+  fs.writeFileSync(path.join(outRoot, `${pg.slug}.html`), html);
 }
 for (const p of products) {
   const html = staticDoc({
@@ -658,8 +702,9 @@ for (const p of products) {
     description: `${p.name}: ${p.tagline}. ${p.capacity}. ${p.fuel}.`,
     active: "urunler",
     main: productMain("static", p),
+    pageSlug: productSlug(p),
   });
-  fs.writeFileSync(path.join(ROOT, `${productSlug(p)}.html`), html);
+  fs.writeFileSync(path.join(outRoot, `${productSlug(p)}.html`), html);
 }
 for (const n of news) {
   const html = staticDoc({
@@ -667,8 +712,9 @@ for (const n of news) {
     description: n.excerpt,
     active: "haberler",
     main: newsDetailMain("static", n),
+    pageSlug: newsSlug(n),
   });
-  fs.writeFileSync(path.join(ROOT, `${newsSlug(n)}.html`), html);
+  fs.writeFileSync(path.join(outRoot, `${newsSlug(n)}.html`), html);
 }
-console.log("Static pages written:", pages.length + products.length + news.length);
-console.log("Products:", products.length, "| News:", news.length);
+console.log(`[${localeCode}] Static pages written:`, pages.length + products.length + news.length);
+console.log(`[${localeCode}] Products:`, products.length, "| News:", news.length);

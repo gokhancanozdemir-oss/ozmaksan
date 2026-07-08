@@ -1,9 +1,25 @@
 [build]
-  command = "node _build/build.mjs"
+  command = "node _build/translate.mjs && node _build/build-all.mjs"
   publish = "."
 
 [build.environment]
   NODE_VERSION = "20"
+
+# Dil klasörleri
+[[redirects]]
+  from = "/en"
+  to = "/en/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/ru"
+  to = "/ru/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/ar"
+  to = "/ar/index.html"
+  status = 200
 
 # Decap CMS SPA
 [[redirects]]
