@@ -53,7 +53,8 @@ collections:
       - label: Ürün fotoğrafı
         name: image
         widget: image
-        media_folder: wordpress-site/assets/products
+        # Başındaki / = repo köküne göre mutlak yol (koleksiyona göre değil)
+        media_folder: /wordpress-site/assets/products
         public_folder: /assets/products
         choose_url: false
         hint: "Dosya seç / fotoğraf yükle"
@@ -83,7 +84,7 @@ collections:
         name: pdf
         widget: file
         required: false
-        media_folder: wordpress-site/assets/catalogs
+        media_folder: /wordpress-site/assets/catalogs
         public_folder: /assets/catalogs
         choose_url: false
 
@@ -127,7 +128,8 @@ collections:
         name: image
         widget: image
         required: false
-        media_folder: wordpress-site/assets/news
+        # Başındaki / = repo köküne göre mutlak yol (koleksiyona göre değil)
+        media_folder: /wordpress-site/assets/news
         public_folder: /assets/news
         choose_url: false
 
