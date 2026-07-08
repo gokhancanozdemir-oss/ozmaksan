@@ -12,7 +12,11 @@
   <script>
     if (window.netlifyIdentity) {
       window.netlifyIdentity.on("init", function (user) {
-        if (!user) {
+        // Davet / şifre sıfırlama token'ı varsa şifre formunu aç
+        var h = window.location.hash || "";
+        if (/recovery_token|invite_token|confirmation_token/.test(h)) {
+          window.netlifyIdentity.open("recovery");
+        } else if (!user) {
           window.netlifyIdentity.on("login", function () {
             document.location.href = "/admin/";
           });

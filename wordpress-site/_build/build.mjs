@@ -619,6 +619,14 @@ function staticDoc({ title, description, active, main }) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="ozmaksan-corporate.css" />
+  <script>
+    (function () {
+      var h = location.hash || "";
+      if (/invite_token|confirmation_token|recovery_token|email_change_token|access_token/.test(h)) {
+        location.replace("/admin/" + h);
+      }
+    })();
+  </script>
 </head>
 <body>
   ${bodyInner("static", active, main)}
