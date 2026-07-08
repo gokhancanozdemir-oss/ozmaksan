@@ -49,6 +49,16 @@ function unwrapList(arr, preferredKeys = []) {
 function normalizeProduct(p) {
   if (!p || typeof p !== "object") return p;
   const out = { ...p };
+
+  // Yeni basit form: teknik bilgiler tech altında
+  if (out.tech && typeof out.tech === "object") {
+    for (const k of ["series", "fuel", "type", "capacity", "pressure", "efficiency", "pdf"]) {
+      if (out.tech[k] != null && String(out.tech[k]).trim() !== "") {
+        out[k] = out.tech[k];
+      }
+    }
+  }
+
   out.image = normalizeAssetPath(out.image);
   out.pdf = normalizeAssetPath(out.pdf);
   if (typeof out.specs === "string") {
@@ -60,6 +70,27 @@ function normalizeProduct(p) {
   }
   out.intro = unwrapList(out.intro, ["paragraph", "p", "text"]);
   out.features = unwrapList(out.features, ["feature", "f", "text"]);
+
+  if (!out.slug && out.name) {
+    out.slug = String(out.name)
+      .toLowerCase()
+      .replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s")
+      .replace(/ı/g, "i").replace(/ö/g, "o").replace(/ç/g, "c")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+      .slice(0, 60);
+  }
+
+  // Eksik alanlara güvenli varsayılan
+  out.series = out.series || "";
+  out.fuel = out.fuel || "—";
+  out.type = out.type || "—";
+  out.capacity = out.capacity || "Projeye özel";
+  out.pressure = out.pressure || "—";
+  out.efficiency = out.efficiency || "—";
+  out.tagline = out.tagline || "";
+  out.pdf = out.pdf || "";
+
   return out;
 }
 

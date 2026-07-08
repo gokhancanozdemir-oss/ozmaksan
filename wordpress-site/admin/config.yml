@@ -1,91 +1,206 @@
-# Decap CMS — Netlify Git Gateway
-# Repo kökü: ozmaksan/  →  içerik wordpress-site/ altında
-# Yerel test: local_backend true + npx decap-server (cwd: wordpress-site)
+# ÖZMAKSAN — İçerik Paneli (Decap CMS)
+# Yazılım bilmeyen kullanıcı için sadeleştirildi: Ürünler + Haberler önde.
 
 backend:
   name: git-gateway
   branch: main
 
-# Sadece localhost'ta aktif olur; canlıda Git Gateway kullanılır
 local_backend: true
-
 locale: tr
 
-# Git'teki klasör (repo root'a göre)
-media_folder: wordpress-site/assets/products
-# Sitede görünen URL yolu (publish root = wordpress-site)
-public_folder: /assets/products
+media_folder: wordpress-site/assets/uploads
+public_folder: /assets/uploads
 
 slug:
   encoding: ascii
   clean_accents: true
 
 collections:
+  - name: products
+    label: "1 · Ürünler"
+    label_singular: Ürün
+    description: "Siteye çıkan ürünler. Yeni Ürün ile ekleyin; kaydettikten sonra Publish (Yayınla) basın."
+    folder: wordpress-site/content/products
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    identifier_field: name
+    summary: "{{name}}"
+    sortable_fields: ["name", "category"]
+    fields:
+      - label: Ürün adı
+        name: name
+        widget: string
+        hint: "Örn. STEAmAX Boiler"
+      - name: slug
+        widget: hidden
+        required: false
+      - label: Kategori
+        name: category
+        widget: select
+        options:
+          - { label: Buhar kazanları, value: buhar }
+          - { label: Kızgın su, value: kizginsu }
+          - { label: Sıcak su, value: sicaksu }
+          - { label: Kızgın yağ, value: kizginyag }
+          - { label: Enerji & tanklar, value: enerji }
+      - label: Kısa açıklama (tek cümle)
+        name: tagline
+        widget: string
+        hint: "Ürün kartında görünür"
+      - label: Ürün fotoğrafı
+        name: image
+        widget: image
+        media_folder: wordpress-site/assets/products
+        public_folder: /assets/products
+        choose_url: false
+        hint: "Dosya seç / fotoğraf yükle"
+      - label: Açıklama (paragraflar)
+        name: intro
+        widget: list
+        allow_add: true
+        hint: "Her satır bir paragraf. Sağdaki + ile ekleyin."
+        field: { label: Paragraf, name: paragraph, widget: text }
+      - label: Özellikler (madde madde)
+        name: features
+        widget: list
+        required: false
+        allow_add: true
+        field: { label: Özellik, name: feature, widget: string }
+      - label: Teknik bilgiler (isteğe bağlı)
+        name: series
+        widget: string
+        required: false
+        hint: "Seri kodu, örn. OSBK"
+      - { label: Yakıt, name: fuel, widget: string, required: false }
+      - { label: Tip, name: type, widget: string, required: false }
+      - { label: Kapasite, name: capacity, widget: string, required: false }
+      - { label: Basınç, name: pressure, widget: string, required: false }
+      - { label: Verim, name: efficiency, widget: string, required: false }
+      - label: Katalog PDF (isteğe bağlı)
+        name: pdf
+        widget: file
+        required: false
+        media_folder: wordpress-site/assets/catalogs
+        public_folder: /assets/catalogs
+        choose_url: false
+
+  - name: news
+    label: "2 · Haberler"
+    label_singular: Haber
+    description: "Anasayfa ve Haberler sayfası. Yeni Haber ekleyin, Publish ile yayınlayın."
+    folder: wordpress-site/content/news
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    identifier_field: title
+    summary: "{{title}}"
+    sortable_fields: ["date", "title"]
+    fields:
+      - label: Başlık
+        name: title
+        widget: string
+      - name: slug
+        widget: hidden
+        required: false
+      - label: Tarih
+        name: date
+        widget: datetime
+        date_format: DD.MM.YYYY
+        time_format: false
+        format: YYYY-MM-DD
+      - name: dateLabel
+        widget: hidden
+        required: false
+      - label: Kısa özet
+        name: excerpt
+        widget: text
+        hint: "Liste kartında görünen kısa metin"
+      - label: Haberin tamamı
+        name: body
+        widget: text
+      - label: Fotoğraf
+        name: image
+        widget: image
+        required: false
+        media_folder: wordpress-site/assets/news
+        public_folder: /assets/news
+        choose_url: false
+
   - name: site
-    label: Site Ayarları
+    label: "3 · Firma bilgileri"
+    description: "Telefon, adres, referanslar. Seyrek değiştirilir."
     files:
       - name: site
-        label: İletişim & Kurumsal
+        label: İletişim ve kurumsal
         file: wordpress-site/content/site.json
         fields:
-          - label: Firma Bilgileri
+          - label: Firma
             name: company
             widget: object
-            collapsed: false
             fields:
-              - { label: Ticari Unvan, name: legalName, widget: string, required: false }
               - { label: Marka, name: brand, widget: string }
-              - { label: Slogan, name: slogan, widget: string }
+              - { label: Ticari unvan, name: legalName, widget: string, required: false }
+              - { label: Slogan, name: slogan, widget: string, required: false }
               - { label: Slogan (EN), name: sloganEn, widget: string, required: false }
-              - { label: Kuruluş Yılı, name: founded, widget: string }
-              - { label: Yıl (hero), name: years, widget: string }
+              - { label: Kuruluş yılı, name: founded, widget: string, required: false }
+              - { label: Kaçıncı yıl yazısı, name: years, widget: string, required: false }
               - { label: Adres, name: address, widget: text }
               - label: Telefonlar
                 name: phones
                 widget: list
                 field: { label: Telefon, name: phone, widget: string }
-              - { label: Faks, name: fax, widget: string }
-              - { label: Mobil, name: mobile, widget: string }
+              - { label: Faks, name: fax, widget: string, required: false }
+              - { label: Mobil, name: mobile, widget: string, required: false }
               - { label: E-posta, name: email, widget: string }
-              - { label: Web, name: web, widget: string }
-              - label: Sosyal Medya
+              - { label: Web, name: web, widget: string, required: false }
+              - label: Sosyal medya
                 name: social
                 widget: object
+                collapsed: true
                 fields:
-                  - { label: Facebook, name: facebook, widget: string }
-                  - { label: Instagram, name: instagram, widget: string }
-                  - { label: LinkedIn, name: linkedin, widget: string }
-                  - { label: YouTube, name: youtube, widget: string }
-          - label: Kurumsal Metin
+                  - { label: Facebook, name: facebook, widget: string, required: false }
+                  - { label: Instagram, name: instagram, widget: string, required: false }
+                  - { label: LinkedIn, name: linkedin, widget: string, required: false }
+                  - { label: YouTube, name: youtube, widget: string, required: false }
+          - label: Hakkımızda
             name: about
             widget: object
+            collapsed: true
             fields:
               - label: Paragraflar
                 name: intro
                 widget: list
                 field: { label: Paragraf, name: paragraph, widget: text }
-              - label: İstatistikler
+              - label: Rakamlar
                 name: stats
                 widget: list
                 required: false
                 fields:
                   - { label: Değer, name: value, widget: string }
-                  - { label: Önek (%), name: prefix, widget: string, required: false }
+                  - { label: Önek, name: prefix, widget: string, required: false }
                   - { label: Sonek, name: suffix, widget: string, required: false }
                   - { label: Etiket, name: label, widget: string }
           - label: SSS
             name: faq
             widget: list
+            collapsed: true
             fields:
               - { label: Soru, name: q, widget: string }
               - { label: Cevap, name: a, widget: text }
           - label: Referanslar
             name: references
             widget: list
-            field: { label: Firma, name: company, widget: string }
+            collapsed: true
+            field: { label: Firma adı, name: company, widget: string }
           - label: Sertifikalar
             name: certs
             widget: list
+            collapsed: true
             fields:
               - { label: Kod, name: code, widget: string }
               - { label: Açıklama, name: note, widget: string }
@@ -93,98 +208,16 @@ collections:
             name: sectors
             widget: list
             required: false
+            collapsed: true
             field: { label: Sektör, name: sector, widget: string }
-          - label: İhracat Ülkeleri
+          - label: İhracat ülkeleri
             name: exportCountries
             widget: list
+            collapsed: true
             field: { label: Ülke, name: country, widget: string }
-          - label: Yardımcı Donanımlar
+          - label: Yardımcı donanımlar
             name: auxiliaries
             widget: list
             required: false
+            collapsed: true
             field: { label: Kalem, name: item, widget: string }
-
-  - name: products
-    label: Ürünler
-    label_singular: Ürün
-    folder: wordpress-site/content/products
-    create: true
-    delete: true
-    slug: "{{slug}}"
-    extension: json
-    format: json
-    summary: "{{name}} ({{category}})"
-    sortable_fields: ["name", "category", "slug"]
-    fields:
-      - { label: Slug (URL), name: slug, widget: string, hint: "örn. steamax → urun-steamax.html" }
-      - { label: Ürün Adı, name: name, widget: string }
-      - { label: Seri, name: series, widget: string, required: false }
-      - label: Kategori
-        name: category
-        widget: select
-        options:
-          - { label: Buhar, value: buhar }
-          - { label: Kızgın Su, value: kizginsu }
-          - { label: Sıcak Su, value: sicaksu }
-          - { label: Kızgın Yağ, value: kizginyag }
-          - { label: Enerji / Tanklar, value: enerji }
-      - { label: Kısa Açıklama, name: tagline, widget: string }
-      - { label: Yakıt, name: fuel, widget: string, required: false, default: "—" }
-      - { label: Tip, name: type, widget: string, required: false, default: "—" }
-      - { label: Kapasite, name: capacity, widget: string, required: false, default: "Projeye özel" }
-      - { label: Basınç, name: pressure, widget: string, required: false, default: "—" }
-      - { label: Verim, name: efficiency, widget: string, required: false, default: "—" }
-      - label: Görsel
-        name: image
-        widget: image
-        media_folder: wordpress-site/assets/products
-        public_folder: /assets/products
-        choose_url: false
-      - label: Katalog PDF
-        name: pdf
-        widget: file
-        required: false
-        media_folder: wordpress-site/assets/catalogs
-        public_folder: /assets/catalogs
-        choose_url: false
-      - label: Giriş Paragrafları
-        name: intro
-        widget: list
-        field: { label: Paragraf, name: paragraph, widget: text }
-      - label: Özellikler
-        name: features
-        widget: list
-        required: false
-        field: { label: Özellik, name: feature, widget: string }
-      - label: Teknik Tablo (JSON)
-        name: specs
-        widget: code
-        required: false
-        default_language: json
-        hint: '{"columns":["Model","Kapasite"],"rows":[["A","100"]]}'
-
-  - name: news
-    label: Haberler
-    label_singular: Haber
-    folder: wordpress-site/content/news
-    create: true
-    delete: true
-    slug: "{{slug}}"
-    extension: json
-    format: json
-    summary: "{{title}}"
-    sortable_fields: ["date", "title", "slug"]
-    fields:
-      - { label: Slug (URL), name: slug, widget: string, hint: "örn. gaziantep-arena → haber-gaziantep-arena.html" }
-      - { label: Başlık, name: title, widget: string }
-      - { label: Tarih, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false, format: YYYY-MM-DD }
-      - { label: Tarih Etiketi, name: dateLabel, widget: string, required: false, hint: "örn. 27 Tem 2016" }
-      - { label: Özet, name: excerpt, widget: text }
-      - { label: İçerik, name: body, widget: text }
-      - label: Görsel
-        name: image
-        widget: image
-        required: false
-        media_folder: wordpress-site/assets/news
-        public_folder: /assets/news
-        choose_url: false

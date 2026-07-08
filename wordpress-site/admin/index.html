@@ -6,112 +6,152 @@
   <meta name="robots" content="noindex" />
   <title>ÖZMAKSAN — İçerik Yönetimi</title>
   <style>
-    body { margin: 0; font-family: system-ui, sans-serif; background: #f5f5f5; }
-    #oz-boot {
-      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 1rem; z-index: 0; color: #334155; text-align: center; padding: 1.5rem;
+    html, body { height: 100%; margin: 0; }
+    body { font-family: "Segoe UI", system-ui, sans-serif; background: #0f172a; color: #e2e8f0; }
+    #login-screen {
+      min-height: 100%; display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem; box-sizing: border-box;
     }
-    #oz-boot button {
-      appearance: none; border: 0; background: #1a5490; color: #fff; font-weight: 600;
-      padding: 0.85rem 1.4rem; border-radius: 10px; cursor: pointer; font-size: 1rem;
+    #login-screen[hidden] { display: none !important; }
+    .card {
+      width: min(420px, 100%); background: #1e293b; border: 1px solid #334155;
+      border-radius: 16px; padding: 2rem 1.75rem; text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,.35);
     }
-    #oz-boot button:hover { background: #0f3a66; }
-    #oz-boot .hint { font-size: 0.9rem; color: #64748b; max-width: 28rem; }
+    .card h1 { margin: 0 0 .4rem; font-size: 1.4rem; font-weight: 700; color: #fff; }
+    .card p { margin: 0 0 1.25rem; color: #94a3b8; font-size: .95rem; line-height: 1.5; }
+    .card button {
+      width: 100%; border: 0; border-radius: 10px; padding: 1rem;
+      background: #1a5490; color: #fff; font-size: 1.05rem; font-weight: 700; cursor: pointer;
+    }
+    .card button:hover { background: #144072; }
+    .card .err {
+      margin-top: 1rem; padding: .75rem; border-radius: 8px; background: #451a1a;
+      color: #fecaca; font-size: .88rem; text-align: left; display: none; white-space: pre-wrap;
+    }
+    .card .err.show { display: block; }
+    .card .tiny { margin-top: 1rem; font-size: .8rem; color: #64748b; line-height: 1.4; }
   </style>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <div id="oz-boot">
-    <div>
-      <strong>ÖZMAKSAN İçerik Yönetimi</strong>
-      <p class="hint" id="oz-boot-msg">Netlify Identity yükleniyor…</p>
+  <div id="login-screen">
+    <div class="card">
+      <h1>ÖZMAKSAN Panel</h1>
+      <p>Ürün ve haberleri buradan düzenlersiniz.<br/>Davet aldığınız e-posta ve şifre ile giriş yapın.</p>
+      <button type="button" id="btn-login">Giriş yap</button>
+      <div class="err" id="login-err"></div>
+      <p class="tiny">Çok deneme yaptıysanız 20 dk bekleyin. Ev interneti açmazsa mobil veri ile deneyin.</p>
     </div>
-    <button type="button" id="oz-login-btn" hidden>Netlify Identity ile Giriş / Daveti Kabul Et</button>
   </div>
 
   <script>
     (function () {
-      var boot = document.getElementById("oz-boot");
-      var msg = document.getElementById("oz-boot-msg");
-      var btn = document.getElementById("oz-login-btn");
-      var hash = window.location.hash || "";
-      var hasInvite = /invite_token=/.test(hash);
-      var hasRecovery = /recovery_token=/.test(hash);
-      var hasConfirm = /confirmation_token=/.test(hash);
+      var errBox = document.getElementById("login-err");
+      var screen = document.getElementById("login-screen");
+      var btn = document.getElementById("btn-login");
 
-      function openIdentity() {
+      function showErr(t) {
+        errBox.textContent = t;
+        errBox.classList.add("show");
+      }
+
+      function slugify(s) {
+        return String(s || "")
+          .toLowerCase()
+          .replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s")
+          .replace(/ı/g, "i").replace(/ö/g, "o").replace(/ç/g, "c")
+          .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+          .slice(0, 60) || "kayit";
+      }
+
+      function monthTr(iso) {
+        var m = ["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
+        var d = String(iso || "").slice(0, 10).split("-");
+        if (d.length < 3) return iso || "";
+        return Number(d[2]) + " " + m[Number(d[1]) - 1] + " " + d[0];
+      }
+
+      function openLogin() {
         if (!window.netlifyIdentity) {
-          msg.textContent = "Identity widget yüklenemedi. Sayfayı yenileyin.";
+          showErr("Giriş modülü yüklenemedi. Sayfayı yenileyin veya mobil veri kullanın.");
           return;
         }
-        // Davet / şifre sıfırlama token'ı varsa widget hash'ten formu açar
         window.netlifyIdentity.open();
       }
 
-      function hideBoot() {
-        if (boot) boot.style.display = "none";
-      }
+      btn.addEventListener("click", openLogin);
 
       if (!window.netlifyIdentity) {
-        msg.textContent = "Identity script bloğu / ağ engeli. Mobil veri ile deneyin veya VPN kapatın.";
+        showErr("Netlify Identity engellenmiş olabilir. Mobil veriyle deneyin.");
         return;
       }
 
-      btn.hidden = false;
-      if (hasInvite) {
-        msg.textContent = "Davet linki algılandı. Aşağıdaki tuşa basın ve yeni şifrenizi belirleyin.";
-      } else if (hasRecovery) {
-        msg.textContent = "Şifre sıfırlama linki algılandı. Aşağıdaki tuşa basın ve yeni şifrenizi yazın.";
-      } else if (hasConfirm) {
-        msg.textContent = "E-posta doğrulama linki algılandı. Aşağıdaki tuşa basın.";
-      } else {
-        msg.textContent = "Yayın paneline girmek için giriş yapın.";
-      }
-
-      btn.addEventListener("click", function () {
-        msg.textContent = "Giriş penceresi açılıyor…";
-        try {
-          openIdentity();
-        } catch (e) {
-          msg.textContent = "Açılamadı: " + (e && e.message ? e.message : e);
+      window.netlifyIdentity.on("error", function (e) {
+        var t = (e && (e.message || e.msg)) || String(e);
+        if (/rate/i.test(t)) {
+          showErr("Çok fazla deneme.\n20–30 dakika bekleyin, sonra tekrar Giriş yapın.");
+        } else {
+          showErr("Hata: " + t);
         }
-      });
-
-      window.netlifyIdentity.on("error", function (err) {
-        var text = (err && (err.message || err.msg || String(err))) || "Bilinmeyen hata";
-        msg.textContent = "Identity hatası: " + text +
-          (String(text).toLowerCase().indexOf("rate") >= 0
-            ? " — 20–30 dk bekleyip tekrar deneyin."
-            : "");
-        btn.hidden = false;
       });
 
       window.netlifyIdentity.on("init", function (user) {
-        if (user) {
-          hideBoot();
-          return;
-        }
-        // Token varsa otomatik bir kez dene; rate limit varsa butonla devam
-        if (hasInvite || hasRecovery || hasConfirm) {
-          setTimeout(openIdentity, 400);
+        var h = location.hash || "";
+        if (/invite_token|recovery_token|confirmation_token/.test(h)) {
+          setTimeout(function () { window.netlifyIdentity.open(); }, 250);
+        } else if (user) {
+          screen.hidden = true;
         }
       });
 
       window.netlifyIdentity.on("login", function () {
-        // Token'lı URL'yi temizleyip paneli yenile
-        window.location.href = "/admin/";
+        if (location.hash && /token=/.test(location.hash)) {
+          location.replace("/admin/");
+          return;
+        }
+        screen.hidden = true;
       });
 
       window.netlifyIdentity.on("logout", function () {
-        window.location.href = "/admin/";
+        location.href = "/admin/";
       });
 
-      // Decap CMS'i Identity'den sonra yükle
       var s = document.createElement("script");
       s.src = "https://unpkg.com/decap-cms@^3.8.3/dist/decap-cms.js";
-      s.async = true;
+      s.onload = function () {
+        if (!window.CMS) return;
+        CMS.registerEventListener({
+          name: "preSave",
+          handler: function (_ref) {
+            var entry = _ref.entry;
+            var collection = entry.get("collection");
+            var data = entry.get("data");
+
+            if (collection === "products") {
+              var name = data.get("name") || "";
+              var slug = data.get("slug");
+              if (!slug) data = data.set("slug", slugify(name));
+              return entry.set("data", data);
+            }
+
+            if (collection === "news") {
+              var title = data.get("title") || "";
+              var slugN = data.get("slug");
+              if (!slugN) data = data.set("slug", slugify(title));
+              var d = data.get("date") || "";
+              if (d && String(d).indexOf("T") >= 0) d = String(d).slice(0, 10);
+              data = data.set("date", d);
+              data = data.set("dateLabel", monthTr(d));
+              return entry.set("data", data);
+            }
+            return entry;
+          },
+        });
+      };
       s.onerror = function () {
-        msg.textContent = "Decap CMS yüklenemedi (unpkg engeli olabilir).";
+        showErr("İçerik paneli yüklenemedi (ağ). Mobil veri deneyin.");
       };
       document.body.appendChild(s);
     })();
