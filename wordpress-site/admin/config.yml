@@ -23,6 +23,9 @@ collections:
     folder: wordpress-site/content/products
     create: true
     delete: true
+    # Tüm ürün medyası repo kökündeki assets/products altına (koleksiyon klasörüne göre değil)
+    media_folder: /wordpress-site/assets/products
+    public_folder: /assets/products
     slug: "{{name}}"
     extension: json
     format: json
@@ -95,6 +98,9 @@ collections:
     folder: wordpress-site/content/news
     create: true
     delete: true
+    # Tüm haber medyası repo kökündeki assets/news altına
+    media_folder: /wordpress-site/assets/news
+    public_folder: /assets/news
     slug: "{{title}}"
     extension: json
     format: json
