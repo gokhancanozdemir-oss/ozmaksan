@@ -1,16 +1,19 @@
 # Decap CMS — Netlify Git Gateway
-# Yerel: npx decap-server (ayrı terminal) + bu config'de local_backend: true
+# Repo kökü: ozmaksan/  →  içerik wordpress-site/ altında
+# Yerel test: local_backend true + npx decap-server (cwd: wordpress-site)
 
 backend:
   name: git-gateway
   branch: main
 
+# Sadece localhost'ta aktif olur; canlıda Git Gateway kullanılır
 local_backend: true
 
 locale: tr
 
-# Varsayılan medya (ürün görselleri)
-media_folder: assets/products
+# Git'teki klasör (repo root'a göre)
+media_folder: wordpress-site/assets/products
+# Sitede görünen URL yolu (publish root = wordpress-site)
 public_folder: /assets/products
 
 slug:
@@ -23,7 +26,7 @@ collections:
     files:
       - name: site
         label: İletişim & Kurumsal
-        file: content/site.json
+        file: wordpress-site/content/site.json
         fields:
           - label: Firma Bilgileri
             name: company
@@ -40,7 +43,7 @@ collections:
               - label: Telefonlar
                 name: phones
                 widget: list
-                field: { label: Telefon, widget: string }
+                field: { label: Telefon, name: phone, widget: string }
               - { label: Faks, name: fax, widget: string }
               - { label: Mobil, name: mobile, widget: string }
               - { label: E-posta, name: email, widget: string }
@@ -60,7 +63,7 @@ collections:
               - label: Paragraflar
                 name: intro
                 widget: list
-                field: { label: Paragraf, widget: text }
+                field: { label: Paragraf, name: paragraph, widget: text }
               - label: İstatistikler
                 name: stats
                 widget: list
@@ -79,7 +82,7 @@ collections:
           - label: Referanslar
             name: references
             widget: list
-            field: { label: Firma, widget: string }
+            field: { label: Firma, name: company, widget: string }
           - label: Sertifikalar
             name: certs
             widget: list
@@ -90,21 +93,21 @@ collections:
             name: sectors
             widget: list
             required: false
-            field: { label: Sektör, widget: string }
+            field: { label: Sektör, name: sector, widget: string }
           - label: İhracat Ülkeleri
             name: exportCountries
             widget: list
-            field: { label: Ülke, widget: string }
+            field: { label: Ülke, name: country, widget: string }
           - label: Yardımcı Donanımlar
             name: auxiliaries
             widget: list
             required: false
-            field: { label: Kalem, widget: string }
+            field: { label: Kalem, name: item, widget: string }
 
   - name: products
     label: Ürünler
     label_singular: Ürün
-    folder: content/products
+    folder: wordpress-site/content/products
     create: true
     delete: true
     slug: "{{slug}}"
@@ -112,8 +115,6 @@ collections:
     format: json
     summary: "{{name}} ({{category}})"
     sortable_fields: ["name", "category", "slug"]
-    media_folder: ""
-    public_folder: ""
     fields:
       - { label: Slug (URL), name: slug, widget: string, hint: "örn. steamax → urun-steamax.html" }
       - { label: Ürün Adı, name: name, widget: string }
@@ -136,25 +137,25 @@ collections:
       - label: Görsel
         name: image
         widget: image
-        media_folder: /assets/products
+        media_folder: wordpress-site/assets/products
         public_folder: /assets/products
         choose_url: false
       - label: Katalog PDF
         name: pdf
         widget: file
         required: false
-        media_folder: /assets/catalogs
+        media_folder: wordpress-site/assets/catalogs
         public_folder: /assets/catalogs
         choose_url: false
       - label: Giriş Paragrafları
         name: intro
         widget: list
-        field: { label: Paragraf, widget: text }
+        field: { label: Paragraf, name: paragraph, widget: text }
       - label: Özellikler
         name: features
         widget: list
         required: false
-        field: { label: Özellik, widget: string }
+        field: { label: Özellik, name: feature, widget: string }
       - label: Teknik Tablo (JSON)
         name: specs
         widget: code
@@ -165,7 +166,7 @@ collections:
   - name: news
     label: Haberler
     label_singular: Haber
-    folder: content/news
+    folder: wordpress-site/content/news
     create: true
     delete: true
     slug: "{{slug}}"
@@ -173,8 +174,6 @@ collections:
     format: json
     summary: "{{title}}"
     sortable_fields: ["date", "title", "slug"]
-    media_folder: ""
-    public_folder: ""
     fields:
       - { label: Slug (URL), name: slug, widget: string, hint: "örn. gaziantep-arena → haber-gaziantep-arena.html" }
       - { label: Başlık, name: title, widget: string }
@@ -186,6 +185,6 @@ collections:
         name: image
         widget: image
         required: false
-        media_folder: /assets/news
+        media_folder: wordpress-site/assets/news
         public_folder: /assets/news
         choose_url: false
