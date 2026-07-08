@@ -134,21 +134,22 @@
           window.CMS.registerEventListener({
             name: "preSave",
             handler: function (_ref) {
+              // preSave, DEĞİŞTİRİLMİŞ DATA'yı döndürmeli (entry'yi değil).
               var entry = _ref.entry;
               var collection = entry.get("collection");
               var data = entry.get("data");
               if (collection === "products") {
                 if (!data.get("slug")) data = data.set("slug", slugify(data.get("name")));
-                return entry.set("data", data);
+                return data;
               }
               if (collection === "news") {
                 if (!data.get("slug")) data = data.set("slug", slugify(data.get("title")));
                 var d = data.get("date") || "";
                 if (d && String(d).indexOf("T") >= 0) d = String(d).slice(0, 10);
                 data = data.set("date", d).set("dateLabel", monthTr(d));
-                return entry.set("data", data);
+                return data;
               }
-              return entry;
+              return data;
             },
           });
           hooksDone = true;
