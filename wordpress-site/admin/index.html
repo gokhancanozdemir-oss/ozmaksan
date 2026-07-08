@@ -39,29 +39,121 @@
         });
       }
 
-      function registerHooks() {
-        if (!window.CMS || !window.CMS.registerEventListener) return false;
-        window.CMS.registerEventListener({
-          name: "preSave",
-          handler: function (_ref) {
-            var entry = _ref.entry;
-            var collection = entry.get("collection");
-            var data = entry.get("data");
-            if (collection === "products") {
-              if (!data.get("slug")) data = data.set("slug", slugify(data.get("name")));
-              return entry.set("data", data);
+      function esc(s) {
+        return String(s == null ? "" : s)
+          .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+      function toList(v) {
+        if (!v) return [];
+        if (v.toJS) v = v.toJS();
+        if (!Array.isArray(v)) return [];
+        return v
+          .map(function (x) {
+            if (x == null) return "";
+            if (typeof x === "object") { for (var k in x) if (x[k]) return String(x[k]); return ""; }
+            return String(x);
+          })
+          .filter(function (s) { return s.trim(); });
+      }
+
+      function newsPreviewHtml(data, imgUrl) {
+        var paras = String(data.body || "").split(/(?<=[.!?])\s+/).filter(Boolean);
+        var body = paras.length ? paras.map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") : "<p></p>";
+        var fig = imgUrl ? '<figure class="news-detail-figure"><img src="' + esc(imgUrl) + '" alt="' + esc(data.title) + '" /></figure>' : "";
+        return '<article class="news-detail"><div class="container news-detail-inner">' +
+          '<header class="news-detail-head"><time>' + esc(data.dateLabel || data.date || "") + "</time><h1>" + esc(data.title) + "</h1></header>" +
+          fig +
+          '<div class="news-detail-body">' + body + "</div>" +
+          "</div></article>";
+      }
+
+      function productPreviewHtml(data, imgUrl) {
+        var quickRows = [
+          ["Yakıt", data.fuel], ["Tip", data.type], ["Kapasite", data.capacity],
+          ["Sıcaklık / Basınç", data.pressure], ["Verim", data.efficiency], ["Seri", data.series],
+        ].filter(function (r) { return r[1] && String(r[1]).trim(); })
+          .map(function (r) { return "<div><dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd></div>"; }).join("");
+        var intro = toList(data.intro).map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") || "<p></p>";
+        var feats = toList(data.features).map(function (f) { return "<li><span>" + esc(f) + "</span></li>"; }).join("");
+        var media = imgUrl ? '<img src="' + esc(imgUrl) + '" alt="' + esc(data.name) + '" />' : "";
+        return '<section class="section product-hero-sec"><div class="container product-hero">' +
+          '<div class="product-hero-media">' + media + "</div>" +
+          '<div class="product-hero-info">' +
+          (data.series ? '<span class="product-series">' + esc(data.series) + "</span>" : "") +
+          "<h1>" + esc(data.name) + "</h1>" +
+          '<p class="product-tagline">' + esc(data.tagline) + "</p>" +
+          '<dl class="quick-specs">' + quickRows + "</dl>" +
+          "</div></div></section>" +
+          '<section class="section product-detail"><div class="container product-detail-grid">' +
+          '<div class="product-desc"><h2 class="section-title">Ürün Açıklaması</h2>' + intro + "</div>" +
+          (feats ? '<aside class="product-features"><h3 class="block-title">Öne Çıkan Özellikler</h3><ul class="feature-list">' + feats + "</ul></aside>" : "") +
+          "</div></section>";
+      }
+
+      function makePreview(builder) {
+        return window.createClass({
+          render: function () {
+            var entry = this.props.entry;
+            var data = entry.get("data").toJS();
+            var getAsset = this.props.getAsset;
+            var imgUrl = "";
+            if (data.image && getAsset) {
+              try { imgUrl = getAsset(data.image).toString(); } catch (e) { imgUrl = data.image; }
             }
-            if (collection === "news") {
-              if (!data.get("slug")) data = data.set("slug", slugify(data.get("title")));
-              var d = data.get("date") || "";
-              if (d && String(d).indexOf("T") >= 0) d = String(d).slice(0, 10);
-              data = data.set("date", d).set("dateLabel", monthTr(d));
-              return entry.set("data", data);
-            }
-            return entry;
+            return window.h("div", {
+              className: "ozmaksan-preview",
+              dangerouslySetInnerHTML: { __html: builder(data, imgUrl) },
+            });
           },
         });
-        return true;
+      }
+
+      var previewsDone = false;
+      function registerPreviews() {
+        if (previewsDone) return;
+        if (!window.CMS || !window.CMS.registerPreviewStyle || !window.createClass || !window.h) return;
+        window.CMS.registerPreviewStyle(
+          "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap"
+        );
+        window.CMS.registerPreviewStyle("/ozmaksan-corporate.css");
+        window.CMS.registerPreviewStyle(
+          ".ozmaksan-preview{padding:8px 0}.ozmaksan-preview .reveal{opacity:1 !important;transform:none !important}",
+          { raw: true }
+        );
+        window.CMS.registerPreviewTemplate("products", makePreview(productPreviewHtml));
+        window.CMS.registerPreviewTemplate("news", makePreview(newsPreviewHtml));
+        previewsDone = true;
+      }
+
+      var hooksDone = false;
+      function registerHooks() {
+        if (!window.CMS || !window.CMS.registerEventListener) return false;
+        registerPreviews();
+        if (!hooksDone) {
+          window.CMS.registerEventListener({
+            name: "preSave",
+            handler: function (_ref) {
+              var entry = _ref.entry;
+              var collection = entry.get("collection");
+              var data = entry.get("data");
+              if (collection === "products") {
+                if (!data.get("slug")) data = data.set("slug", slugify(data.get("name")));
+                return entry.set("data", data);
+              }
+              if (collection === "news") {
+                if (!data.get("slug")) data = data.set("slug", slugify(data.get("title")));
+                var d = data.get("date") || "";
+                if (d && String(d).indexOf("T") >= 0) d = String(d).slice(0, 10);
+                data = data.set("date", d).set("dateLabel", monthTr(d));
+                return entry.set("data", data);
+              }
+              return entry;
+            },
+          });
+          hooksDone = true;
+        }
+        return hooksDone && previewsDone;
       }
 
       var tries = 0;

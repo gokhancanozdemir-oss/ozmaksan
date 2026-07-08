@@ -94,10 +94,25 @@ function normalizeProduct(p) {
   return out;
 }
 
-function normalizeNews(n) {
+function slugify(s) {
+  return String(s || "")
+    .toLowerCase()
+    .replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s")
+    .replace(/ı/g, "i").replace(/ö/g, "o").replace(/ç/g, "c")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+    .slice(0, 60);
+}
+
+function normalizeNews(n, fileSlug = "") {
   if (!n || typeof n !== "object") return n;
+  const slug = n.slug || slugify(n.title) || fileSlug || "haber";
   return {
     ...n,
+    slug,
+    title: n.title || "",
+    excerpt: n.excerpt || "",
+    body: n.body || "",
     image: normalizeAssetPath(n.image),
     dateLabel: n.dateLabel || n.date || "",
   };
@@ -143,7 +158,17 @@ let products = loadFolderJson(productDir).map(normalizeProduct);
 if (!products.length) products = (defaults.products || []).map(normalizeProduct);
 
 const newsDir = path.join(CONTENT, "news");
-let news = loadFolderJson(newsDir).map(normalizeNews);
+let news = fs.existsSync(newsDir)
+  ? fs
+      .readdirSync(newsDir)
+      .filter((f) => f.endsWith(".json"))
+      .sort()
+      .map((f) => {
+        const data = readJson(path.join(newsDir, f));
+        return data ? normalizeNews(data, f.replace(/\.json$/i, "")) : null;
+      })
+      .filter(Boolean)
+  : [];
 const newsArrayFile = path.join(CONTENT, "news.json");
 if (!news.length && fs.existsSync(newsArrayFile)) {
   const arr = readJson(newsArrayFile);

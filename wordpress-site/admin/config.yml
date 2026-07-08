@@ -23,7 +23,7 @@ collections:
     folder: wordpress-site/content/products
     create: true
     delete: true
-    slug: "{{slug}}"
+    slug: "{{name}}"
     extension: json
     format: json
     identifier_field: name
@@ -94,7 +94,7 @@ collections:
     folder: wordpress-site/content/news
     create: true
     delete: true
-    slug: "{{slug}}"
+    slug: "{{title}}"
     extension: json
     format: json
     identifier_field: title
