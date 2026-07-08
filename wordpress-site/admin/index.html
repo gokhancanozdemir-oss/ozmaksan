@@ -5,57 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>ÖZMAKSAN — İçerik Yönetimi</title>
-  <style>
-    html, body { height: 100%; margin: 0; }
-    body { font-family: "Segoe UI", system-ui, sans-serif; background: #0f172a; color: #e2e8f0; }
-    #login-screen {
-      min-height: 100%; display: flex; align-items: center; justify-content: center;
-      padding: 1.5rem; box-sizing: border-box;
-    }
-    #login-screen[hidden] { display: none !important; }
-    .card {
-      width: min(420px, 100%); background: #1e293b; border: 1px solid #334155;
-      border-radius: 16px; padding: 2rem 1.75rem; text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,.35);
-    }
-    .card h1 { margin: 0 0 .4rem; font-size: 1.4rem; font-weight: 700; color: #fff; }
-    .card p { margin: 0 0 1.25rem; color: #94a3b8; font-size: .95rem; line-height: 1.5; }
-    .card button {
-      width: 100%; border: 0; border-radius: 10px; padding: 1rem;
-      background: #1a5490; color: #fff; font-size: 1.05rem; font-weight: 700; cursor: pointer;
-    }
-    .card button:hover { background: #144072; }
-    .card .err {
-      margin-top: 1rem; padding: .75rem; border-radius: 8px; background: #451a1a;
-      color: #fecaca; font-size: .88rem; text-align: left; display: none; white-space: pre-wrap;
-    }
-    .card .err.show { display: block; }
-    .card .tiny { margin-top: 1rem; font-size: .8rem; color: #64748b; line-height: 1.4; }
-  </style>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <div id="login-screen">
-    <div class="card">
-      <h1>ÖZMAKSAN Panel</h1>
-      <p>Ürün ve haberleri buradan düzenlersiniz.<br/>Davet aldığınız e-posta ve şifre ile giriş yapın.</p>
-      <button type="button" id="btn-login">Giriş yap</button>
-      <div class="err" id="login-err"></div>
-      <p class="tiny">Çok deneme yaptıysanız 20 dk bekleyin. Ev interneti açmazsa mobil veri ile deneyin.</p>
-    </div>
-  </div>
-
+  <!-- Decap CMS kendi "Netlify Identity ile Giriş" ekranını gösterir -->
+  <script src="https://unpkg.com/decap-cms@^3.8.3/dist/decap-cms.js"></script>
   <script>
     (function () {
-      var errBox = document.getElementById("login-err");
-      var screen = document.getElementById("login-screen");
-      var btn = document.getElementById("btn-login");
-
-      function showErr(t) {
-        errBox.textContent = t;
-        errBox.classList.add("show");
-      }
-
       function slugify(s) {
         return String(s || "")
           .toLowerCase()
@@ -65,7 +21,6 @@
           .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
           .slice(0, 60) || "kayit";
       }
-
       function monthTr(iso) {
         var m = ["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
         var d = String(iso || "").slice(0, 10).split("-");
@@ -73,87 +28,47 @@
         return Number(d[2]) + " " + m[Number(d[1]) - 1] + " " + d[0];
       }
 
-      function openLogin() {
-        if (!window.netlifyIdentity) {
-          showErr("Giriş modülü yüklenemedi. Sayfayı yenileyin veya mobil veri kullanın.");
-          return;
-        }
-        window.netlifyIdentity.open();
+      // Davet / şifre sıfırlama token'ı ana sayfada kalırsa buraya taşı
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", function (user) {
+          if (!user) {
+            window.netlifyIdentity.on("login", function () {
+              document.location.href = "/admin/";
+            });
+          }
+        });
       }
 
-      btn.addEventListener("click", openLogin);
-
-      if (!window.netlifyIdentity) {
-        showErr("Netlify Identity engellenmiş olabilir. Mobil veriyle deneyin.");
-        return;
-      }
-
-      window.netlifyIdentity.on("error", function (e) {
-        var t = (e && (e.message || e.msg)) || String(e);
-        if (/rate/i.test(t)) {
-          showErr("Çok fazla deneme.\n20–30 dakika bekleyin, sonra tekrar Giriş yapın.");
-        } else {
-          showErr("Hata: " + t);
-        }
-      });
-
-      window.netlifyIdentity.on("init", function (user) {
-        var h = location.hash || "";
-        if (/invite_token|recovery_token|confirmation_token/.test(h)) {
-          setTimeout(function () { window.netlifyIdentity.open(); }, 250);
-        } else if (user) {
-          screen.hidden = true;
-        }
-      });
-
-      window.netlifyIdentity.on("login", function () {
-        if (location.hash && /token=/.test(location.hash)) {
-          location.replace("/admin/");
-          return;
-        }
-        screen.hidden = true;
-      });
-
-      window.netlifyIdentity.on("logout", function () {
-        location.href = "/admin/";
-      });
-
-      var s = document.createElement("script");
-      s.src = "https://unpkg.com/decap-cms@^3.8.3/dist/decap-cms.js";
-      s.onload = function () {
-        if (!window.CMS) return;
-        CMS.registerEventListener({
+      function registerHooks() {
+        if (!window.CMS || !window.CMS.registerEventListener) return false;
+        window.CMS.registerEventListener({
           name: "preSave",
           handler: function (_ref) {
             var entry = _ref.entry;
             var collection = entry.get("collection");
             var data = entry.get("data");
-
             if (collection === "products") {
-              var name = data.get("name") || "";
-              var slug = data.get("slug");
-              if (!slug) data = data.set("slug", slugify(name));
+              if (!data.get("slug")) data = data.set("slug", slugify(data.get("name")));
               return entry.set("data", data);
             }
-
             if (collection === "news") {
-              var title = data.get("title") || "";
-              var slugN = data.get("slug");
-              if (!slugN) data = data.set("slug", slugify(title));
+              if (!data.get("slug")) data = data.set("slug", slugify(data.get("title")));
               var d = data.get("date") || "";
               if (d && String(d).indexOf("T") >= 0) d = String(d).slice(0, 10);
-              data = data.set("date", d);
-              data = data.set("dateLabel", monthTr(d));
+              data = data.set("date", d).set("dateLabel", monthTr(d));
               return entry.set("data", data);
             }
             return entry;
           },
         });
-      };
-      s.onerror = function () {
-        showErr("İçerik paneli yüklenemedi (ağ). Mobil veri deneyin.");
-      };
-      document.body.appendChild(s);
+        return true;
+      }
+
+      var tries = 0;
+      var timer = setInterval(function () {
+        tries += 1;
+        if (registerHooks() || tries > 40) clearInterval(timer);
+      }, 250);
     })();
   </script>
 </body>
