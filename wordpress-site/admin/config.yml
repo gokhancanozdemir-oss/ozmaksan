@@ -23,9 +23,6 @@ collections:
     folder: wordpress-site/content/products
     create: true
     delete: true
-    # Tüm ürün medyası repo kökündeki assets/products altına (koleksiyon klasörüne göre değil)
-    media_folder: /wordpress-site/assets/products
-    public_folder: /assets/products
     slug: "{{name}}"
     extension: json
     format: json
@@ -56,8 +53,8 @@ collections:
       - label: Ürün fotoğrafı
         name: image
         widget: image
-        # Başındaki / = repo köküne göre mutlak yol (koleksiyona göre değil)
-        media_folder: /wordpress-site/assets/products
+        # content/products klasöründen iki üst: wordpress-site/assets/products
+        media_folder: ../../assets/products
         public_folder: /assets/products
         choose_url: false
         hint: "Dosya seç / fotoğraf yükle"
@@ -87,7 +84,7 @@ collections:
         name: pdf
         widget: file
         required: false
-        media_folder: /wordpress-site/assets/catalogs
+        media_folder: ../../assets/catalogs
         public_folder: /assets/catalogs
         choose_url: false
 
@@ -98,9 +95,6 @@ collections:
     folder: wordpress-site/content/news
     create: true
     delete: true
-    # Tüm haber medyası repo kökündeki assets/news altına
-    media_folder: /wordpress-site/assets/news
-    public_folder: /assets/news
     slug: "{{title}}"
     extension: json
     format: json
@@ -134,8 +128,7 @@ collections:
         name: image
         widget: image
         required: false
-        # Başındaki / = repo köküne göre mutlak yol (koleksiyona göre değil)
-        media_folder: /wordpress-site/assets/news
+        media_folder: ../../assets/news
         public_folder: /assets/news
         choose_url: false
 

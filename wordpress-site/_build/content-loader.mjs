@@ -8,7 +8,34 @@ import { fileURLToPath } from "node:url";
 import * as defaults from "./data.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CONTENT = path.resolve(__dirname, "..", "content");
+const SITE_ROOT = path.resolve(__dirname, "..");
+const CONTENT = path.join(SITE_ROOT, "content");
+
+/**
+ * Decap monorepo'da media_folder bazen content/.../wordpress-site/assets/... altına
+ * kaydeder; JSON ise /assets/... yazar. Build öncesi dosyaları doğru yere kopyalar.
+ */
+function relocateMisnestedCmsAssets() {
+  const pairs = [
+    [path.join(CONTENT, "products", "wordpress-site", "assets", "products"), path.join(SITE_ROOT, "assets", "products")],
+    [path.join(CONTENT, "products", "wordpress-site", "assets", "catalogs"), path.join(SITE_ROOT, "assets", "catalogs")],
+    [path.join(CONTENT, "news", "wordpress-site", "assets", "news"), path.join(SITE_ROOT, "assets", "news")],
+  ];
+  for (const [srcDir, destDir] of pairs) {
+    if (!fs.existsSync(srcDir)) continue;
+    fs.mkdirSync(destDir, { recursive: true });
+    for (const name of fs.readdirSync(srcDir)) {
+      const src = path.join(srcDir, name);
+      if (!fs.statSync(src).isFile()) continue;
+      const dest = path.join(destDir, name);
+      if (!fs.existsSync(dest) || fs.statSync(src).mtimeMs > fs.statSync(dest).mtimeMs) {
+        fs.copyFileSync(src, dest);
+      }
+    }
+  }
+}
+
+relocateMisnestedCmsAssets();
 
 function readJson(file) {
   if (!fs.existsSync(file)) return null;
