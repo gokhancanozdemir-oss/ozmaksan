@@ -58,7 +58,7 @@ function header(mode, active) {
   return `<header class="site-header" id="top">
     <div class="header-inner">
       <a href="${link(mode, "index")}" class="logo">
-        <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)} — ${esc(company.slogan)}" width="180" height="72" />
+        <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)} — ${esc(company.slogan)}" width="240" height="143" />
       </a>
       <nav class="main-nav" aria-label="Ana menü">
         ${links}
