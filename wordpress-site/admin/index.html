@@ -5,24 +5,116 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>ÖZMAKSAN — İçerik Yönetimi</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #f5f5f5; }
+    #oz-boot {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem; z-index: 0; color: #334155; text-align: center; padding: 1.5rem;
+    }
+    #oz-boot button {
+      appearance: none; border: 0; background: #1a5490; color: #fff; font-weight: 600;
+      padding: 0.85rem 1.4rem; border-radius: 10px; cursor: pointer; font-size: 1rem;
+    }
+    #oz-boot button:hover { background: #0f3a66; }
+    #oz-boot .hint { font-size: 0.9rem; color: #64748b; max-width: 28rem; }
+  </style>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3.8.3/dist/decap-cms.js"></script>
+  <div id="oz-boot">
+    <div>
+      <strong>ÖZMAKSAN İçerik Yönetimi</strong>
+      <p class="hint" id="oz-boot-msg">Netlify Identity yükleniyor…</p>
+    </div>
+    <button type="button" id="oz-login-btn" hidden>Netlify Identity ile Giriş / Daveti Kabul Et</button>
+  </div>
+
   <script>
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", function (user) {
-        // Davet / şifre sıfırlama token'ı varsa şifre formunu aç
-        var h = window.location.hash || "";
-        if (/recovery_token|invite_token|confirmation_token/.test(h)) {
-          window.netlifyIdentity.open("recovery");
-        } else if (!user) {
-          window.netlifyIdentity.on("login", function () {
-            document.location.href = "/admin/";
-          });
+    (function () {
+      var boot = document.getElementById("oz-boot");
+      var msg = document.getElementById("oz-boot-msg");
+      var btn = document.getElementById("oz-login-btn");
+      var hash = window.location.hash || "";
+      var hasInvite = /invite_token=/.test(hash);
+      var hasRecovery = /recovery_token=/.test(hash);
+      var hasConfirm = /confirmation_token=/.test(hash);
+
+      function openIdentity() {
+        if (!window.netlifyIdentity) {
+          msg.textContent = "Identity widget yüklenemedi. Sayfayı yenileyin.";
+          return;
+        }
+        // Davet / şifre sıfırlama token'ı varsa widget hash'ten formu açar
+        window.netlifyIdentity.open();
+      }
+
+      function hideBoot() {
+        if (boot) boot.style.display = "none";
+      }
+
+      if (!window.netlifyIdentity) {
+        msg.textContent = "Identity script bloğu / ağ engeli. Mobil veri ile deneyin veya VPN kapatın.";
+        return;
+      }
+
+      btn.hidden = false;
+      if (hasInvite) {
+        msg.textContent = "Davet linki algılandı. Aşağıdaki tuşa basın ve yeni şifrenizi belirleyin.";
+      } else if (hasRecovery) {
+        msg.textContent = "Şifre sıfırlama linki algılandı. Aşağıdaki tuşa basın ve yeni şifrenizi yazın.";
+      } else if (hasConfirm) {
+        msg.textContent = "E-posta doğrulama linki algılandı. Aşağıdaki tuşa basın.";
+      } else {
+        msg.textContent = "Yayın paneline girmek için giriş yapın.";
+      }
+
+      btn.addEventListener("click", function () {
+        msg.textContent = "Giriş penceresi açılıyor…";
+        try {
+          openIdentity();
+        } catch (e) {
+          msg.textContent = "Açılamadı: " + (e && e.message ? e.message : e);
         }
       });
-    }
+
+      window.netlifyIdentity.on("error", function (err) {
+        var text = (err && (err.message || err.msg || String(err))) || "Bilinmeyen hata";
+        msg.textContent = "Identity hatası: " + text +
+          (String(text).toLowerCase().indexOf("rate") >= 0
+            ? " — 20–30 dk bekleyip tekrar deneyin."
+            : "");
+        btn.hidden = false;
+      });
+
+      window.netlifyIdentity.on("init", function (user) {
+        if (user) {
+          hideBoot();
+          return;
+        }
+        // Token varsa otomatik bir kez dene; rate limit varsa butonla devam
+        if (hasInvite || hasRecovery || hasConfirm) {
+          setTimeout(openIdentity, 400);
+        }
+      });
+
+      window.netlifyIdentity.on("login", function () {
+        // Token'lı URL'yi temizleyip paneli yenile
+        window.location.href = "/admin/";
+      });
+
+      window.netlifyIdentity.on("logout", function () {
+        window.location.href = "/admin/";
+      });
+
+      // Decap CMS'i Identity'den sonra yükle
+      var s = document.createElement("script");
+      s.src = "https://unpkg.com/decap-cms@^3.8.3/dist/decap-cms.js";
+      s.async = true;
+      s.onerror = function () {
+        msg.textContent = "Decap CMS yüklenemedi (unpkg engeli olabilir).";
+      };
+      document.body.appendChild(s);
+    })();
   </script>
 </body>
 </html>
