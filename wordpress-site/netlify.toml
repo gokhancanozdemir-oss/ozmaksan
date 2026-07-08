@@ -1,0 +1,29 @@
+[build]
+  command = "node _build/build.mjs"
+  publish = "."
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Decap CMS SPA
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
+
+# Temiz URL'ler (isteğe bağlı)
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/assets/catalogs/*"
+  [headers.values]
+    Content-Type = "application/pdf"
+
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Robots-Tag = "noindex"

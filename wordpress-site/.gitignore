@@ -1,0 +1,23 @@
+# Netlify build çıktısı — her deploy'da yeniden üretilir
+*.html
+!admin/index.html
+
+# Node
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Yerel Decap proxy
+.decap/
+
+# WordPress (artık kullanılmıyor — arşiv)
+ozmaksan/
+ozmaksan-assets/
+ozmaksan-*.zip
+ozmaksan-wordpress.xml
+_build/front-page-id.txt
+_build/_*.html
+
+# IDE
+.idea/
+.vscode/

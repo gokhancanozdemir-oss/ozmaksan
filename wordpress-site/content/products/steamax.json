@@ -1,0 +1,73 @@
+{
+  "slug": "steamax",
+  "name": "STEAmAX Boiler",
+  "series": "OSBK",
+  "category": "buhar",
+  "tagline": "Sıvı & gaz yakıtlı skoç tip yüksek basınçlı buhar kazanı",
+  "fuel": "Sıvı & Gaz",
+  "type": "Skoç Tip · 3 Geçişli",
+  "capacity": "600 – 24.000 kg/h buhar",
+  "pressure": "20 bar'a kadar",
+  "efficiency": "%90 – 92",
+  "image": "assets/products/steamax.jpg",
+  "pdf": "assets/catalogs/steamax.pdf",
+  "intro": [
+    "OSBK serisi buhar kazanları uluslararası skoç tip olarak dizayn edilmiştir. Üretimin her safhası ve kalite kontrolü 97/23/EC ve EN-12953 normlarına uygundur.",
+    "Üretimde yüksek kaliteli özel kazan sacı ile dikişsiz çelik çekme kazan borusu kullanılır. 24 ton/h buhar kapasitesine ve 20 bar çalışma basıncına kadar geniş bir ürün yelpazesine sahiptir."
+  ],
+  "features": [
+    "3 geçişli uluslararası skoç tip tasarım",
+    "Yüksek kaliteli özel kazan sacı ve dikişsiz borular",
+    "Radyografik tarama ve hidrostatik test",
+    "Opsiyonel ekonomizer & süperheater",
+    "Düşük NOx'lu, kompakt ve yüksek verimli"
+  ],
+  "specs": {
+    "columns": [
+      "Model",
+      "Kapasite (kg/h)"
+    ],
+    "rows": [
+      [
+        "OSBK-15",
+        "600"
+      ],
+      [
+        "OSBK-30",
+        "1.200"
+      ],
+      [
+        "OSBK-50",
+        "2.000"
+      ],
+      [
+        "OSBK-75",
+        "3.000"
+      ],
+      [
+        "OSBK-100",
+        "4.000"
+      ],
+      [
+        "OSBK-150",
+        "6.000"
+      ],
+      [
+        "OSBK-200",
+        "8.000"
+      ],
+      [
+        "OSBK-300",
+        "12.000"
+      ],
+      [
+        "OSBK-450",
+        "18.000"
+      ],
+      [
+        "OSBK-600",
+        "24.000"
+      ]
+    ]
+  }
+}

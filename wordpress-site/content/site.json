@@ -1,0 +1,237 @@
+{
+  "company": {
+    "legalName": "ÖZMAKSAN ISI SANAYİ VE TİCARET A.Ş.",
+    "brand": "ÖZMAKSAN",
+    "slogan": "YÜKSEK ISI TEKNOLOJİSİ",
+    "sloganEn": "HIGH HEATING TECHNOLOGY",
+    "founded": "1976",
+    "years": "49",
+    "address": "4. Organize Sanayi Bölgesi, 83404 Nolu Cadde No:10, Başpınar / Gaziantep / Türkiye",
+    "phones": [
+      "+90 342 220 40 56",
+      "+90 342 220 39 56",
+      "+90 342 357 01 62"
+    ],
+    "fax": "+90 342 232 61 13",
+    "mobile": "+90 533 372 83 35",
+    "email": "ozmaksan@ozmaksan.com.tr",
+    "web": "ozmaksan.com.tr",
+    "social": {
+      "facebook": "https://www.facebook.com/OZMAKSANISI/",
+      "instagram": "https://www.instagram.com/ozmaksan_isi/",
+      "linkedin": "https://www.linkedin.com/in/ozmaksan-isi-san-tic-as-570399161",
+      "youtube": "https://www.youtube.com/@ozmaksan"
+    }
+  },
+  "about": {
+    "intro": [
+      "ÖZMAKSAN, 1976 yılında ısıtma ve buhar sektöründe hizmet vermek üzere Gaziantep'e kurulmuş olup, uzun yıllardır basınçlı kaplar üretim sektöründe faaliyet göstermektedir.",
+      "14.000 m² üretim tesisimizde yüksek basınçlı buhar kazanları, kızgın su ve kızgın yağ kazanları, atık ısı kazanları, buhar jeneratörleri, ısı eşanjörleri, ekonomizerler, akümülasyon tankları ve enerji geri kazanım ekipmanları üretmekteyiz.",
+      "Güneydoğu Anadolu bölgesinin en geniş üretim kapasitesine sahip firmalarından biri olarak, modern üretim altyapısı ve uzman mühendis kadrosuyla yurt içi ve yurt dışında önde gelen sanayi kuruluşlarının tedarikçisiyiz."
+    ],
+    "stats": [
+      {
+        "value": "49",
+        "suffix": "",
+        "label": "Yıllık Tecrübe"
+      },
+      {
+        "value": "14000",
+        "suffix": "",
+        "label": "m² Üretim Alanı"
+      },
+      {
+        "value": "3000",
+        "suffix": "",
+        "label": "Ton/Yıl Kapasite"
+      },
+      {
+        "value": "40",
+        "prefix": "%",
+        "suffix": "",
+        "label": "İhracat Oranı"
+      }
+    ]
+  },
+  "faq": [
+    {
+      "q": "Hangi standartlara uygun üretim yapıyorsunuz?",
+      "a": "97/23/EC (PED), 2014/68/EU, EN 12953, EN 303-5, AD 2000 Merkblatt, ASME, TSE ve CE standartlarına uygun üretim yapılmaktadır. Basınç ve güvenlik testleri bağımsız kuruluş gözetiminde gerçekleştirilir."
+    },
+    {
+      "q": "Montaj ve devreye alma hizmeti veriyor musunuz?",
+      "a": "Evet. Endüstriyel sistemlerin montajı ve devreye alınması konusunda uzman ekibimizle hizmet vermekteyiz. EPDK sertifikalı doğalgaz dönüşüm hizmeti de sunulmaktadır."
+    },
+    {
+      "q": "Hangi yakıt türleriyle çalışan kazanlarınız var?",
+      "a": "Doğalgaz, LPG, LNG, sıvı yakıt ve katı yakıt (kömür, prina, odun talaşı, pelet, meyve kabuğu) ile çalışan geniş bir ürün yelpazemiz bulunmaktadır. Ayrıca çift yakıtlı (dual) çözümler sunulur."
+    },
+    {
+      "q": "İhracat yapıyor musunuz?",
+      "a": "Evet. Ortadoğu, Kuzey Afrika ve Orta Asya başta olmak üzere birçok ülkeye doğrudan ihracat yapmaktayız. Üretimimizin yaklaşık %40'ı yurt dışı pazarlarına yöneliktir."
+    }
+  ],
+  "references": [
+    "Mercedes-Benz",
+    "Coca-Cola",
+    "PepsiCo Beverages",
+    "KIA Motors",
+    "Aygaz",
+    "Abdi İbrahim",
+    "Penti",
+    "Oba Makarna",
+    "Saka Holding",
+    "Ferrero Türkiye",
+    "Kara Holding",
+    "Fargona Yog-Moy",
+    "Mutlu Makarna",
+    "KÇS Gazbeton",
+    "Altaş Grup",
+    "Bondoll",
+    "MIFCO",
+    "EGPI",
+    "Sanko Enerji",
+    "Uzkabel",
+    "Akça Enerji",
+    "Assan Alüminyum",
+    "Kayalı Enerji",
+    "Reckitt Benckiser",
+    "Sis Enerji",
+    "Emirates",
+    "Koruma Klor",
+    "Dedeman Hotel",
+    "Limak",
+    "Reha Süt",
+    "Weatherford",
+    "Sibline",
+    "Kalyon Stadyum",
+    "Aves A.Ş.",
+    "Multi Development",
+    "Asia",
+    "Maitex",
+    "BOTAŞ",
+    "Türkiye Petrolleri (TPAO)",
+    "Nuh Çimento",
+    "İSDEMİR",
+    "JUB Group",
+    "Mogul Tekstil",
+    "Menderes Geothermal",
+    "Kadooğlu Yağ",
+    "Greeneco Enerji",
+    "Universal Hastanesi",
+    "Acarsan Gıda",
+    "Altunsa",
+    "Lidersan Sağlık",
+    "Kassatly Chtaura",
+    "Enviro Energia",
+    "Mado",
+    "SCLI Baghdad",
+    "Chtoora",
+    "Hawa Chicken",
+    "TOKİ",
+    "Erdemir"
+  ],
+  "certs": [
+    {
+      "code": "CE",
+      "note": "Szutest — 2007'den beri"
+    },
+    {
+      "code": "ISO 9001",
+      "note": "TÜV — kalite yönetim sistemi"
+    },
+    {
+      "code": "TSE",
+      "note": "Onaylı endüstriyel kazanlar"
+    },
+    {
+      "code": "ASME",
+      "note": "Uluslararası basınçlı kap standardı"
+    },
+    {
+      "code": "AD 2000",
+      "note": "Merkblatt standartları"
+    },
+    {
+      "code": "TÜV",
+      "note": "Bağımsız gözetim ve test"
+    },
+    {
+      "code": "EPDK",
+      "note": "Doğalgaz dönüşüm sertifikası"
+    },
+    {
+      "code": "TÜRK LOYDU",
+      "note": "Sertifikalı üretim"
+    },
+    {
+      "code": "K.B.S.B.",
+      "note": "Kazan ve Basınçlı Kap San. Birliği"
+    },
+    {
+      "code": "SZUTEST",
+      "note": "Onaylanmış kuruluş"
+    },
+    {
+      "code": "DIN",
+      "note": "Alman malzeme normları"
+    },
+    {
+      "code": "TURSEFF",
+      "note": "Verimli teknoloji referansı"
+    }
+  ],
+  "sectors": [
+    "Tekstil & İplik",
+    "Kimya & Petrokimya",
+    "İlaç Sanayi",
+    "Gıda & İçecek",
+    "Kağıt & Ambalaj",
+    "Metal & Cam",
+    "Otel & AVM",
+    "Hastane & Sterilizasyon",
+    "Seracılık & Besicilik",
+    "Jeotermal Enerji",
+    "Asfalt & İnşaat",
+    "Kamu Kurumları",
+    "Endüstriyel Çamaşırhane",
+    "Boyama & Dokuma",
+    "Mobilya & Ağaç",
+    "Petrol & Rafineri"
+  ],
+  "exportCountries": [
+    "Irak",
+    "Mısır",
+    "Libya",
+    "Lübnan",
+    "Ürdün",
+    "Birleşik Arap Emirlikleri",
+    "Tunus",
+    "Cezayir",
+    "Fas",
+    "Moldova",
+    "Güney Afrika",
+    "Azerbaycan",
+    "Gürcistan",
+    "Türkmenistan",
+    "Kazakistan",
+    "Özbekistan",
+    "Kuzey Kıbrıs Türk Cumhuriyeti",
+    "Yunanistan",
+    "Pakistan"
+  ],
+  "auxiliaries": [
+    "Degazörler",
+    "Eşanjörler",
+    "Ekonomizerler",
+    "Reküperatörler",
+    "Kondens Tankları",
+    "Flaş Buhar Tankları",
+    "Boylerler",
+    "Bacalar",
+    "Kızdırıcı Üniteleri",
+    "Akümülasyon Tankları",
+    "N-Pentan Depolama Tankları",
+    "Yakıt Depolama Tankları"
+  ]
+}

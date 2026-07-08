@@ -1,0 +1,25 @@
+{
+  "slug": "steampack",
+  "name": "STEAMpack Boiler",
+  "series": "Paket Ünite",
+  "category": "buhar",
+  "tagline": "Tak-çalıştır paket (skid) buhar sistemi",
+  "fuel": "Sıvı & Gaz",
+  "type": "Paket / Skid Ünite",
+  "capacity": "Talebe göre",
+  "pressure": "2014/68/EU uygun",
+  "efficiency": "Yüksek verim",
+  "image": "assets/products/steampack.jpg",
+  "pdf": "assets/catalogs/steampack.pdf",
+  "intro": [
+    "STEAMpack paket buhar sistemleri; buhar kazanı ile birlikte pompa grubu, emniyet ekipmanları, kolektörler ve tüm yardımcı donanımların tek bir şase üzerine monte edildiği tak-çalıştır çözümlerdir.",
+    "2014/68/EU basınçlı ekipman yönetmeliğine uygun üretilir; hızlı devreye alma ve kompakt yerleşim sağlar."
+  ],
+  "features": [
+    "Komple paket (skid) çözüm",
+    "Pompa grubu, emniyet ve kontrol ekipmanları dahil",
+    "Hızlı devreye alma",
+    "2014/68/EU yönetmeliğine uygun",
+    "Minimum saha işçiliği, kompakt yerleşim"
+  ]
+}

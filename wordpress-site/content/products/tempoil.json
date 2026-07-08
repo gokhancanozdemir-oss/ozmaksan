@@ -1,0 +1,83 @@
+{
+  "slug": "tempoil",
+  "name": "TEMPoIL Boiler",
+  "series": "KYK",
+  "category": "kizginyag",
+  "tagline": "Sıvı & gaz yakıtlı kızgın yağ (termal) kazanı",
+  "fuel": "Sıvı & Gaz",
+  "type": "Spiral Sarımlı",
+  "capacity": "500.000 – 5.000.000 kcal/h",
+  "pressure": "350 °C'ye kadar",
+  "efficiency": "%90 – 92",
+  "image": "assets/products/tempoil.jpg",
+  "pdf": "assets/catalogs/tempoil.pdf",
+  "intro": [
+    "KYK serisi kızgın yağ kazanları sıvı ve gaz yakıtlı olup spiral sarımlı borulu dizayna sahiptir. Kızgın yağı serpantin borularda optimum hızda dolaştırarak 350°C'ye kadar kullanıma uygun ısı transferi sağlar.",
+    "Tekstil, kimya, yağ, ağaç, gıda ve asfalt endüstrilerinde proses ısıtma için idealdir. 500.000 – 5.000.000 kcal/h."
+  ],
+  "features": [
+    "Spiral sarımlı serpantin tasarım",
+    "350°C'ye kadar çalışma sıcaklığı",
+    "DIN 17155 kazan çeliği, DIN 17175/2448 spiral borular",
+    "1300°C'ye dayanıklı refrakter",
+    "100 mm kaya yünü izolasyon"
+  ],
+  "usage": [
+    "Tekstil",
+    "Kimya",
+    "Yağ Tesisleri",
+    "Ağaç Endüstrisi",
+    "Gıda",
+    "Asfalt Plentleri",
+    "İnşaat"
+  ],
+  "specs": {
+    "columns": [
+      "Model",
+      "Kapasite (kcal/h)",
+      "Yağ Hacmi (Lt)"
+    ],
+    "rows": [
+      [
+        "KYK-500",
+        "500.000",
+        "240"
+      ],
+      [
+        "KYK-1000",
+        "1.000.000",
+        "600"
+      ],
+      [
+        "KYK-1500",
+        "1.500.000",
+        "850"
+      ],
+      [
+        "KYK-2000",
+        "2.000.000",
+        "1.200"
+      ],
+      [
+        "KYK-2500",
+        "2.500.000",
+        "1.750"
+      ],
+      [
+        "KYK-3000",
+        "3.000.000",
+        "2.000"
+      ],
+      [
+        "KYK-4000",
+        "4.000.000",
+        "2.900"
+      ],
+      [
+        "KYK-5000",
+        "5.000.000",
+        "3.900"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "slug": "automass",
+  "name": "AUTOmass Boiler",
+  "series": "OOPK",
+  "category": "sicaksu",
+  "tagline": "Otomatik (helezon) yüklemeli katı yakıtlı kazan",
+  "fuel": "Katı Yakıt (Otomatik)",
+  "type": "Otomatik Yüklemeli",
+  "capacity": "100.000 – 800.000 kcal/h",
+  "pressure": "Merkezi ısıtma",
+  "efficiency": "Yüksek verim",
+  "image": "assets/products/automass.jpg",
+  "pdf": "assets/catalogs/automass.pdf",
+  "intro": [
+    "OOPK serisi otomatik yüklemeli katı yakıtlı sıcak su kazanları, katı yakıtı helezon vasıtasıyla otomatik besleme prensibiyle çalışır (EN 303-5).",
+    "Prina, odun talaşı, fındık kömürü, odun peleti ve meyve kabuğu gibi yakıtlarla çalışabilir; düşük yakıt sarfiyatı sağlar. 100.000 – 800.000 kcal/h."
+  ],
+  "features": [
+    "Otomatik helezon besleme sistemi",
+    "Çoklu katı yakıt: prina, talaş, fındık kömürü, pelet, meyve kabuğu",
+    "Düşük yakıt sarfiyatı",
+    "Elektronik kontrol paneli",
+    "Fan destekli verimli yanma"
+  ],
+  "specs": {
+    "columns": [
+      "Model",
+      "Kapasite (kcal/h)"
+    ],
+    "rows": [
+      [
+        "OOPK-100",
+        "100.000"
+      ],
+      [
+        "OOPK-200",
+        "200.000"
+      ],
+      [
+        "OOPK-300",
+        "300.000"
+      ],
+      [
+        "OOPK-400",
+        "400.000"
+      ],
+      [
+        "OOPK-500",
+        "500.000"
+      ],
+      [
+        "OOPK-600",
+        "600.000"
+      ],
+      [
+        "OOPK-700",
+        "700.000"
+      ],
+      [
+        "OOPK-800",
+        "800.000"
+      ]
+    ]
+  }
+}

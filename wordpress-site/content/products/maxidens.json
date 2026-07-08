@@ -1,0 +1,79 @@
+{
+  "slug": "maxidens",
+  "name": "MAXIdens Boiler",
+  "series": "OYPK",
+  "category": "sicaksu",
+  "tagline": "Yoğuşmalı sıcak su kazanı — %109'a varan verim",
+  "fuel": "Doğalgaz / LPG / LNG",
+  "type": "Yoğuşmalı · 3 Geçişli",
+  "capacity": "86.000 – 860.000 kcal/h (100–1.000 kW)",
+  "pressure": "Merkezi ısıtma",
+  "efficiency": "%109'a kadar",
+  "image": "assets/products/maxidens.jpg",
+  "pdf": "assets/catalogs/maxidens.pdf",
+  "intro": [
+    "OYPK serisi yoğuşmalı merkezi ısıtma kazanları doğalgaz, LPG ve LNG ile çalışır. 86.000 – 860.000 kcal/h (100–1.000 kW) kapasite aralığında üretilir.",
+    "Türk Standartları Enstitüsü laboratuvarlarında gerçekleşen ısıl verim testleri sonucunda, verim değerleri %109,3'e varan oranlarda tescillenmiştir."
+  ],
+  "features": [
+    "%109,3'e varan yüksek verim",
+    "3 geçişli tasarım, paslanmaz çelik yoğuşma bölmesi",
+    "80 mm alüminyum folyolu cam yünü izolasyon",
+    "Düşük yakıt tüketimi, düşük emisyon",
+    "2009/142/AT ve TS EN 15417 uygun · çevre dostu"
+  ],
+  "specs": {
+    "columns": [
+      "Model",
+      "Kapasite (kcal/h)",
+      "kW"
+    ],
+    "rows": [
+      [
+        "OYPK-100",
+        "86.000",
+        "100"
+      ],
+      [
+        "OYPK-150",
+        "129.000",
+        "150"
+      ],
+      [
+        "OYPK-200",
+        "172.000",
+        "200"
+      ],
+      [
+        "OYPK-300",
+        "258.000",
+        "300"
+      ],
+      [
+        "OYPK-400",
+        "344.000",
+        "400"
+      ],
+      [
+        "OYPK-500",
+        "430.000",
+        "500"
+      ],
+      [
+        "OYPK-700",
+        "602.000",
+        "700"
+      ],
+      [
+        "OYPK-800",
+        "688.000",
+        "800"
+      ],
+      [
+        "OYPK-1000",
+        "860.000",
+        "1.000"
+      ]
+    ]
+  }
+}

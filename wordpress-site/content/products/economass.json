@@ -1,0 +1,65 @@
+{
+  "slug": "economass",
+  "name": "ECONOmass Boiler",
+  "series": "OKK",
+  "category": "sicaksu",
+  "tagline": "Elle yüklemeli katı yakıtlı sıcak su kazanı",
+  "fuel": "Katı Yakıt",
+  "type": "Skoç Tip · 3 Geçişli · Elle Yüklemeli",
+  "capacity": "100.000 – 1.000.000 kcal/h",
+  "pressure": "Merkezi ısıtma",
+  "efficiency": "%91'e kadar",
+  "image": "assets/products/economass.jpg",
+  "pdf": "assets/catalogs/economass.pdf",
+  "intro": [
+    "OKK serisi elle yüklemeli katı yakıtlı sıcak su kazanları son Avrupa normlarına (EN 303-5) göre dizayn edilmiştir. Skoç tip üç geçişli yapıdadır.",
+    "Geniş servis bunkeri, uzun ömür ve %91'e varan yüksek verim sunar; kömür, odun ve prina gibi katı yakıtlarla çalışır."
+  ],
+  "features": [
+    "Elle yüklemeli, geniş yükleme bunkeri",
+    "3 geçişli skoç tip",
+    "%91'e varan verim",
+    "1300°C refrakter malzeme",
+    "Opsiyonel üfleme fanı ve kontrol paneli"
+  ],
+  "specs": {
+    "columns": [
+      "Model",
+      "Kapasite (kcal/h)"
+    ],
+    "rows": [
+      [
+        "OKK-100",
+        "100.000"
+      ],
+      [
+        "OKK-200",
+        "200.000"
+      ],
+      [
+        "OKK-300",
+        "300.000"
+      ],
+      [
+        "OKK-400",
+        "400.000"
+      ],
+      [
+        "OKK-500",
+        "500.000"
+      ],
+      [
+        "OKK-650",
+        "650.000"
+      ],
+      [
+        "OKK-800",
+        "800.000"
+      ],
+      [
+        "OKK-1000",
+        "1.000.000"
+      ]
+    ]
+  }
+}

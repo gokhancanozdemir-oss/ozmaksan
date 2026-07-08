@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local site archive
+wordpress-site.zip
+*.zip
+!wordpress-site/assets/**/*.zip

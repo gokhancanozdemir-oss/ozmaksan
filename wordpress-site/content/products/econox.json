@@ -1,0 +1,74 @@
+{
+  "slug": "econox",
+  "name": "ECONOx Boiler",
+  "series": "OPK",
+  "category": "sicaksu",
+  "tagline": "Karşı basınçlı (reverse flame) sıcak su kazanı",
+  "fuel": "Sıvı & Gaz",
+  "type": "Reverse Flame / Karşı Basınçlı",
+  "capacity": "80.000 – 2.000.000 kcal/h (93–2.325 kW)",
+  "pressure": "Merkezi ısıtma",
+  "efficiency": "%90 – 92",
+  "image": "assets/products/econox.jpg",
+  "pdf": "assets/catalogs/econox.pdf",
+  "intro": [
+    "OPK serisi sıvı ve gaz yakıtlı sıcak su kazanları 'Karşı Basınç' (Reverse Flame) teknolojisine göre üretilir. Brülör alevi ocak içinde geri döner; yanma gazlarının yarattığı karşı basınçla alev yön değiştirir.",
+    "Bu sayede ısı transferi ve verim yükselir; 80.000 – 2.000.000 kcal/h aralığında üretilir."
+  ],
+  "features": [
+    "Reverse Flame / karşı basınçlı teknoloji",
+    "Yüksek ısı transferi ve verim",
+    "1300°C'ye dayanıklı özel refrakter",
+    "Düşük yakıt tüketimi",
+    "Kompakt dizayn, kolay montaj"
+  ],
+  "specs": {
+    "columns": [
+      "Model",
+      "Kapasite (kcal/h)",
+      "kW"
+    ],
+    "rows": [
+      [
+        "OPK-80",
+        "80.000",
+        "93"
+      ],
+      [
+        "OPK-150",
+        "150.000",
+        "174"
+      ],
+      [
+        "OPK-300",
+        "300.000",
+        "349"
+      ],
+      [
+        "OPK-500",
+        "500.000",
+        "581"
+      ],
+      [
+        "OPK-700",
+        "700.000",
+        "814"
+      ],
+      [
+        "OPK-1000",
+        "1.000.000",
+        "1.163"
+      ],
+      [
+        "OPK-1500",
+        "1.500.000",
+        "1.744"
+      ],
+      [
+        "OPK-2000",
+        "2.000.000",
+        "2.325"
+      ]
+    ]
+  }
+}

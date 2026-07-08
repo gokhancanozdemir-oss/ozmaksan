@@ -1,0 +1,19 @@
+{
+  "name": "ozmaksan-web",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ÖZMAKSAN kurumsal site — Netlify + Decap CMS",
+  "scripts": {
+    "build": "node _build/build.mjs",
+    "serve": "node _build/serve.mjs 8790",
+    "dev": "node _build/serve.mjs 8790",
+    "export-content": "node _build/export-content.mjs",
+    "fetch:news": "node _build/fetch-haberler.mjs",
+    "fetch:products": "node _build/fetch-urunler.mjs",
+    "cms": "npx --yes decap-server"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

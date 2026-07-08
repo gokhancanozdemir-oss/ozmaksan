@@ -1,0 +1,74 @@
+{
+  "slug": "trinity",
+  "name": "TRInITY Boiler",
+  "series": "OUPK",
+  "category": "sicaksu",
+  "tagline": "Yeni nesil 3 geçişli sıvı & gaz yakıtlı sıcak su kazanı",
+  "fuel": "Sıvı & Gaz",
+  "type": "3 Geçişli",
+  "capacity": "90.000 – 1.200.000 kcal/h (105–1.395 kW)",
+  "pressure": "90/70 °C",
+  "efficiency": "Yüksek verim",
+  "image": "assets/products/trinity.jpg",
+  "pdf": "assets/catalogs/trinity.pdf",
+  "intro": [
+    "TRINITY serisi sıvı ve gaz yakıtlı sıcak su kazanları üç geçişli dizayna sahip, Özmaksan'ın yeni nesil kazanlarındandır.",
+    "Kazan gövdesinde optimum ısıl denge sağlanır; türbülatör kullanımıyla konveksiyonel ısı transferi artırılarak yüksek performans elde edilir."
+  ],
+  "features": [
+    "Yeni nesil 3 geçişli tasarım",
+    "Optimum ısıl denge",
+    "Türbülatörlü yüksek verim",
+    "80 mm alüminyum folyolu cam yünü izolasyon",
+    "92/42/EEC, 2009/142/AT, TS 497 ve TS EN 303-304 uygun"
+  ],
+  "specs": {
+    "columns": [
+      "Model",
+      "Kapasite (kcal/h)",
+      "kW"
+    ],
+    "rows": [
+      [
+        "OUPK-90",
+        "90.000",
+        "105"
+      ],
+      [
+        "OUPK-150",
+        "150.000",
+        "174"
+      ],
+      [
+        "OUPK-200",
+        "200.000",
+        "233"
+      ],
+      [
+        "OUPK-300",
+        "300.000",
+        "349"
+      ],
+      [
+        "OUPK-500",
+        "500.000",
+        "581"
+      ],
+      [
+        "OUPK-700",
+        "700.000",
+        "814"
+      ],
+      [
+        "OUPK-900",
+        "900.000",
+        "1.047"
+      ],
+      [
+        "OUPK-1200",
+        "1.200.000",
+        "1.395"
+      ]
+    ]
+  }
+}

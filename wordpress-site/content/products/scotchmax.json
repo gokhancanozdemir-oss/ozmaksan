@@ -1,0 +1,25 @@
+{
+  "slug": "scotchmax",
+  "name": "SCOTCHmax Boiler",
+  "series": "Skoç Tip",
+  "category": "sicaksu",
+  "tagline": "Sıvı & gaz yakıtlı skoç tip sıcak su kazanı",
+  "fuel": "Sıvı & Gaz",
+  "type": "Skoç Tip · 3 Geçişli",
+  "capacity": "Geniş kapasite aralığı",
+  "pressure": "Merkezi ısıtma",
+  "efficiency": "Yüksek verim",
+  "image": "assets/products/scotchmax.jpg",
+  "pdf": "assets/catalogs/scotchmax.pdf",
+  "intro": [
+    "SCOTCHmax serisi sıvı ve gaz yakıtlı, uluslararası skoç tip 3 geçişli sıcak su kazanıdır. Üretimin her safhası 97/23/EEC PED, EN 303-5 ve TS 497 normlarına uygundur.",
+    "Geniş su hacmi uzun ömür sağlar; düşük yakıt tüketimi ve yüksek ısı transferi sunar."
+  ],
+  "features": [
+    "Skoç tip 3 geçişli tasarım",
+    "Geniş su hacmi, uzun ömür",
+    "Düşük yakıt tüketimi",
+    "Dikişsiz kazan boruları",
+    "Galvaniz kaplı, izoleli gövde"
+  ]
+}

@@ -1,0 +1,191 @@
+# Decap CMS — Netlify Git Gateway
+# Yerel: npx decap-server (ayrı terminal) + bu config'de local_backend: true
+
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+
+locale: tr
+
+# Varsayılan medya (ürün görselleri)
+media_folder: assets/products
+public_folder: /assets/products
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: site
+    label: Site Ayarları
+    files:
+      - name: site
+        label: İletişim & Kurumsal
+        file: content/site.json
+        fields:
+          - label: Firma Bilgileri
+            name: company
+            widget: object
+            collapsed: false
+            fields:
+              - { label: Ticari Unvan, name: legalName, widget: string, required: false }
+              - { label: Marka, name: brand, widget: string }
+              - { label: Slogan, name: slogan, widget: string }
+              - { label: Slogan (EN), name: sloganEn, widget: string, required: false }
+              - { label: Kuruluş Yılı, name: founded, widget: string }
+              - { label: Yıl (hero), name: years, widget: string }
+              - { label: Adres, name: address, widget: text }
+              - label: Telefonlar
+                name: phones
+                widget: list
+                field: { label: Telefon, widget: string }
+              - { label: Faks, name: fax, widget: string }
+              - { label: Mobil, name: mobile, widget: string }
+              - { label: E-posta, name: email, widget: string }
+              - { label: Web, name: web, widget: string }
+              - label: Sosyal Medya
+                name: social
+                widget: object
+                fields:
+                  - { label: Facebook, name: facebook, widget: string }
+                  - { label: Instagram, name: instagram, widget: string }
+                  - { label: LinkedIn, name: linkedin, widget: string }
+                  - { label: YouTube, name: youtube, widget: string }
+          - label: Kurumsal Metin
+            name: about
+            widget: object
+            fields:
+              - label: Paragraflar
+                name: intro
+                widget: list
+                field: { label: Paragraf, widget: text }
+              - label: İstatistikler
+                name: stats
+                widget: list
+                required: false
+                fields:
+                  - { label: Değer, name: value, widget: string }
+                  - { label: Önek (%), name: prefix, widget: string, required: false }
+                  - { label: Sonek, name: suffix, widget: string, required: false }
+                  - { label: Etiket, name: label, widget: string }
+          - label: SSS
+            name: faq
+            widget: list
+            fields:
+              - { label: Soru, name: q, widget: string }
+              - { label: Cevap, name: a, widget: text }
+          - label: Referanslar
+            name: references
+            widget: list
+            field: { label: Firma, widget: string }
+          - label: Sertifikalar
+            name: certs
+            widget: list
+            fields:
+              - { label: Kod, name: code, widget: string }
+              - { label: Açıklama, name: note, widget: string }
+          - label: Sektörler
+            name: sectors
+            widget: list
+            required: false
+            field: { label: Sektör, widget: string }
+          - label: İhracat Ülkeleri
+            name: exportCountries
+            widget: list
+            field: { label: Ülke, widget: string }
+          - label: Yardımcı Donanımlar
+            name: auxiliaries
+            widget: list
+            required: false
+            field: { label: Kalem, widget: string }
+
+  - name: products
+    label: Ürünler
+    label_singular: Ürün
+    folder: content/products
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    summary: "{{name}} ({{category}})"
+    sortable_fields: ["name", "category", "slug"]
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: Slug (URL), name: slug, widget: string, hint: "örn. steamax → urun-steamax.html" }
+      - { label: Ürün Adı, name: name, widget: string }
+      - { label: Seri, name: series, widget: string, required: false }
+      - label: Kategori
+        name: category
+        widget: select
+        options:
+          - { label: Buhar, value: buhar }
+          - { label: Kızgın Su, value: kizginsu }
+          - { label: Sıcak Su, value: sicaksu }
+          - { label: Kızgın Yağ, value: kizginyag }
+          - { label: Enerji / Tanklar, value: enerji }
+      - { label: Kısa Açıklama, name: tagline, widget: string }
+      - { label: Yakıt, name: fuel, widget: string, required: false, default: "—" }
+      - { label: Tip, name: type, widget: string, required: false, default: "—" }
+      - { label: Kapasite, name: capacity, widget: string, required: false, default: "Projeye özel" }
+      - { label: Basınç, name: pressure, widget: string, required: false, default: "—" }
+      - { label: Verim, name: efficiency, widget: string, required: false, default: "—" }
+      - label: Görsel
+        name: image
+        widget: image
+        media_folder: /assets/products
+        public_folder: /assets/products
+        choose_url: false
+      - label: Katalog PDF
+        name: pdf
+        widget: file
+        required: false
+        media_folder: /assets/catalogs
+        public_folder: /assets/catalogs
+        choose_url: false
+      - label: Giriş Paragrafları
+        name: intro
+        widget: list
+        field: { label: Paragraf, widget: text }
+      - label: Özellikler
+        name: features
+        widget: list
+        required: false
+        field: { label: Özellik, widget: string }
+      - label: Teknik Tablo (JSON)
+        name: specs
+        widget: code
+        required: false
+        default_language: json
+        hint: '{"columns":["Model","Kapasite"],"rows":[["A","100"]]}'
+
+  - name: news
+    label: Haberler
+    label_singular: Haber
+    folder: content/news
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    extension: json
+    format: json
+    summary: "{{title}}"
+    sortable_fields: ["date", "title", "slug"]
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: Slug (URL), name: slug, widget: string, hint: "örn. gaziantep-arena → haber-gaziantep-arena.html" }
+      - { label: Başlık, name: title, widget: string }
+      - { label: Tarih, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false, format: YYYY-MM-DD }
+      - { label: Tarih Etiketi, name: dateLabel, widget: string, required: false, hint: "örn. 27 Tem 2016" }
+      - { label: Özet, name: excerpt, widget: text }
+      - { label: İçerik, name: body, widget: text }
+      - label: Görsel
+        name: image
+        widget: image
+        required: false
+        media_folder: /assets/news
+        public_folder: /assets/news
+        choose_url: false

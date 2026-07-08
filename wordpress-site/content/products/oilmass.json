@@ -1,0 +1,64 @@
+{
+  "slug": "oilmass",
+  "name": "OILmass Boiler",
+  "series": "KKYK",
+  "category": "kizginyag",
+  "tagline": "Katı yakıtlı (stokerli) kızgın yağ kazanı",
+  "fuel": "Katı Yakıt (Stokerli)",
+  "type": "Dikey Serpantin · Alttan Ocaklı",
+  "capacity": "500.000 – 3.000.000 kcal/h",
+  "pressure": "Proses ısıtma",
+  "efficiency": "Yüksek verim",
+  "image": "assets/products/oilmass.jpg",
+  "pdf": "assets/catalogs/oilmass.pdf",
+  "intro": [
+    "KKYK serisi katı yakıtlı kızgın yağ kazanları, alttan ocaklı dikey serpantin sarımlı tasarımdır. Katı yakıt, helezon vasıtasıyla otomatik (stokerli) prensiple yüklenir.",
+    "Prina, odun ve badem kabuğu gibi çeşitli katı yakıtlarla çalışır. 500.000 – 3.000.000 kcal/h."
+  ],
+  "features": [
+    "Alttan ocaklı dikey serpantin tasarım",
+    "Stokerli otomatik yükleme",
+    "Çoklu katı yakıt kullanımı",
+    "Kaya yünü izolasyon",
+    "Opsiyonel komple paket ünite"
+  ],
+  "specs": {
+    "columns": [
+      "Model",
+      "Kapasite (kcal/h)",
+      "Yağ Hacmi (Lt)"
+    ],
+    "rows": [
+      [
+        "KKYK500",
+        "500.000",
+        "410"
+      ],
+      [
+        "KKYK1000",
+        "1.000.000",
+        "1.041"
+      ],
+      [
+        "KKYK1500",
+        "1.500.000",
+        "1.507"
+      ],
+      [
+        "KKYK2000",
+        "2.000.000",
+        "2.980"
+      ],
+      [
+        "KKYK2500",
+        "2.500.000",
+        "3.703"
+      ],
+      [
+        "KKYK3000",
+        "3.000.000",
+        "4.090"
+      ]
+    ]
+  }
+}
