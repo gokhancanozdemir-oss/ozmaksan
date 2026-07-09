@@ -16,11 +16,10 @@ function hashKey(text) {
 }
 
 function loadUi(locale) {
-  const file = path.join(__dirname, "i18n", `ui.${locale}.json`);
-  if (locale === "tr" && fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, "utf8"));
+  const manual = path.join(__dirname, "i18n", `ui.${locale}.json`);
+  if (fs.existsSync(manual)) return JSON.parse(fs.readFileSync(manual, "utf8"));
   const translated = path.join(I18N_DIR, `ui.${locale}.json`);
   if (fs.existsSync(translated)) return JSON.parse(fs.readFileSync(translated, "utf8"));
-  if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, "utf8"));
   return JSON.parse(fs.readFileSync(path.join(__dirname, "i18n", "ui.tr.json"), "utf8"));
 }
 
