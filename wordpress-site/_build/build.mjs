@@ -90,7 +90,7 @@ function header(mode, active, pageSlug = active) {
   return `<header class="site-header" id="top">
     <div class="header-inner">
       <a href="${link(mode, "index")}" class="logo">
-        <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)} — ${esc(company.slogan)}" width="240" height="143" />
+        <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)} — ${esc(company.slogan)}" width="240" height="80" />
       </a>
       <nav class="main-nav" aria-label="${esc(t("aria.mainNav"))}">
         ${links}
@@ -122,7 +122,7 @@ function footer(mode) {
   return `<footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)}" width="170" height="68" style="filter:brightness(0) invert(1)" />
+        <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)}" width="200" height="66" />
         <p>${t("footer.blurb", { founded: company.founded })}</p>
         ${social}
       </div>
