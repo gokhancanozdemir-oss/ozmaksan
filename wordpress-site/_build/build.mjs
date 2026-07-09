@@ -668,8 +668,8 @@ function staticDoc({ title, description, active, main, pageSlug = active }) {
         if (l !== "tr") {
           document.documentElement.lang = l;
           document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
-          document.documentElement.classList.add("oz-i18n-pending");
         }
+        document.documentElement.classList.remove("oz-i18n-pending");
       } catch (e) {}
     })();
   </script>

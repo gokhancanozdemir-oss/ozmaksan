@@ -1,6 +1,6 @@
 /**
  * ÖZMAKSAN — Anlık istemci çevirisi + dil tercihi (localStorage)
- * Türkçe HTML kaynak; EN / RU / AR önbellek + canlı API yedek.
+ * Sayfa her zaman görünür; önbellek anında, eksikler arka planda çevrilir.
  */
 (function () {
   "use strict";
@@ -15,10 +15,13 @@
   var maps = {};
   var liveCache = {};
   var originals = new WeakMap();
+  var queue = Promise.resolve();
+  var liveDelay = 200;
 
   function getLang() {
     try {
-      return localStorage.getItem(STORAGE_KEY) || "tr";
+      var l = localStorage.getItem(STORAGE_KEY) || "tr";
+      return LOCALES.indexOf(l) !== -1 ? l : "tr";
     } catch (e) {
       return "tr";
     }
@@ -96,19 +99,14 @@
       });
   }
 
-  var queue = Promise.resolve();
-  var liveDelay = 280;
-
   function enqueue(task) {
-    queue = queue
-      .then(function () {
-        return new Promise(function (resolve) {
-          setTimeout(resolve, liveDelay);
-        });
-      })
-      .then(task)
-      .catch(function () {});
-    return queue;
+    var run = queue.then(function () {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, liveDelay);
+      });
+    }).then(task);
+    queue = run.catch(function () {});
+    return run;
   }
 
   function liveTranslate(text, lang) {
@@ -138,26 +136,20 @@
     });
   }
 
-  function translateOne(text, lang, map) {
-    var hit = lookup(map, text);
-    if (hit) return Promise.resolve(hit);
-    return liveTranslate(text, lang);
-  }
-
   function rememberOriginal(node, kind, value) {
     if (!originals.has(node)) originals.set(node, {});
     var bag = originals.get(node);
     if (bag[kind] === undefined) bag[kind] = value;
   }
 
-  function getOriginal(node, kind, fallback) {
+  function getOriginal(node, kind) {
     var bag = originals.get(node);
-    return bag && bag[kind] !== undefined ? bag[kind] : fallback;
+    return bag && bag[kind] !== undefined ? bag[kind] : null;
   }
 
   function isSkippedEl(el) {
     if (!el || el.nodeType !== 1) return false;
-    if (el.closest("[data-no-translate], .lang-switcher, .ozmaksan-logo")) return true;
+    if (el.closest("[data-no-translate], .lang-switcher, .logo")) return true;
     if (el.hasAttribute("data-no-translate")) return true;
     return false;
   }
@@ -197,17 +189,57 @@
     return { textNodes: textNodes, attrTargets: attrTargets };
   }
 
-  function applyToTurkish(root) {
-    var targets = collectTargets(root);
+  function setAttrTarget(t, value) {
+    if (t.attr === "__title__") t.el.textContent = value;
+    else t.el.setAttribute(t.attr, value);
+  }
+
+  function applyCached(lang, map) {
+    var pending = [];
+    var targets = collectTargets(document.body);
+
     targets.textNodes.forEach(function (node) {
-      var orig = getOriginal(node, "text", null);
+      var raw = node.nodeValue;
+      if (shouldSkipText(raw)) return;
+      rememberOriginal(node, "text", raw);
+      var hit = lookup(map, raw);
+      if (hit) node.nodeValue = hit;
+      else pending.push({ kind: "text", node: node, raw: raw });
+    });
+
+    targets.attrTargets.forEach(function (t) {
+      rememberOriginal(t.el, t.attr, t.text);
+      var hit = lookup(map, t.text);
+      if (hit) setAttrTarget(t, hit);
+      else pending.push({ kind: "attr", target: t, raw: t.text });
+    });
+
+    pending.forEach(function (item) {
+      liveTranslate(item.raw, lang).then(function (out) {
+        if (!out || out === item.raw) return;
+        if (item.kind === "text") item.node.nodeValue = out;
+        else setAttrTarget(item.target, out);
+      });
+    });
+  }
+
+  function applyToTurkish() {
+    var targets = collectTargets(document.body);
+    targets.textNodes.forEach(function (node) {
+      var orig = getOriginal(node, "text");
       if (orig !== null) node.nodeValue = orig;
     });
     targets.attrTargets.forEach(function (t) {
-      var orig = getOriginal(t.el, t.attr, null);
-      if (orig === null) return;
-      if (t.attr === "__title__") t.el.textContent = orig;
-      else t.el.setAttribute(t.attr, orig);
+      var orig = getOriginal(t.el, t.attr);
+      if (orig !== null) setAttrTarget(t, orig);
+    });
+  }
+
+  function updateSwitcher(lang) {
+    document.querySelectorAll("[data-oz-lang]").forEach(function (btn) {
+      var active = btn.getAttribute("data-oz-lang") === lang;
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-current", active ? "true" : "false");
     });
   }
 
@@ -215,51 +247,15 @@
     var root = document.documentElement;
     root.lang = lang === "tr" ? "tr" : lang;
     root.dir = RTL[lang] ? "rtl" : "ltr";
-
-    document.querySelectorAll("[data-oz-lang]").forEach(function (btn) {
-      var active = btn.getAttribute("data-oz-lang") === lang;
-      btn.classList.toggle("active", active);
-      btn.setAttribute("aria-current", active ? "true" : "false");
-    });
+    updateSwitcher(lang);
 
     if (lang === "tr") {
-      applyToTurkish(document.body);
-      root.classList.remove("oz-i18n-pending");
+      applyToTurkish();
       return Promise.resolve();
     }
 
-    root.classList.add("oz-i18n-pending");
-
     return loadMap(lang).then(function (map) {
-      var targets = collectTargets(document.body);
-      var jobs = [];
-
-      targets.textNodes.forEach(function (node) {
-        var raw = node.nodeValue;
-        if (shouldSkipText(raw)) return;
-        rememberOriginal(node, "text", raw);
-        jobs.push(
-          translateOne(raw, lang, map).then(function (out) {
-            if (out) node.nodeValue = out;
-          })
-        );
-      });
-
-      targets.attrTargets.forEach(function (t) {
-        rememberOriginal(t.el, t.attr, t.text);
-        jobs.push(
-          translateOne(t.text, lang, map).then(function (out) {
-            if (t.attr === "__title__") t.el.textContent = out;
-            else t.el.setAttribute(t.attr, out);
-          })
-        );
-      });
-
-      return Promise.all(jobs);
-    }).then(function () {
-      root.classList.remove("oz-i18n-pending");
-    }).catch(function () {
-      root.classList.remove("oz-i18n-pending");
+      applyCached(lang, map);
     });
   }
 
@@ -288,11 +284,7 @@
     var lang = getLang();
     document.documentElement.lang = lang === "tr" ? "tr" : lang;
     document.documentElement.dir = RTL[lang] ? "rtl" : "ltr";
-    document.querySelectorAll("[data-oz-lang]").forEach(function (btn) {
-      var active = btn.getAttribute("data-oz-lang") === lang;
-      btn.classList.toggle("active", active);
-      btn.setAttribute("aria-current", active ? "true" : "false");
-    });
+    updateSwitcher(lang);
     if (lang !== "tr") applyLanguage(lang);
   }
 

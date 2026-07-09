@@ -321,7 +321,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 html.oz-i18n-pending body {
-  visibility: hidden;
+  /* Sayfa asla gizlenmez — çeviri arka planda uygulanır */
 }
 
 .site-header:not(.is-scrolled) .lang-switcher {
