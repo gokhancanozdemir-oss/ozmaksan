@@ -1,27 +1,28 @@
 {
   "company": {
-    "legalName": "ÖZMAKSAN ISI SANAYİ VE TİCARET A.Ş.",
-    "brand": "ÖZMAKSAN",
-    "slogan": "YÜKSEK ISI TEKNOLOJİSİ",
-    "sloganEn": "HIGH HEATING TECHNOLOGY",
     "founded": "1976",
-    "years": "49",
-    "address": "4. Organize Sanayi Bölgesi, 83404 Nolu Cadde No:10, Başpınar / Gaziantep / Türkiye",
+    "mobile": "+90 533 372 83 35",
+    "legalName": "ÖZMAKSAN ISI SANAYİ VE TİCARET A.Ş.",
     "phones": [
       "+90 342 220 40 56",
       "+90 342 220 39 56",
-      "+90 342 357 01 62"
+      "+90 342 357 01 62",
+      "+90 533 372 83 35"
     ],
-    "fax": "+90 342 232 61 13",
-    "mobile": "+90 533 372 83 35",
-    "email": "ozmaksan@ozmaksan.com.tr",
-    "web": "ozmaksan.com.tr",
+    "sloganEn": "HIGH HEATING TECHNOLOGY",
+    "brand": "ÖZMAKSAN",
     "social": {
       "facebook": "https://www.facebook.com/OZMAKSANISI/",
       "instagram": "https://www.instagram.com/ozmaksan_isi/",
       "linkedin": "https://www.linkedin.com/in/ozmaksan-isi-san-tic-as-570399161",
       "youtube": "https://www.youtube.com/@ozmaksan"
-    }
+    },
+    "web": "ozmaksan.com.tr",
+    "address": "4. Organize Sanayi Bölgesi, 83404 Nolu Cadde No:10, Başpınar / Gaziantep / Türkiye",
+    "years": "49",
+    "email": "ozmaksan@ozmaksan.com.tr",
+    "fax": "+90 342 232 61 13",
+    "slogan": "YÜKSEK ISI TEKNOLOJİSİ"
   },
   "about": {
     "intro": [
@@ -36,7 +37,7 @@
         "label": "Yıllık Tecrübe"
       },
       {
-        "value": "14000",
+        "value": "17000",
         "suffix": "",
         "label": "m² Üretim Alanı"
       },
@@ -46,7 +47,7 @@
         "label": "Ton/Yıl Kapasite"
       },
       {
-        "value": "40",
+        "value": "60",
         "prefix": "%",
         "suffix": "",
         "label": "İhracat Oranı"
