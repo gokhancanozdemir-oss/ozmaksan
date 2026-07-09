@@ -90,7 +90,7 @@ function header(mode, active, pageSlug = active) {
   return `<header class="site-header" id="top">
     <div class="header-inner">
       <a href="${link(mode, "index")}" class="logo">
-        <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)} — ${esc(company.slogan)}" width="240" height="80" />
+        <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)} — ${esc(company.slogan)}" width="280" height="93" />
       </a>
       <nav class="main-nav" aria-label="${esc(t("aria.mainNav"))}">
         ${links}
