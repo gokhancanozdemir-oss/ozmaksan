@@ -9,6 +9,7 @@
     "build:all": "node _build/translate.mjs && node _build/build-all.mjs",
     "build:tr": "node _build/build.mjs",
     "translate": "node _build/translate.mjs",
+    "process:media": "node _build/process-wetransfer-media.mjs",
     "serve": "node _build/serve.mjs 8790",
     "dev": "node _build/serve.mjs 8790",
     "export-content": "node _build/export-content.mjs",
@@ -18,5 +19,9 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.3.0",
+    "sharp": "^0.35.3"
   }
 }

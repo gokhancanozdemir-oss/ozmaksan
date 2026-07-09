@@ -241,8 +241,8 @@ function homeMain(mode) {
   return `    <section class="hero" aria-label="Ana tanıtım">
       <div class="hero-media">
         <video class="hero-video" autoplay muted loop playsinline
-          poster="https://images.pexels.com/photos/276553/pexels-photo-276553.jpeg?auto=compress&cs=tinysrgb&w=1920">
-          <source src="https://videos.pexels.com/video-files/6046354/6046354-hd_1920_1080_25fps.mp4" type="video/mp4" />
+          poster="${asset(mode, "assets/media/hero-poster.jpg")}">
+          <source src="${asset(mode, "assets/media/hero-web-giris.mp4")}" type="video/mp4" />
         </video>
         <div class="hero-overlay"></div>
       </div>
@@ -262,7 +262,7 @@ function homeMain(mode) {
     <section class="section about">
       <div class="container about-grid">
         <div class="about-visual reveal-left">
-          <div class="about-img-stack"><img src="${asset(mode, "assets/products/factory-plant.jpg")}" alt="${esc(company.brand)} Gaziantep üretim tesisi" loading="lazy" /></div>
+          <div class="about-img-stack"><img src="${asset(mode, "assets/media/home-factory.jpg")}" alt="${esc(company.brand)} Gaziantep üretim tesisi ve kontrol panelleri" loading="lazy" /></div>
           <div class="about-float-card"><strong>${company.years}+</strong><span>${esc(t("home.experience"))}</span></div>
         </div>
         <div class="about-text reveal-right">
@@ -386,7 +386,7 @@ function urunlerMain(mode) {
     </div>`;
   }).join("\n      ");
 
-  return `    ${pageHero(t("page.products"), t("page.productsTitle"), t("page.productsDesc"))}
+  return `    ${pageHero(mode, t("page.products"), t("page.productsTitle"), t("page.productsDesc"), "marketing-boiler.png")}
     <section class="section">
       <div class="container">
       ${byCat}
@@ -468,11 +468,11 @@ function kurumsalMain(mode) {
     ["04", t("process.4.title"), t("process.4.desc")],
   ].map(([n, title, desc]) => `<div class="process-step"><div class="process-num">${n}</div><h3>${esc(title)}</h3><p>${esc(desc)}</p></div>`).join("\n        ");
 
-  return `    ${pageHero(t("page.corporate"), t("page.corporateTitle"), t("page.corporateDesc"))}
+  return `    ${pageHero(mode, t("page.corporate"), t("page.corporateTitle"), t("page.corporateDesc"), "corporate-wide.jpg")}
     <section class="section about">
       <div class="container about-grid">
         <div class="about-visual reveal-left">
-          <div class="about-img-stack"><img src="${asset(mode, "assets/products/factory-boilers.jpg")}" alt="${esc(company.brand)} üretim hattı" loading="lazy" /></div>
+          <div class="about-img-stack"><img src="${asset(mode, "assets/media/factory-production.jpg")}" alt="${esc(company.brand)} üretim hattı" loading="lazy" /></div>
           <div class="about-float-card"><strong>14.000</strong><span>m² Üretim Alanı</span></div>
         </div>
         <div class="about-text reveal-right">
@@ -505,7 +505,7 @@ function kurumsalMain(mode) {
 /* ---------- page: haberler ---------- */
 function haberlerMain(mode) {
   const cards = news.map((n) => newsCard(mode, n)).join("\n        ");
-  return `    ${pageHero(t("page.news"), t("page.newsTitle"), t("page.newsDesc"))}
+  return `    ${pageHero(mode, t("page.news"), t("page.newsTitle"), t("page.newsDesc"), "factory-aerial.jpg")}
     <section class="section">
       <div class="container">
         <div class="news-grid news-grid-all stagger-children reveal">
@@ -552,11 +552,22 @@ function newsDetailMain(mode, n) {
 
 /* ---------- page: referanslar ---------- */
 function referanslarMain(mode) {
+  const refGallery = [
+    ["ref-abdi-ibrahim.jpg", "Abdi İbrahim — endüstriyel kazan tesisi"],
+    ["ref-saka-holding.jpg", "Saka Holding — sıcak su kazanı projesi"],
+    ["ref-oba-makarna.jpg", "Oba Makarna — kızgın su kazanı kurulumu"],
+    ["site-logistics.jpg", "ÖZMAKSAN — sevkiyat ve lojistik operasyonu"],
+    ["factory-welding.jpg", "Üretim hattı — kaynak ve imalat"],
+    ["factory-assembly.jpg", "Tesis içi montaj ve kalite kontrol"],
+  ].map(([file, alt]) => `<figure class="ref-photo reveal"><img src="${asset(mode, `assets/media/${file}`)}" alt="${esc(alt)}" loading="lazy" /><figcaption>${esc(alt)}</figcaption></figure>`).join("\n        ");
   const grid = references.map((r) => `<div class="ref-cell reveal">${esc(r)}</div>`).join("\n        ");
-  return `    ${pageHero(t("nav.references"), t("page.referencesTitle"), t("page.referencesDesc"))}
+  return `    ${pageHero(mode, t("nav.references"), t("page.referencesTitle"), t("page.referencesDesc"), "corporate-hero.jpg")}
     <section class="section">
       <div class="container">
-        <div class="ref-grid stagger-children reveal">
+        <div class="ref-photo-grid stagger-children reveal">
+        ${refGallery}
+        </div>
+        <div class="ref-grid stagger-children reveal" style="margin-top:3rem">
         ${grid}
         </div>
       </div>
@@ -567,9 +578,10 @@ function referanslarMain(mode) {
 /* ---------- page: sertifikalar ---------- */
 function sertifikalarMain(mode) {
   const grid = certs.map((c) => `<div class="cert-card lg reveal"><strong>${esc(c.code)}</strong><span>${esc(c.note)}</span></div>`).join("\n        ");
-  return `    ${pageHero(t("nav.certs"), t("page.certsTitle"), t("page.certsDesc"))}
+  return `    ${pageHero(mode, t("nav.certs"), t("page.certsTitle"), t("page.certsDesc"), "factory-hall.jpg")}
     <section class="section">
       <div class="container">
+        <figure class="certs-banner reveal"><img src="${asset(mode, "assets/media/certs-banner.jpg")}" alt="${esc(company.brand)} sertifika ve onay logoları" loading="lazy" /></figure>
         <p class="lead reveal">${esc(t("page.certsLead"))}</p>
         <div class="certs-grid lg stagger-children reveal">
         ${grid}
@@ -583,7 +595,7 @@ function sertifikalarMain(mode) {
 function iletisimMain(mode) {
   const phones = company.phones.map((p) => `<a href="tel:${p.replace(/\s/g, "")}">${esc(p)}</a>`).join("<br />");
   const s = company.social;
-  return `    ${pageHero(t("nav.contact"), t("page.contactTitle"), t("page.contactDesc"))}
+  return `    ${pageHero(mode, t("nav.contact"), t("page.contactTitle"), t("page.contactDesc"))}
     <section class="section contact">
       <div class="container contact-grid">
         <div class="contact-info reveal-left">
@@ -633,8 +645,11 @@ function iletisimMain(mode) {
 }
 
 /* ---------- shared page pieces ---------- */
-function pageHero(label, titleHtml, desc) {
-  return `<section class="page-hero">
+function pageHero(mode, label, titleHtml, desc, bgFile) {
+  const bg = bgFile
+    ? ` style="background-image:linear-gradient(105deg,rgba(255,255,255,0.94),rgba(232,240,248,0.88)),url('${asset(mode, `assets/media/${bgFile}`)}')"`
+    : "";
+  return `<section class="page-hero"${bg}>
       <div class="container">
         <span class="section-label">${esc(label)}</span>
         <h1>${titleHtml}</h1>

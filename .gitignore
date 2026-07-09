@@ -45,3 +45,4 @@ next-env.d.ts
 wordpress-site.zip
 *.zip
 !wordpress-site/assets/**/*.zip
+_wetransfer_extract/
