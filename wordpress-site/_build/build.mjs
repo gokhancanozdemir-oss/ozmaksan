@@ -357,10 +357,10 @@ function homeMain(mode) {
     <section class="section">
       <div class="container faq-grid">
         <div class="faq-intro reveal-left">
-          <span class="section-label">S.S.S.</span>
-          <h2 class="section-title">Sık Sorulan <em>Sorular</em></h2>
-          <p class="section-desc">Kazanlar, basınçlı kaplar ve montaj hizmetleri hakkında.</p>
-          <a href="${link(mode, "iletisim")}" class="btn btn-blue">Bize Ulaşın ${ICON.arrow}</a>
+          <span class="section-label">${esc(t("home.faqAbbr"))}</span>
+          <h2 class="section-title">${t("home.faqTitle")}</h2>
+          <p class="section-desc">${esc(t("home.faqDesc"))}</p>
+          <a href="${link(mode, "iletisim")}" class="btn btn-blue">${esc(t("home.contactUs"))} ${ICON.arrow}</a>
         </div>
         <div class="faq-list reveal-right">
         ${faqItems}
@@ -570,7 +570,7 @@ function sertifikalarMain(mode) {
   return `    ${pageHero(t("nav.certs"), t("page.certsTitle"), t("page.certsDesc"))}
     <section class="section">
       <div class="container">
-        <p class="lead reveal">Kuruluşumuz; üretim kalitesini etkileyen her koşulu sürekli iyileştirmeyi amaç edinir. Kalite belgelerimizi ve sertifikalarımızı aşağıda bulabilirsiniz.</p>
+        <p class="lead reveal">${esc(t("page.certsLead"))}</p>
         <div class="certs-grid lg stagger-children reveal">
         ${grid}
         </div>
@@ -587,12 +587,13 @@ function iletisimMain(mode) {
     <section class="section contact">
       <div class="container contact-grid">
         <div class="contact-info reveal-left">
+          <h3 class="contact-info-title">${esc(t("contact.info"))}</h3>
           <ul class="contact-list">
-            <li><div class="contact-icon">${ICON.pin}</div><div><strong>Fabrika</strong><span>${esc(company.address)}</span></div></li>
-            <li><div class="contact-icon">${ICON.phone}</div><div><strong>Telefon</strong>${phones}</div></li>
-            <li><div class="contact-icon">${ICON.fax}</div><div><strong>Faks</strong><span>${esc(company.fax)}</span></div></li>
-            <li><div class="contact-icon">${ICON.mail}</div><div><strong>E-posta</strong><a href="mailto:${company.email}">${esc(company.email)}</a></div></li>
-            <li><div class="contact-icon">${ICON.web}</div><div><strong>Web</strong><a href="https://${company.web}" target="_blank" rel="noopener">${esc(company.web)}</a></div></li>
+            <li><div class="contact-icon">${ICON.pin}</div><div><strong>${esc(t("contact.factory"))}</strong><span>${esc(company.address)}</span></div></li>
+            <li><div class="contact-icon">${ICON.phone}</div><div><strong>${esc(t("contact.phone"))}</strong>${phones}</div></li>
+            <li><div class="contact-icon">${ICON.fax}</div><div><strong>${esc(t("contact.fax"))}</strong><span>${esc(company.fax)}</span></div></li>
+            <li><div class="contact-icon">${ICON.mail}</div><div><strong>${esc(t("contact.email"))}</strong><a href="mailto:${company.email}">${esc(company.email)}</a></div></li>
+            <li><div class="contact-icon">${ICON.web}</div><div><strong>${esc(t("contact.web"))}</strong><a href="https://${company.web}" target="_blank" rel="noopener">${esc(company.web)}</a></div></li>
           </ul>
           <div class="footer-social dark">
             <a href="${s.facebook}" target="_blank" rel="noopener" aria-label="Facebook">${ICON.facebook}</a>
@@ -601,23 +602,32 @@ function iletisimMain(mode) {
             <a href="${s.youtube}" target="_blank" rel="noopener" aria-label="YouTube">${ICON.youtube}</a>
           </div>
         </div>
-        <form class="contact-form reveal-right" action="#" method="post">
+        <form class="contact-form reveal-right" name="teklif" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="${link(mode, "iletisim")}">
+          <input type="hidden" name="form-name" value="teklif" />
+          <input type="hidden" name="locale" value="${localeCode}" />
+          <p class="contact-form-honeypot" hidden aria-hidden="true">
+            <label>Bot: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+          </p>
+          <span hidden data-contact-msg="success">${esc(t("contact.success"))}</span>
+          <span hidden data-contact-msg="error">${esc(t("contact.error"))}</span>
+          <span hidden data-contact-msg="sending">${esc(t("contact.sending"))}</span>
+          <div class="contact-form-status" hidden role="status" aria-live="polite"></div>
           <h3>${esc(t("contact.form"))}</h3>
           <div class="form-row">
-            <label>Ad Soyad<input type="text" name="name" required placeholder="Adınız Soyadınız" /></label>
-            <label>Firma<input type="text" name="company" placeholder="Firma adı" /></label>
+            <label>${esc(t("contact.name"))}<input type="text" name="name" required placeholder="${esc(t("contact.namePh"))}" autocomplete="name" /></label>
+            <label>${esc(t("contact.company"))}<input type="text" name="company" placeholder="${esc(t("contact.companyPh"))}" autocomplete="organization" /></label>
           </div>
           <div class="form-row">
-            <label>Telefon<input type="tel" name="phone" required placeholder="05xx xxx xx xx" /></label>
-            <label>E-posta<input type="email" name="email" required placeholder="ornek@firma.com" /></label>
+            <label>${esc(t("contact.phone"))}<input type="tel" name="phone" required placeholder="${esc(t("contact.phonePh"))}" autocomplete="tel" /></label>
+            <label>${esc(t("contact.email"))}<input type="email" name="email" required placeholder="${esc(t("contact.emailPh"))}" autocomplete="email" /></label>
           </div>
-          <label>Ürün / Konu<input type="text" name="subject" placeholder="Örn. Buhar kazanı, kapasite, yakıt türü" /></label>
-          <label>Mesajınız<textarea name="message" rows="4" placeholder="Proje detayı, kapasite, yakıt türü…"></textarea></label>
-          <button type="submit" class="btn btn-primary btn-lg btn-full">Teklif Talebi Gönder ${ICON.arrow}</button>
+          <label>${esc(t("contact.subject"))}<input type="text" name="subject" placeholder="${esc(t("contact.subjectPh"))}" /></label>
+          <label>${esc(t("contact.message"))}<textarea name="message" rows="4" placeholder="${esc(t("contact.messagePh"))}"></textarea></label>
+          <button type="submit" class="btn btn-primary btn-lg btn-full">${esc(t("cta.sendQuote"))} ${ICON.arrow}</button>
         </form>
       </div>
       <div class="container map-wrap reveal">
-        <iframe title="ÖZMAKSAN konum" src="https://www.google.com/maps?q=${encodeURIComponent("ÖZMAKSAN 4. Organize Sanayi Bölgesi Başpınar Gaziantep")}&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <iframe title="${esc(t("contact.mapTitle"))}" src="https://www.google.com/maps?q=${encodeURIComponent("ÖZMAKSAN 4. Organize Sanayi Bölgesi Başpınar Gaziantep")}&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </section>`;
 }
@@ -647,6 +657,14 @@ function staticDoc({ title, description, active, main, pageSlug = active }) {
   const animHref = relRoot ? `${relRoot}/ozmaksan-animations.js` : "ozmaksan-animations.js";
   const mapHref = relRoot ? `${relRoot}/ozmaksan-export-map.js` : "ozmaksan-export-map.js";
   const langScript = relRoot ? `${relRoot}/ozmaksan-lang.js` : "ozmaksan-lang.js";
+  const contactScript =
+    pageSlug === "iletisim"
+      ? `<script src="${relRoot ? `${relRoot}/ozmaksan-contact-form.js` : "ozmaksan-contact-form.js"}"></script>`
+      : "";
+  const netlifyProbe =
+    pageSlug === "index" && localeCode === "tr"
+      ? `<form name="teklif" data-netlify="true" data-netlify-honeypot="bot-field" hidden><input type="hidden" name="form-name" value="teklif" /><input name="bot-field" /></form>`
+      : "";
   const hreflangs = LOCALES.map((loc) => {
     const href = langHref(loc.code, pageSlug);
     return `<link rel="alternate" hreflang="${loc.htmlLang}" href="/${href.replace(/^\.\.\//, "").replace(/^index\.html$/, "")}" />`;
@@ -674,9 +692,11 @@ function staticDoc({ title, description, active, main, pageSlug = active }) {
   <script src="${langScript}"></script>
 </head>
 <body>
+  ${netlifyProbe}
   ${bodyInner("static", active, main, pageSlug)}
   <script src="${animHref}"></script>
   <script src="${mapHref}"></script>
+  ${contactScript}
 </body>
 </html>`;
 }
