@@ -320,10 +320,6 @@ a { color: inherit; text-decoration: none; }
   background: var(--oz-blue-light);
 }
 
-html.oz-i18n-pending body {
-  /* Sayfa asla gizlenmez — çeviri arka planda uygulanır */
-}
-
 .site-header:not(.is-scrolled) .lang-switcher {
   background: rgba(255, 255, 255, 0.88);
 }
