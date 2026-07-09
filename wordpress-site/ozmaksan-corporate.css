@@ -260,6 +260,10 @@ a { color: inherit; text-decoration: none; }
   width: auto;
   max-width: none;
   object-fit: contain;
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .main-nav {
