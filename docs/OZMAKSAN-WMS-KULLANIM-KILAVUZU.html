@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>ÖZMAKSAN WMS — Kullanım Kılavuzu (Vercel)</title>
+  <style>
+    @page { margin: 2cm; }
+    body {
+      font-family: "Segoe UI", Calibri, Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 21cm;
+      margin: 0 auto;
+      padding: 1.5cm;
+    }
+    h1 { font-size: 20pt; color: #1a5490; border-bottom: 3px solid #d71920; padding-bottom: 8px; margin-top: 1.5em; }
+    h2 { font-size: 14pt; color: #1a5490; margin-top: 1.6em; page-break-after: avoid; }
+    h3 { font-size: 11.5pt; color: #0f3a66; margin-top: 1.1em; }
+    .cover { text-align: center; padding: 2.5cm 0; page-break-after: always; }
+    .cover h1 { border: none; font-size: 26pt; color: #1a5490; }
+    .cover .red { color: #d71920; }
+    table { width: 100%; border-collapse: collapse; margin: 0.8em 0; font-size: 10pt; }
+    th, td { border: 1px solid #bbb; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #e8f0f8; color: #1a5490; }
+    .warn { background: #fff8e6; border-left: 4px solid #e6a800; padding: 12px 16px; margin: 1em 0; }
+    .danger { background: #fef2f2; border-left: 4px solid #d71920; padding: 12px 16px; margin: 1em 0; }
+    .ok { background: #ecfdf5; border-left: 4px solid #059669; padding: 12px 16px; margin: 1em 0; }
+    ol.steps { list-style: none; padding-left: 0; counter-reset: step; }
+    ol.steps > li { counter-increment: step; margin: 0.7em 0; padding-left: 2.4em; position: relative; }
+    ol.steps > li::before {
+      content: counter(step); position: absolute; left: 0; top: 0;
+      background: #1a5490; color: #fff; width: 1.55em; height: 1.55em; border-radius: 50%;
+      text-align: center; line-height: 1.55em; font-weight: bold; font-size: 9.5pt;
+    }
+    code { font-family: Consolas, monospace; font-size: 9.5pt; background: #f4f4f4; padding: 1px 5px; }
+    .status { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9pt; font-weight: bold; }
+    .st-white { background: #f3f4f6; color: #374151; }
+    .st-green { background: #d1fae5; color: #065f46; }
+    .st-yellow { background: #fef3c7; color: #92400e; }
+    .page-break { page-break-before: always; }
+    .qr-sample { text-align: center; margin: 1em 0; }
+    .qr-sample img { width: 180px; border: 1px solid #ddd; }
+    @media print { body { padding: 0; } a { color: inherit; text-decoration: none; } }
+  </style>
+</head>
+<body>
+
+<div class="cover">
+  <p style="font-size:11pt;color:#666;letter-spacing:.15em">ÖZMAKSAN ISI SANAYİ TİCARET A.Ş.</p>
+  <h1>Akıllı Depo &amp; Üretim Takip<br /><span class="red">WMS / MES</span></h1>
+  <p style="font-size:14pt;margin-top:1em">Personel Kullanım Kılavuzu</p>
+  <p style="font-size:13pt;color:#1a5490;font-weight:bold;margin-top:2em">https://ozmaksan.vercel.app</p>
+  <p style="margin-top:2.5em;font-size:10pt;color:#666">
+    Sürüm 2.0 · 9 Temmuz 2026<br />
+    QR okutma · Sarfiyat · Stok · Yönetim paneli
+  </p>
+</div>
+
+<h1>1. Sistem nedir?</h1>
+<p>
+  Bu uygulama <strong>üretim sahasında hammadde takibi</strong> içindir. Her malzemenin üzerine yapıştırılan
+  <strong>QR etiketi</strong> okutularak:
+</p>
+<ul>
+  <li><strong>Sarfiyat girişi</strong> — hangi projede ne kadar malzeme kullanıldı</li>
+  <li><strong>Stok ekleme</strong> — depoya yeni malzeme girişi</li>
+</ul>
+<p>
+  <strong>Yönetici</strong> panelden proje (sipariş), ürün tanımı, QR etiket üretimi ve tüm kayıtları yönetir.
+  <strong>Okutucu</strong> personel yalnızca ana sayfadaki QR okuyucuyu kullanır.
+</p>
+
+<div class="warn">
+  <strong>Not:</strong> Bu sistem, kurumsal web sitesi (Netlify/Decap) ile <em>farklıdır</em>.
+  Burada ürün/haber sitesi yok; depo ve üretim takibi vardır.
+</div>
+
+<h2>1.1 Adresler</h2>
+<table>
+  <tr><th>Sayfa</th><th>Adres</th><th>Kim kullanır?</th></tr>
+  <tr><td>Giriş</td><td><code>https://ozmaksan.vercel.app/login</code></td><td>Herkes</td></tr>
+  <tr><td>QR Okutucu (ana sayfa)</td><td><code>https://ozmaksan.vercel.app/</code></td><td>Okutucu + Yönetici</td></tr>
+  <tr><td>Yönetim paneli</td><td><code>https://ozmaksan.vercel.app/admin</code></td><td>Yalnızca Yönetici</td></tr>
+  <tr><td>Proje detayı</td><td><code>…/admin/projects/[id]</code></td><td>Yönetici</td></tr>
+</table>
+
+<h1 class="page-break">2. Hesaplar ve şifreler</h1>
+
+<div class="danger">
+  <strong>Güvenlik:</strong> Aşağıdaki şifreler sistem kurulumunda (<code>npm run seed:users</code>) tanımlanan
+  <strong>varsayılan</strong> değerlerdir. Canlı ortamda mutlaka değiştirin. Bu belgeyi yetkisiz kişilerle paylaşmayın.
+</div>
+
+<table>
+  <tr>
+    <th>Rol</th>
+    <th>E-posta</th>
+    <th>Varsayılan şifre</th>
+    <th>Yetkiler</th>
+  </tr>
+  <tr>
+    <td><strong>Yönetici</strong> (admin)</td>
+    <td><code>admin@ozmaksan.com</code></td>
+    <td><code>OzmaksanAdmin1!</code></td>
+    <td>Yönetim paneli, proje/ürün tanımı, QR üretimi, kayıt silme, Excel içe aktarma</td>
+  </tr>
+  <tr>
+    <td><strong>Okutucu</strong> (okutucu)</td>
+    <td><code>okutucu@ozmaksan.com</code></td>
+    <td><code>OzmaksanOkutucu1!</code></td>
+    <td>Yalnızca QR okutma, sarfiyat ve stok girişi</td>
+  </tr>
+</table>
+
+<h3>Ek personel hesabı ekleme (yönetici)</h3>
+<ol class="steps">
+  <li><a href="https://supabase.com">supabase.com</a> → Proje → <strong>Authentication → Users</strong></li>
+  <li><strong>Add user</strong> → e-posta ve şifre girin</li>
+  <li><strong>Table Editor → profiles</strong> tablosunda kullanıcıya <code>role</code> atayın: <code>admin</code> veya <code>okutucu</code></li>
+  <li>Personel <code>/login</code> sayfasından giriş yapar</li>
+</ol>
+
+<h1>3. Giriş yapma</h1>
+<ol class="steps">
+  <li>Telefon veya bilgisayarda <code>https://ozmaksan.vercel.app/login</code> açın.</li>
+  <li>E-posta ve şifrenizi girin → <strong>Giriş Yap</strong>.</li>
+  <li>Okutucu → otomatik ana sayfaya (QR okuyucu) yönlendirilir.</li>
+  <li>Yönetici → sağ üstte <strong>Yönetim Paneli</strong> butonunu görür.</li>
+  <li>Çıkış için sağ üst <strong>Çıkış</strong>.</li>
+</ol>
+
+<h1 class="page-break">4. QR Okutucu (saha personeli)</h1>
+<p>Ana sayfa: <code>https://ozmaksan.vercel.app/</code></p>
+
+<h2>4.1 İki mod</h2>
+<table>
+  <tr><th>Mod</th><th>Ne zaman?</th><th>Ne yapar?</th></tr>
+  <tr><td><strong>Sarfiyat Girişi</strong></td><td>Malzeme üretimde kullanıldığında</td><td>Projeye düşer, stoktan düşer, maliyet hesaplanır</td></tr>
+  <tr><td><strong>Stok Ekle</strong></td><td>Depoya yeni malzeme geldiğinde</td><td>Ürün stoğuna miktar ekler</td></tr>
+</table>
+
+<h2>4.2 Sarfiyat kaydı (adım adım)</h2>
+<ol class="steps">
+  <li><strong>Sarfiyat Girişi</strong> seçili olsun.</li>
+  <li>Malzeme etiketindeki <strong>QR kodu</strong> kameraya gösterin (veya manuel kod girin).</li>
+  <li>Ürün adı ve stok bilgisi ekranda görünür.</li>
+  <li><strong>Proje / sipariş</strong> seçin (ör. <code>2638/2026</code>).</li>
+  <li>Varsa <strong>kalem</strong> (proje satırı) seçin.</li>
+  <li><strong>Miktar</strong> ve <strong>birim</strong> girin (kg, adet, metre vb.).</li>
+  <li>Sac malzemede kullanılan <strong>en × boy (mm)</strong> girilirse kg otomatik hesaplanır.</li>
+  <li><strong>Kaydet</strong> → yeşil onay mesajı gelir.</li>
+  <li>Sonraki malzeme için tekrar QR okutun.</li>
+</ol>
+
+<h2>4.3 Stok ekleme</h2>
+<ol class="steps">
+  <li><strong>Stok Ekle</strong> moduna geçin.</li>
+  <li>QR okutun.</li>
+  <li>Gelen miktarı ve birimi girin.</li>
+  <li>İsteğe bağlı not yazın → <strong>Kaydet</strong>.</li>
+</ol>
+
+<div class="ok">
+  <strong>İpucu:</strong> Telefonda tarayıcıyı tam ekran kullanın; kamera izni verin.
+  Aydınlık ortamda okutma daha kolaydır.
+</div>
+
+<h1 class="page-break">5. Yönetim paneli (yönetici)</h1>
+<p>Adres: <code>https://ozmaksan.vercel.app/admin</code></p>
+<p>Üç sekme vardır: <strong>Projeler</strong> · <strong>Ürünler</strong> · <strong>Sarfiyat Kayıtları</strong></p>
+
+<h2>5.1 Projeler sekmesi</h2>
+<p>Sipariş ve proje kalemlerini yönetir.</p>
+
+<h3>Durum renkleri (kalem satırları)</h3>
+<p>
+  <span class="status st-white">BAŞLANMADI</span>
+  <span class="status st-green">AKTİF</span>
+  <span class="status st-yellow">BİTMİŞ</span>
+</p>
+
+<ol class="steps">
+  <li><strong>+ Yeni Sipariş</strong> → sipariş no, yıl, müşteri, kalemler ekleyin.</li>
+  <li>Her kalemde: spec, ürün adı, miktar, durum, teslim tarihleri.</li>
+  <li><strong>Excel İçe Aktar</strong> ile toplu sipariş yüklenebilir (.xlsx).</li>
+  <li>Arama kutusu: sipariş no, müşteri veya kalem adı ile filtreler.</li>
+  <li><strong>Detay</strong> → proje özet sayfası · <strong>Düzenle</strong> · <strong>Sil</strong> (geri alınamaz).</li>
+  <li>Kalem sayısına tıklayarak satır altında kalemleri genişletin.</li>
+</ol>
+
+<h2>5.2 Ürünler sekmesi</h2>
+<p>Depodaki hammaddeler ve QR kodları burada tanımlanır.</p>
+
+<ol class="steps">
+  <li><strong>+ Yeni Ürün</strong> — standart malzeme (boya, boru, vida vb.)</li>
+  <li><strong>+ Yeni Sac</strong> — sac levha; en/boy/kalınlık (mm) ve adet girilir, kg otomatik hesaplanır</li>
+  <li>Ürün adı, birim maliyet (TRY), varsayılan birim, stok miktarı doldurun</li>
+  <li><strong>Kaydet</strong> → yeni üründe <strong>QR etiketi PNG</strong> otomatik indirilir</li>
+  <li>QR kodu <code>OZMK-XXXXXXXX</code> formatındadır (web adresi değil!)</li>
+  <li>Etiketi yazdırıp fiziksel malzemeye yapıştırın (Bölüm 7)</li>
+  <li><strong>Pasife al</strong> — QR artık okutulamaz; kayıtlar silinmez</li>
+  <li>Düşük stok uyarısı üst bantta görünür</li>
+</ol>
+
+<div class="qr-sample">
+  <p><strong>Örnek ürün QR etiketi (sistem üretir):</strong></p>
+  <div style="display:inline-block;border:2px solid #1a5490;padding:16px 24px;background:#fff;text-align:center">
+    <p style="font-size:9pt;font-weight:bold;color:#1a5490;margin:0">ÖZMAKSAN</p>
+    <p style="font-family:monospace;font-size:11pt;margin:8px 0"><code>OZMK-A1B2C3D4</code></p>
+    <div style="width:120px;height:120px;border:2px solid #333;margin:8px auto;background:repeating-linear-gradient(45deg,#000 0 4px,#fff 4px 8px)"></div>
+    <p style="font-size:10pt;font-weight:bold;color:#1a5490;margin:8px 0 0">Ürün Adı</p>
+  </div>
+  <p style="font-size:9pt">Kayıt sonrası gerçek PNG etiket otomatik indirilir; ürün adı altta yazılıdır.</p>
+</div>
+
+<h2>5.3 Sarfiyat kayıtları sekmesi</h2>
+<p>Tüm sarfiyat geçmişi: tarih, ürün, proje, miktar, maliyet, okutan personel.</p>
+<ul>
+  <li>Arama ile filtreleyin</li>
+  <li>Yönetici yanlış kaydı <strong>Sil</strong> ile kaldırabilir (stok geri yüklenir)</li>
+</ul>
+
+<h2>5.4 Panel ↔ saha geçişi</h2>
+<p>Panelde sağ üst <strong>← QR Okutucuya Dön</strong> ile ana sayfaya dönersiniz.</p>
+
+<h1 class="page-break">6. Sık sorunlar</h1>
+<table>
+  <tr><th>Sorun</th><th>Çözüm</th></tr>
+  <tr><td>E-posta veya şifre hatalı</td><td>Büyük/küçük harf kontrolü; yöneticiden şifre sıfırlama</td></tr>
+  <tr><td>QR okunmuyor</td><td>Etiket temiz mi, yeterli ışık var mı; ürün pasif mi kontrol edin</td></tr>
+  <tr><td>Ürün bulunamadı</td><td>QR panelde tanımlı mı; pasif ürün okutulamaz</td></tr>
+  <tr><td>Proje listesi boş</td><td>Yönetici panelden aktif proje eklemeli</td></tr>
+  <tr><td>Yönetim paneli açılmıyor</td><td>Hesabınız <code>admin</code> rolünde olmalı</td></tr>
+  <tr><td>Veritabanı hatası</td><td>İnternet bağlantısı; yöneticiye bildirin (Supabase)</td></tr>
+</table>
+
+<h1>7. QR etiket baskısı — Print Master + Phomemo M110</h1>
+<p>
+  Yönetici panelden indirilen <strong>PNG etiket dosyasını</strong> Phomemo M110 termal yazıcı ile basın.
+  Etiket saca, tüpe, kutuya yapıştırılır; saha personeli bu kodu okutur.
+</p>
+
+<h2>7.1 Gerekli malzeme</h2>
+<ul>
+  <li>Phomemo <strong>M110</strong> termal etiket yazıcısı</li>
+  <li>Uyumlu etiket rulosu (genelde <strong>40×30 mm</strong> veya <strong>50×30 mm</strong> — kutu üzerindeki ölçüye bakın)</li>
+  <li>Android veya iPhone</li>
+  <li><strong>Print Master</strong> veya <strong>Phomemo</strong> uygulaması (resmi mağaza)</li>
+</ul>
+
+<h2>7.2 Yazıcıyı hazırlama</h2>
+<ol class="steps">
+  <li>M110’u şarj edin, açın.</li>
+  <li>Etiket rulosunu yuvaya yerleştirin; çıkan etiket ön tarafa bakacak şekilde.</li>
+  <li>Kapağı kapatın; birkaç etiket boşa çıkararak hizayı kontrol edin.</li>
+  <li>Telefonda <strong>Bluetooth</strong>’u açın.</li>
+</ol>
+
+<h2>7.2 Uygulama ve Bluetooth eşleştirme</h2>
+<ol class="steps">
+  <li>Play Store / App Store → <strong>“Phomemo”</strong> veya <strong>“Print Master”</strong> yükleyin.</li>
+  <li>Uygulamayı açın → <strong>Cihazım</strong> / <strong>Printer</strong>.</li>
+  <li><strong>+ Yazıcı ekle</strong> → listeden <strong>Phomemo M110</strong> seçin.</li>
+  <li><strong>Bağlandı</strong> yazısını bekleyin.</li>
+</ol>
+
+<h2>7.3 Panelden indirilen PNG’yi basma (önerilen yöntem)</h2>
+<ol class="steps">
+  <li>Yönetim panelinde <strong>+ Yeni Ürün</strong> kaydedin → <code>etiket-urun-adi.png</code> indirilir.</li>
+  <li>PNG dosyasını telefona aktarın (WhatsApp, e-posta, USB veya bilgisayardan AirDrop).</li>
+  <li>Print Master’da <strong>Etiket</strong> / <strong>Label</strong> → etiket boyutunu rulonuzla aynı seçin (ör. 40×30 mm).</li>
+  <li><strong>Görsel ekle</strong> / <strong>Image</strong> → indirdiğiniz PNG’yi seçin.</li>
+  <li>Görseli etiket alanına sığdırın; kenarlardan 1–2 mm boşluk bırakın.</li>
+  <li><strong>Önizleme</strong> ile QR ve ürün adının kesilmediğini kontrol edin.</li>
+  <li><strong>Yazdır</strong> → kopya sayısı → <strong>Koyu / Dark</strong> yoğunluk seçin (QR okunaklı olsun).</li>
+  <li>Çıkan etiketi malzemeye yapıştırın.</li>
+  <li>Telefon kamerasıyla QR’ı test edin → <code>ozmaksan.vercel.app</code> ana sayfasında okutunca ürün adı gelmeli.</li>
+</ol>
+
+<h2>7.4 Uygulama içinde sıfırdan QR oluşturma (alternatif)</h2>
+<ol class="steps">
+  <li>Paneldeki ürünün <strong>QR kodunu</strong> kopyalayın (ör. <code>OZMK-A1B2C3D4</code>).</li>
+  <li>Print Master → yeni etiket → <strong>QR Kod ekle</strong>.</li>
+  <li>Metin alanına <strong>tam QR kodunu</strong> yapıştırın (web adresi değil!).</li>
+  <li>Altına <strong>metin</strong> ekleyip ürün adını yazın.</li>
+  <li>Önizleme → yazdır.</li>
+</ol>
+
+<div class="danger">
+  <strong>Dikkat:</strong> Etikete <code>https://…</code> web adresi yazmayın.
+  Sistem <code>OZMK-…</code> kodunu okur. Yanlış kod basılırsa saha okutması çalışmaz.
+</div>
+
+<h2>7.5 Baskı sorunları</h2>
+<table>
+  <tr><th>Sorun</th><th>Çözüm</th></tr>
+  <tr><td>QR telefonla okunmuyor</td><td>Yoğunluğu artırın; QR’ı büyütün; etiket düz yapışsın</td></tr>
+  <tr><td>Baskı soluk</td><td>Koyu mod; yeni rulo; yazıcı başlığını temizleyin</td></tr>
+  <tr><td>Kağıt sıkışıyor</td><td>Rulo yönü; kapak tam kapalı mı</td></tr>
+  <tr><td>Bluetooth kopuyor</td><td>1 m mesafe; diğer BT cihazlarını kapatın</td></tr>
+  <tr><td>Görsel kesik çıkıyor</td><td>Etiket boyutunu büyütün veya görseli küçültün</td></tr>
+</table>
+
+<h1 class="page-break">8. Hızlı referans kartı</h1>
+<table>
+  <tr><th>İşlem</th><th>Nerede?</th><th>Kısa yol</th></tr>
+  <tr><td>Giriş</td><td>/login</td><td>E-posta + şifre</td></tr>
+  <tr><td>Malzeme sarf et</td><td>Ana sayfa → Sarfiyat</td><td>QR okut → proje → miktar → kaydet</td></tr>
+  <tr><td>Stok gir</td><td>Ana sayfa → Stok Ekle</td><td>QR okut → miktar → kaydet</td></tr>
+  <tr><td>Sipariş ekle</td><td>Admin → Projeler</td><td>+ Yeni Sipariş</td></tr>
+  <tr><td>Malzeme tanımla</td><td>Admin → Ürünler</td><td>+ Yeni Ürün → PNG indir → yapıştır</td></tr>
+  <tr><td>Etiket bas</td><td>Print Master + M110</td><td>PNG yükle → yazdır</td></tr>
+</table>
+
+<hr style="margin-top:2em" />
+<p style="text-align:center;font-size:9pt;color:#666">
+  ÖZMAKSAN ISI SANAYİ TİCARET A.Ş. · Gaziantep · 4. OSB<br />
+  Destek: ozmaksan@ozmaksan.com.tr · +90 342 220 40 56<br />
+  Sistem: ozmaksan.vercel.app · WMS &amp; MES
+</p>
+
+</body>
+</html>
