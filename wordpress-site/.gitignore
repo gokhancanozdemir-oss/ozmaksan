@@ -9,6 +9,7 @@ Thumbs.db
 
 # Yerel Decap proxy
 .decap/
+translate-log.txt
 
 # WordPress (artık kullanılmıyor — arşiv)
 ozmaksan/

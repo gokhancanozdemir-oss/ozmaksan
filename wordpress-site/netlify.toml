@@ -1,5 +1,5 @@
 [build]
-  command = "node _build/translate.mjs && node _build/build-all.mjs"
+  command = "npm install && node _build/translate.mjs && node _build/build-all.mjs"
   publish = "."
 
 [build.environment]
@@ -37,6 +37,17 @@
   for = "/assets/catalogs/*"
   [headers.values]
     Content-Type = "application/pdf"
+
+[[headers]]
+  for = "/assets/media/*.mp4"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "video/mp4"
+
+[[headers]]
+  for = "/assets/media/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
 
 [[headers]]
   for = "/admin/*"
