@@ -41,24 +41,43 @@ function compressVideo(inputPath, outputPath) {
   if (!ffmpegPath) {
     fs.copyFileSync(inputPath, outputPath);
     console.log(`  ⚠ ffmpeg yok — video kopyalandı`);
-    return;
+    return false;
   }
+  const tmp = outputPath + ".tmp.mp4";
   const args = [
     "-y", "-i", inputPath,
-    "-c:v", "libx264", "-preset", "medium", "-crf", "28",
+    "-c:v", "libx264",
+    "-profile:v", "main",
+    "-level", "4.0",
+    "-pix_fmt", "yuv420p",
+    "-preset", "medium",
+    "-crf", "28",
+    "-r", "30",
+    "-g", "60",
     "-movflags", "+faststart",
     "-an",
-    "-vf", "scale='min(1920,iw)':-2",
-    outputPath,
+    "-vf", "scale='min(1280,iw)':-2:flags=lanczos",
+    tmp,
   ];
   const r = spawnSync(ffmpegPath, args, { stdio: "inherit" });
-  if (r.status !== 0) {
+  if (r.status !== 0 || !verifyVideo(tmp)) {
+    if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
+    console.log(`  ⚠ sıkıştırma başarısız — orijinal kopyalanıyor`);
     fs.copyFileSync(inputPath, outputPath);
-    console.log(`  ⚠ sıkıştırma başarısız — orijinal kopyalandı`);
-  } else {
-    const stat = fs.statSync(outputPath);
-    console.log(`  ✓ ${path.basename(outputPath)} (${(stat.size / 1024 / 1024).toFixed(1)} MB)`);
+    return verifyVideo(outputPath);
   }
+  fs.renameSync(tmp, outputPath);
+  const stat = fs.statSync(outputPath);
+  console.log(`  ✓ ${path.basename(outputPath)} (${(stat.size / 1024 / 1024).toFixed(1)} MB, mobil uyumlu)`);
+  return true;
+}
+
+function verifyVideo(filePath) {
+  if (!ffmpegPath || !fs.existsSync(filePath)) return false;
+  const r = spawnSync(ffmpegPath, ["-v", "error", "-i", filePath, "-f", "null", "-"], { encoding: "utf8" });
+  const ok = r.status === 0;
+  if (!ok) console.log(`  ✗ bozuk video: ${path.basename(filePath)} — ${(r.stderr || "").trim()}`);
+  return ok;
 }
 
 function extractPoster(videoPath, posterPath) {

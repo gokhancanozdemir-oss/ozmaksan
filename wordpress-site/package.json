@@ -10,6 +10,7 @@
     "build:tr": "node _build/build.mjs",
     "translate": "node _build/translate.mjs",
     "process:media": "node _build/process-wetransfer-media.mjs",
+    "reencode:hero": "node _build/reencode-hero-video.mjs",
     "serve": "node _build/serve.mjs 8790",
     "dev": "node _build/serve.mjs 8790",
     "export-content": "node _build/export-content.mjs",

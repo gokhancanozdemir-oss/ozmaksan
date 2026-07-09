@@ -240,7 +240,8 @@ function homeMain(mode) {
 
   return `    <section class="hero" aria-label="Ana tanıtım">
       <div class="hero-media">
-        <video class="hero-video" autoplay muted loop playsinline
+        <video class="hero-video" autoplay muted loop playsinline webkit-playsinline
+          preload="auto"
           poster="${asset(mode, "assets/media/hero-poster.jpg")}">
           <source src="${asset(mode, "assets/media/hero-web-giris.mp4")}" type="video/mp4" />
         </video>

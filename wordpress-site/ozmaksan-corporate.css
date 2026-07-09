@@ -398,6 +398,13 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  background: #e8f0f8 center / cover no-repeat;
+}
+.hero-video.is-playing {
+  background: transparent;
+}
+.hero-video.is-fallback {
+  opacity: 0;
 }
 
 .hero-overlay {

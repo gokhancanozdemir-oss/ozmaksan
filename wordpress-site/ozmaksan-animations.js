@@ -95,12 +95,38 @@
 
   document.querySelectorAll("[data-count]").forEach((el) => counterObserver.observe(el));
 
-  /* ── Hero video pause on hidden tab ── */
+  /* ── Hero video: mobil autoplay + bozuk dosya poster yedegi ── */
   const video = document.querySelector(".hero-video");
-  document.addEventListener("visibilitychange", () => {
-    if (!video) return;
-    document.hidden ? video.pause() : video.play().catch(() => {});
-  });
+  if (video) {
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+
+    const tryPlay = () => {
+      const p = video.play();
+      if (p && typeof p.then === "function") {
+        p.then(() => video.classList.add("is-playing")).catch(() => {});
+      }
+    };
+
+    tryPlay();
+    video.addEventListener("loadeddata", tryPlay, { once: true });
+    video.addEventListener("canplay", tryPlay, { once: true });
+    video.addEventListener("error", () => video.classList.add("is-fallback"));
+
+    const unlock = () => {
+      tryPlay();
+      document.removeEventListener("touchstart", unlock, true);
+      document.removeEventListener("click", unlock, true);
+    };
+    document.addEventListener("touchstart", unlock, { once: true, passive: true, capture: true });
+    document.addEventListener("click", unlock, { once: true, capture: true });
+
+    document.addEventListener("visibilitychange", () => {
+      document.hidden ? video.pause() : tryPlay();
+    });
+  }
 
   /* ── Smooth anchor offset for fixed header ── */
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
