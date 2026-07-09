@@ -19,9 +19,12 @@ const MYMEMORY = {
   en: "tr|en",
   ru: "tr|ru",
   ar: "tr|ar",
+  ru_en: "en|ru",
+  ar_en: "en|ar",
 };
 
 const DEEPL_LANG = { en: "EN", ru: "RU", ar: "AR" };
+const TURKISH_CHARS = /[ğüşıöçĞÜŞİÖÇ]/;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function hashKey(text) {
@@ -43,8 +46,16 @@ function shouldSkip(text) {
   if (/^[\d\s+().\-–—%°/,]+$/.test(t)) return true;
   if (/^\+?\d/.test(t) && t.includes("@")) return true;
   if (/^https?:\/\//i.test(t)) return true;
-  if (/^[A-Z0-9][A-Z0-9\-./ ]{2,}$/.test(t) && !/[ğüşıöçĞÜŞİÖÇ]/.test(t)) return true;
+  if (/^[A-Z0-9][A-Z0-9\-./ ]{2,}$/.test(t) && !TURKISH_CHARS.test(t)) return true;
   return false;
+}
+
+function isValidTranslation(source, translated, lang) {
+  if (!translated || translated === source) return false;
+  if (/MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(translated)) return false;
+  if (lang === "en" && TURKISH_CHARS.test(translated) && TURKISH_CHARS.test(source)) return false;
+  if ((lang === "ru" || lang === "ar") && TURKISH_CHARS.test(translated)) return false;
+  return true;
 }
 
 function collectStrings() {
@@ -55,7 +66,6 @@ function collectStrings() {
   };
 
   for (const v of Object.values(UI_TR)) add(v);
-
   for (const n of trData.nav) add(n.label);
   for (const c of trData.categories) {
     add(c.label);
@@ -95,7 +105,7 @@ function collectStrings() {
   return [...set];
 }
 
-async function deeplTranslate(text, lang) {
+async function deeplTranslate(text, lang, sourceLang = "TR") {
   const key = process.env.DEEPL_API_KEY;
   if (!key) return null;
   const target = DEEPL_LANG[lang];
@@ -103,27 +113,76 @@ async function deeplTranslate(text, lang) {
   const res = await fetch(`${base}/v2/translate`, {
     method: "POST",
     headers: { Authorization: `DeepL-Auth-Key ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ text: [text], target_lang: target, source_lang: "TR" }),
+    body: JSON.stringify({ text: [text], target_lang: target, source_lang: sourceLang }),
   });
   if (!res.ok) return null;
   const data = await res.json();
   return data.translations?.[0]?.text || null;
 }
 
-async function myMemoryTranslate(text, lang) {
-  const pair = MYMEMORY[lang];
+async function myMemoryTranslate(text, pair) {
   const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${pair}`;
   const res = await fetch(url);
   if (!res.ok) return null;
   const data = await res.json();
   const out = data.responseData?.translatedText;
   if (!out || out === text) return null;
-  if (/MYMEMORY WARNING/i.test(out)) return null;
+  if (/MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(out)) return null;
   return out;
 }
 
-async function translateOne(text, lang) {
-  return (await deeplTranslate(text, lang)) || (await myMemoryTranslate(text, lang)) || text;
+async function googleTranslate(text, targetLang) {
+  try {
+    const url =
+      "https://translate.googleapis.com/translate_a/single?client=gtx&sl=tr&tl=" +
+      targetLang +
+      "&dt=t&q=" +
+      encodeURIComponent(text);
+    const res = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; OzmaksanBuild/1.0)" },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const out = Array.isArray(data?.[0]) ? data[0].map((p) => p[0]).join("") : null;
+    return out || null;
+  } catch {
+    return null;
+  }
+}
+
+async function translateDirect(text, lang) {
+  const pair = MYMEMORY[lang];
+  return (
+    (await deeplTranslate(text, lang)) ||
+    (await myMemoryTranslate(text, pair)) ||
+    (await googleTranslate(text, lang)) ||
+    null
+  );
+}
+
+async function translateViaEnglish(text, lang, enText) {
+  const pivotPair = MYMEMORY[lang === "ru" ? "ru_en" : "ar_en"];
+  return (
+    (await deeplTranslate(enText, lang, "EN")) ||
+    (await myMemoryTranslate(enText, pivotPair)) ||
+    (await googleTranslate(enText, lang)) ||
+    null
+  );
+}
+
+async function translateOne(text, lang, enCache) {
+  let out = await translateDirect(text, lang);
+  if (isValidTranslation(text, out, lang)) return out;
+
+  if ((lang === "ru" || lang === "ar") && enCache) {
+    const en = enCache[hashKey(text)];
+    if (en && en !== text) {
+      out = await translateViaEnglish(text, lang, en);
+      if (isValidTranslation(text, out, lang)) return out;
+    }
+  }
+
+  return null;
 }
 
 function loadCache(lang) {
@@ -145,7 +204,6 @@ function buildUi(lang, cache) {
   return out;
 }
 
-/** İstemci anlık çeviri: Türkçe metin → hedef dil */
 function exportTextMaps(strings) {
   const all = new Set(strings);
   for (const tr of Object.values(UI_TR)) all.add(tr);
@@ -155,7 +213,8 @@ function exportTextMaps(strings) {
     const map = {};
     for (const text of all) {
       const hk = hashKey(text);
-      if (cache[hk] && cache[hk] !== text) map[text] = cache[hk];
+      const translated = cache[hk];
+      if (isValidTranslation(text, translated, lang)) map[text] = translated;
     }
     fs.writeFileSync(
       path.join(I18N_DIR, `text.${lang}.json`),
@@ -174,12 +233,12 @@ function finalizeLocales(strings) {
   exportTextMaps(strings);
 }
 
-/** API başarısız olduğunda Türkçe kopyalanmış önbellek girdilerini temizle */
-function purgeUntranslated(cache, strings) {
+function purgeBad(cache, strings, lang) {
   let removed = 0;
   for (const text of strings) {
     const hk = hashKey(text);
-    if (cache[hk] === text) {
+    const v = cache[hk];
+    if (v !== undefined && !isValidTranslation(text, v, lang)) {
       delete cache[hk];
       removed += 1;
     }
@@ -193,10 +252,10 @@ async function main() {
 
   for (const lang of TARGET_LOCALES) {
     const cache = loadCache(lang);
-    const removed = purgeUntranslated(cache, strings);
+    const removed = purgeBad(cache, strings, lang);
     if (removed) {
       saveCache(lang, cache);
-      console.log(`Translate: ${lang} — ${removed} çevrilmemiş girdi silindi`);
+      console.log(`Translate: ${lang} — ${removed} hatalı girdi silindi`);
     }
   }
 
@@ -205,28 +264,40 @@ async function main() {
     const cache = loadCache(lang);
     pending += strings.filter((t) => !cache[hashKey(t)]).length;
   }
+
   if (pending === 0) {
-    console.log("Translate: önbellek güncel, API çağrısı yok.");
+    console.log("Translate: önbellek güncel.");
     finalizeLocales(strings);
     return;
   }
-  console.log("Translate: çevrilecek yeni metin:", pending);
+
+  console.log("Translate: çevrilecek metin:", pending);
+  const delay = process.env.DEEPL_API_KEY ? 120 : 250;
 
   for (const lang of TARGET_LOCALES) {
     const cache = loadCache(lang);
+    const enCache = lang === "ru" || lang === "ar" ? loadCache("en") : null;
     let added = 0;
+    let failed = 0;
     for (const text of strings) {
       const hk = hashKey(text);
       if (cache[hk]) continue;
-      const translated = await translateOne(text, lang);
-      cache[hk] = translated;
-      added += 1;
-      if (added % 5 === 0) process.stdout.write(`  ${lang}: ${added} new…\r`);
-      await sleep(process.env.DEEPL_API_KEY ? 120 : 350);
+      const translated = await translateOne(text, lang, enCache);
+      if (translated) {
+        cache[hk] = translated;
+        added += 1;
+      } else {
+        failed += 1;
+      }
+      if ((added + failed) % 5 === 0) {
+        process.stdout.write(`  ${lang}: ${added} ok, ${failed} skip…\r`);
+      }
+      await sleep(delay);
     }
     saveCache(lang, cache);
-    console.log(`\n${lang}: cache ${Object.keys(cache).length} entries (+${added} new)`);
+    console.log(`\n${lang}: ${Object.keys(cache).length} cache (+${added} new, ${failed} failed)`);
   }
+
   finalizeLocales(strings);
 }
 
