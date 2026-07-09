@@ -90,7 +90,7 @@ function header(mode, active, pageSlug = active) {
   return `<header class="site-header" id="top">
     <div class="header-inner">
       <a href="${link(mode, "index")}" class="logo">
-        <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)} — ${esc(company.slogan)}" width="280" height="93" />
+        <img src="${asset(mode, "ozmaksan-logo.png")}" alt="${esc(company.brand)} — ${esc(company.slogan)}" width="320" height="106" />
       </a>
       <nav class="main-nav" aria-label="${esc(t("aria.mainNav"))}">
         ${links}
@@ -221,12 +221,6 @@ function homeMain(mode) {
   const stats = about.stats
     .map((s) => `<div class="stat"><strong data-count="${s.value}"${s.prefix ? ` data-prefix="${s.prefix}"` : ""} data-suffix="${s.suffix || ""}">0</strong><span>${esc(s.label)}</span></div>`)
     .join("");
-  const catCards = categories
-    .map((c) => `<a class="cat-card reveal" href="${link(mode, "urunler")}#${c.key}">
-          <h3>${esc(c.label)}</h3>
-          <p>${esc(c.desc)}</p>
-          <span class="cat-more">${esc(t("cat.viewProducts"))} ${ICON.arrow}</span>
-        </a>`).join("\n        ");
   const sectorPills = sectors.map((s) => `<span class="sector-pill">${esc(s)}</span>`).join("\n          ");
   const refItems = references.slice(0, 22)
     .map((r) => `<span class="refs-marquee-item"><span class="marquee-brand-name">${esc(r)}</span></span>`).join("\n            ");
@@ -280,10 +274,7 @@ function homeMain(mode) {
     <section class="section" id="urunler">
       <div class="container">
         ${sectionHead(t("home.productGroups"), t("home.productGroupsTitle"), t("home.productGroupsDesc"))}
-        <div class="cat-grid stagger-children reveal">
-        ${catCards}
-        </div>
-        <div class="products-grid stagger-children reveal" style="margin-top:2rem">
+        <div class="products-grid stagger-children reveal">
         ${featured.map((p) => productCard(mode, p)).join("\n        ")}
         </div>
         <div class="center-cta reveal"><a href="${link(mode, "urunler")}" class="btn btn-primary btn-lg">${esc(t("home.allProducts"))} ${ICON.arrow}</a></div>
@@ -372,25 +363,14 @@ function homeMain(mode) {
 
 /* ---------- page: urunler ---------- */
 function urunlerMain(mode) {
-  const byCat = categories.map((c) => {
-    const list = products.filter((p) => p.category === c.key);
-    const cards = list.map((p) => productCard(mode, p)).join("\n        ");
-    const aux = c.key === "enerji"
-      ? `<div class="aux-list reveal">${auxiliaries.map((a) => `<span>${ICON.check}${esc(a)}</span>`).join("")}</div>`
-      : "";
-    return `<div class="prod-cat" id="${c.key}">
-      <div class="prod-cat-head reveal"><h2>${esc(c.label)}</h2><p>${esc(c.desc)}</p></div>
-      <div class="products-grid stagger-children reveal">
-        ${cards}
-      </div>
-      ${aux}
-    </div>`;
-  }).join("\n      ");
+  const cards = products.map((p) => productCard(mode, p)).join("\n        ");
 
   return `    ${pageHero(mode, t("page.products"), t("page.productsTitle"), t("page.productsDesc"), "marketing-boiler.png")}
     <section class="section">
       <div class="container">
-      ${byCat}
+        <div class="products-grid products-grid-all stagger-children reveal">
+        ${cards}
+        </div>
       </div>
     </section>
     ${ctaBand(mode)}`;
