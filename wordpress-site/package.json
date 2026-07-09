@@ -5,7 +5,8 @@
   "type": "module",
   "description": "ÖZMAKSAN kurumsal site — Netlify + Decap CMS",
   "scripts": {
-    "build": "node _build/translate.mjs && node _build/build-all.mjs",
+    "build": "node _build/translate.mjs && node _build/build.mjs",
+    "build:all": "node _build/translate.mjs && node _build/build-all.mjs",
     "build:tr": "node _build/build.mjs",
     "translate": "node _build/translate.mjs",
     "serve": "node _build/serve.mjs 8790",

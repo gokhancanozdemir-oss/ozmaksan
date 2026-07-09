@@ -39,12 +39,10 @@ function langHref(targetLocale, slug) {
   if (targetLocale === "tr") return `../${file}`;
   return `../${targetLocale}/${file}`;
 }
-function langSwitcher(pageSlug) {
-  return LOCALES.map((loc) => {
-    const href = langHref(loc.code, pageSlug);
-    const active = loc.code === localeCode ? ' class="active" aria-current="true"' : "";
-    return `<a href="${href}" hreflang="${loc.htmlLang}" lang="${loc.htmlLang}"${active}>${loc.label}</a>`;
-  }).join("\n        ");
+function langSwitcher() {
+  return LOCALES.map((loc) =>
+    `<button type="button" data-oz-lang="${loc.code}" lang="${loc.htmlLang}" aria-current="false">${loc.label}</button>`
+  ).join("\n        ");
 }
 const productSlug = (p) => `urun-${p.slug}`;
 const newsSlug = (n) => `haber-${n.slug}`;
@@ -97,7 +95,7 @@ function header(mode, active, pageSlug = active) {
         ${links}
       </nav>
       <div class="lang-switcher" aria-label="${esc(t("lang.switch"))}">
-        ${langSwitcher(pageSlug)}
+        ${langSwitcher()}
       </div>
       <a href="${link(mode, "iletisim")}" class="btn btn-primary btn-sm">${esc(t("cta.quote"))}</a>
       <button class="menu-toggle" aria-label="${esc(t("aria.menu"))}" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -647,18 +645,14 @@ function staticDoc({ title, description, active, main, pageSlug = active }) {
   const cssHref = relRoot ? `${relRoot}/ozmaksan-corporate.css` : "ozmaksan-corporate.css";
   const animHref = relRoot ? `${relRoot}/ozmaksan-animations.js` : "ozmaksan-animations.js";
   const mapHref = relRoot ? `${relRoot}/ozmaksan-export-map.js` : "ozmaksan-export-map.js";
-  const hreflangs = LOCALES.map((loc) => {
-    const href = langHref(loc.code, pageSlug);
-    return `<link rel="alternate" hreflang="${loc.htmlLang}" href="/${href.replace(/^\.\.\//, "").replace(/^index\.html$/, "")}" />`;
-  }).join("\n  ");
+  const i18nHref = relRoot ? `${relRoot}/ozmaksan-i18n.js` : "ozmaksan-i18n.js";
   return `<!DOCTYPE html>
-<html lang="${locale.htmlLang}" dir="${locale.dir}">
+<html lang="tr" dir="ltr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}" />
-  ${hreflangs}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
@@ -669,11 +663,20 @@ function staticDoc({ title, description, active, main, pageSlug = active }) {
       if (/invite_token|confirmation_token|recovery_token|email_change_token|access_token/.test(h)) {
         location.replace("/admin/" + h);
       }
+      try {
+        var l = localStorage.getItem("ozmaksan_lang") || "tr";
+        if (l !== "tr") {
+          document.documentElement.lang = l;
+          document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+          document.documentElement.classList.add("oz-i18n-pending");
+        }
+      } catch (e) {}
     })();
   </script>
 </head>
 <body>
   ${bodyInner("static", active, main, pageSlug)}
+  <script src="${i18nHref}"></script>
   <script src="${animHref}"></script>
   <script src="${mapHref}"></script>
 </body>

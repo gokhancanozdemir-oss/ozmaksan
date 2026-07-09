@@ -1,25 +1,40 @@
 [build]
-  command = "node _build/translate.mjs && node _build/build-all.mjs"
+  command = "node _build/translate.mjs && node _build/build.mjs"
   publish = "."
 
 [build.environment]
   NODE_VERSION = "20"
 
-# Dil klasörleri
+# Eski dil klasörleri → kök sayfa + dil parametresi (localStorage ile kalıcı)
+[[redirects]]
+  from = "/en/*"
+  to = "/:splat?lang=en"
+  status = 302
+
+[[redirects]]
+  from = "/ru/*"
+  to = "/:splat?lang=ru"
+  status = 302
+
+[[redirects]]
+  from = "/ar/*"
+  to = "/:splat?lang=ar"
+  status = 302
+
 [[redirects]]
   from = "/en"
-  to = "/en/index.html"
-  status = 200
+  to = "/index.html?lang=en"
+  status = 302
 
 [[redirects]]
   from = "/ru"
-  to = "/ru/index.html"
-  status = 200
+  to = "/index.html?lang=ru"
+  status = 302
 
 [[redirects]]
   from = "/ar"
-  to = "/ar/index.html"
-  status = 200
+  to = "/index.html?lang=ar"
+  status = 302
 
 # Decap CMS SPA
 [[redirects]]

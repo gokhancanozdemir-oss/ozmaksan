@@ -145,9 +145,60 @@ function buildUi(lang, cache) {
   return out;
 }
 
+/** İstemci anlık çeviri: Türkçe metin → hedef dil */
+function exportTextMaps(strings) {
+  const all = new Set(strings);
+  for (const tr of Object.values(UI_TR)) all.add(tr);
+
+  for (const lang of TARGET_LOCALES) {
+    const cache = loadCache(lang);
+    const map = {};
+    for (const text of all) {
+      const hk = hashKey(text);
+      if (cache[hk] && cache[hk] !== text) map[text] = cache[hk];
+    }
+    fs.writeFileSync(
+      path.join(I18N_DIR, `text.${lang}.json`),
+      JSON.stringify(map, null, 2),
+      "utf8"
+    );
+    console.log(`Translate: text.${lang}.json → ${Object.keys(map).length} entries`);
+  }
+}
+
+function finalizeLocales(strings) {
+  for (const lang of TARGET_LOCALES) {
+    const cache = loadCache(lang);
+    fs.writeFileSync(path.join(I18N_DIR, `ui.${lang}.json`), JSON.stringify(buildUi(lang, cache), null, 2), "utf8");
+  }
+  exportTextMaps(strings);
+}
+
+/** API başarısız olduğunda Türkçe kopyalanmış önbellek girdilerini temizle */
+function purgeUntranslated(cache, strings) {
+  let removed = 0;
+  for (const text of strings) {
+    const hk = hashKey(text);
+    if (cache[hk] === text) {
+      delete cache[hk];
+      removed += 1;
+    }
+  }
+  return removed;
+}
+
 async function main() {
   const strings = collectStrings();
   console.log("Translate: unique strings:", strings.length);
+
+  for (const lang of TARGET_LOCALES) {
+    const cache = loadCache(lang);
+    const removed = purgeUntranslated(cache, strings);
+    if (removed) {
+      saveCache(lang, cache);
+      console.log(`Translate: ${lang} — ${removed} çevrilmemiş girdi silindi`);
+    }
+  }
 
   let pending = 0;
   for (const lang of TARGET_LOCALES) {
@@ -156,10 +207,7 @@ async function main() {
   }
   if (pending === 0) {
     console.log("Translate: önbellek güncel, API çağrısı yok.");
-    for (const lang of TARGET_LOCALES) {
-      const cache = loadCache(lang);
-      fs.writeFileSync(path.join(I18N_DIR, `ui.${lang}.json`), JSON.stringify(buildUi(lang, cache), null, 2), "utf8");
-    }
+    finalizeLocales(strings);
     return;
   }
   console.log("Translate: çevrilecek yeni metin:", pending);
@@ -177,9 +225,9 @@ async function main() {
       await sleep(process.env.DEEPL_API_KEY ? 120 : 350);
     }
     saveCache(lang, cache);
-    fs.writeFileSync(path.join(I18N_DIR, `ui.${lang}.json`), JSON.stringify(buildUi(lang, cache), null, 2), "utf8");
     console.log(`\n${lang}: cache ${Object.keys(cache).length} entries (+${added} new)`);
   }
+  finalizeLocales(strings);
 }
 
 main().catch((e) => {
