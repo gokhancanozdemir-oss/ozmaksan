@@ -386,14 +386,44 @@ function homeMain(mode) {
 
 /* ---------- page: urunler ---------- */
 function urunlerMain(mode) {
-  const cards = products.map((p) => productCard(mode, p)).join("\n        ");
+  const catNav = categories
+    .map((c) => {
+      const count = products.filter((p) => p.category === c.key).length;
+      if (!count) return "";
+      return `<a class="cat-card" href="#${c.key}">
+          <h3>${esc(c.label)}</h3>
+          <p>${esc(c.desc)}</p>
+          <span class="cat-more">${esc(t("cat.viewProducts"))} ${ICON.arrow}</span>
+        </a>`;
+    })
+    .filter(Boolean)
+    .join("\n        ");
+
+  const catSections = categories
+    .map((c) => {
+      const items = products.filter((p) => p.category === c.key);
+      if (!items.length) return "";
+      const cards = items.map((p) => productCard(mode, p)).join("\n          ");
+      return `<div class="prod-cat" id="${c.key}">
+          <div class="prod-cat-head">
+            <h2>${esc(c.label)}</h2>
+            <p>${esc(c.desc)}</p>
+          </div>
+          <div class="products-grid">
+          ${cards}
+          </div>
+        </div>`;
+    })
+    .filter(Boolean)
+    .join("\n");
 
   return `    ${pageHero(mode, t("page.products"), t("page.productsTitle"), t("page.productsDesc"), "factory-production.jpg", "heroProducts")}
     <section class="section products-page-section">
       <div class="container">
-        <div class="products-grid products-grid-all">
-        ${cards}
+        <div class="cat-grid products-cat-nav">
+        ${catNav}
         </div>
+        ${catSections}
       </div>
     </section>
     ${ctaBand(mode)}`;
