@@ -58,6 +58,19 @@ collections:
         public_folder: /assets/products
         choose_url: false
         hint: "Dosya seç / fotoğraf yükle"
+      - label: Ek fotoğraflar (galeri)
+        name: images
+        widget: list
+        required: false
+        allow_add: true
+        hint: "Birden fazla fotoğraf eklerseniz ürün sayfasında kaydırmalı galeri oluşur."
+        field:
+          label: Fotoğraf
+          name: image
+          widget: image
+          media_folder: ../../assets/products
+          public_folder: /assets/products
+          choose_url: false
       - label: Açıklama (paragraflar)
         name: intro
         widget: list
@@ -131,6 +144,19 @@ collections:
         media_folder: ../../assets/news
         public_folder: /assets/news
         choose_url: false
+      - label: Ek fotoğraflar (galeri)
+        name: images
+        widget: list
+        required: false
+        allow_add: true
+        hint: "Birden fazla fotoğraf eklerseniz haber sayfasında kaydırmalı galeri oluşur."
+        field:
+          label: Fotoğraf
+          name: image
+          widget: image
+          media_folder: ../../assets/news
+          public_folder: /assets/news
+          choose_url: false
 
   - name: site
     label: "3 · Firma bilgileri"
@@ -222,3 +248,83 @@ collections:
             required: false
             collapsed: true
             field: { label: Kalem, name: item, widget: string }
+          - label: Anasayfa vitrin ürünleri
+            name: featuredProducts
+            widget: list
+            required: false
+            collapsed: true
+            hint: "Anasayfada gösterilecek ürünlerin adları (ürün dosya adı/slug). Boş bırakılırsa varsayılan liste kullanılır."
+            field:
+              label: Ürün
+              name: product
+              widget: relation
+              collection: products
+              search_fields: ["name"]
+              value_field: slug
+              display_fields: ["name"]
+          - label: Referans listesi dosyası (PDF)
+            name: referencesFile
+            widget: file
+            required: false
+            media_folder: ../../assets/uploads
+            public_folder: /assets/uploads
+            choose_url: false
+            hint: "Referanslar sayfasındaki 'Tüm referanslarımız' butonunun açacağı dosya. Boşsa buton görünmez."
+          - label: Kurumsal (Vizyon / Misyon / Şirketlerimiz)
+            name: corporate
+            widget: object
+            required: false
+            collapsed: true
+            fields:
+              - { label: Vizyon, name: vision, widget: text, required: false }
+              - { label: Misyon, name: mission, widget: text, required: false }
+              - { label: Şirketlerimiz, name: companies, widget: text, required: false }
+          - label: Sayfa görselleri
+            name: pageMedia
+            widget: object
+            required: false
+            collapsed: true
+            hint: "Sayfa üst bantları ve anasayfa hakkımızda görseli. Boş bırakılan alanlarda varsayılan görsel kullanılır."
+            fields:
+              - { label: "Anasayfa — Hakkımızda görseli", name: homeAbout, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: "Kurumsal bant görseli", name: heroCorporate, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: "Ürünler bant görseli", name: heroProducts, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: "Haberler bant görseli", name: heroNews, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: "Referanslar bant görseli", name: heroReferences, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: "Sertifikalar bant görseli", name: heroCerts, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: "İletişim bant görseli", name: heroContact, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+
+  - name: pagetexts
+    label: "4 · Sayfa metinleri"
+    description: "Sitedeki başlık ve tanıtım metinleri (Türkçe kaynak — diğer diller otomatik çevrilir)."
+    files:
+      - name: uitr
+        label: Sayfa metinleri (TR)
+        file: wordpress-site/_build/i18n/ui.tr.json
+        fields:
+          - { label: "Anasayfa — üst rozet", name: "hero.badge", widget: string, hint: "{founded} kuruluş yılına dönüşür" }
+          - { label: "Anasayfa — ana başlık", name: "hero.title", widget: string, hint: "HTML etiketleri korunmalı (<br>, <span>)" }
+          - { label: "Anasayfa — açıklama", name: "hero.desc", widget: text }
+          - { label: "Anasayfa — Hakkımızda başlığı", name: "home.aboutTitle", widget: string, hint: "<em> etiketi vurgu için" }
+          - { label: "Anasayfa — Ürün grupları başlığı", name: "home.productGroupsTitle", widget: string }
+          - { label: "Anasayfa — Ürün grupları açıklaması", name: "home.productGroupsDesc", widget: string }
+          - { label: "Anasayfa — Sektörler başlığı", name: "home.sectorsTitle", widget: string }
+          - { label: "Anasayfa — İhracat etiketi", name: "home.export", widget: string }
+          - { label: "Anasayfa — İhracat başlığı", name: "home.exportTitle", widget: string }
+          - { label: "Anasayfa — İhracat açıklaması", name: "home.exportDesc", widget: text }
+          - { label: "İhracat kutucuğu — değer", name: "home.exportBadgeValue", widget: string }
+          - { label: "İhracat kutucuğu — etiket", name: "home.exportBadgeLabel", widget: string }
+          - { label: "Anasayfa — Referanslar başlığı", name: "home.referencesTitle", widget: string }
+          - { label: "Anasayfa — Referanslar açıklaması", name: "home.referencesDesc", widget: string }
+          - { label: "Anasayfa — Haberler başlığı", name: "home.newsTitle", widget: string }
+          - { label: "Sertifikalar — tanıtım metni", name: "page.certsLead", widget: text }
+          - { label: "Referanslar — başlık", name: "page.referencesTitle", widget: string }
+          - { label: "Referanslar — açıklama", name: "page.referencesDesc", widget: text }
+          - { label: "Ürünler — başlık", name: "page.productsTitle", widget: string }
+          - { label: "Ürünler — açıklama", name: "page.productsDesc", widget: text }
+          - { label: "Kurumsal — başlık", name: "page.corporateTitle", widget: string }
+          - { label: "Kurumsal — açıklama", name: "page.corporateDesc", widget: text }
+          - { label: "İletişim — başlık", name: "page.contactTitle", widget: string }
+          - { label: "İletişim — açıklama", name: "page.contactDesc", widget: text }
+          - { label: "CTA — başlık", name: "cta.title", widget: string }
+          - { label: "CTA — açıklama", name: "cta.desc", widget: text }

@@ -81,6 +81,11 @@ function collectStrings() {
   for (const s of trData.sectors || []) add(s);
   for (const c of trData.exportCountries || []) add(c);
   for (const a of trData.auxiliaries || []) add(a);
+  if (trData.corporate) {
+    add(trData.corporate.vision);
+    add(trData.corporate.mission);
+    add(trData.corporate.companies);
+  }
 
   for (const p of trData.products) {
     add(p.tagline);

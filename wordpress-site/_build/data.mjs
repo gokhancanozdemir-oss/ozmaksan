@@ -540,12 +540,12 @@ export const faq = [
 export const about = {
   intro: [
     "ÖZMAKSAN, 1976 yılında ısıtma ve buhar sektöründe hizmet vermek üzere Gaziantep'e kurulmuş olup, uzun yıllardır basınçlı kaplar üretim sektöründe faaliyet göstermektedir.",
-    "14.000 m² üretim tesisimizde yüksek basınçlı buhar kazanları, kızgın su ve kızgın yağ kazanları, atık ısı kazanları, buhar jeneratörleri, ısı eşanjörleri, ekonomizerler, akümülasyon tankları ve enerji geri kazanım ekipmanları üretmekteyiz.",
+    "17.000 m² üretim tesisimizde yüksek basınçlı buhar kazanları, kızgın su ve kızgın yağ kazanları, atık ısı kazanları, buhar jeneratörleri, ısı eşanjörleri, ekonomizerler, akümülasyon tankları ve enerji geri kazanım ekipmanları üretmekteyiz.",
     "Güneydoğu Anadolu bölgesinin en geniş üretim kapasitesine sahip firmalarından biri olarak, modern üretim altyapısı ve uzman mühendis kadrosuyla yurt içi ve yurt dışında önde gelen sanayi kuruluşlarının tedarikçisiyiz.",
   ],
   stats: [
     { value: "49", suffix: "", label: "Yıllık Tecrübe" },
-    { value: "14000", suffix: "", label: "m² Üretim Alanı" },
+    { value: "17000", suffix: "", label: "m² Üretim Alanı" },
     { value: "3000", suffix: "", label: "Ton/Yıl Kapasite" },
     { value: "40", prefix: "%", suffix: "", label: "İhracat Oranı" },
   ],
@@ -557,3 +557,11 @@ export const exportCountries = [
   "Gürcistan", "Türkmenistan", "Kazakistan", "Özbekistan",
   "Kuzey Kıbrıs Türk Cumhuriyeti", "Yunanistan", "Pakistan",
 ];
+
+export const featuredProducts = ["steamax", "maxidens", "scotchsuper", "tempoil", "automass", "econox"];
+
+export const corporate = {
+  vision: "Yüksek basınçlı buhar ve ısı teknolojilerinde uluslararası ölçekte tanınan, yenilikçi ve güvenilir bir dünya markası olmak; enerji verimliliği ve sürdürülebilir üretimde sektöre yön vermek.",
+  mission: "1976'dan bu yana edindiğimiz mühendislik birikimiyle; müşterilerimizin ihtiyaçlarına uygun, uluslararası standartlarda, güvenli ve verimli basınçlı kap ve kazan çözümleri üretmek, satış sonrası destekle uzun ömürlü iş ortaklıkları kurmak.",
+  companies: "ÖZMAKSAN Isı Sanayi Tic. A.Ş. çatısı altında; basınçlı kap ve kazan üretimi, enerji geri kazanım sistemleri ve anahtar teslim kazan dairesi kurulumu alanlarında faaliyet gösteren üretim ve mühendislik birimlerimizle hizmet veriyoruz.",
+};

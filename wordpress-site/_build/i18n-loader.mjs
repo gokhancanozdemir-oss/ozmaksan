@@ -130,6 +130,14 @@ export function loadLocalizedData(locale = "tr") {
     sectors: locale === "tr" ? tr.sectors : trList(cache, tr.sectors),
     exportCountries: locale === "tr" ? tr.exportCountries : trList(cache, tr.exportCountries),
     auxiliaries: locale === "tr" ? tr.auxiliaries : trList(cache, tr.auxiliaries),
+    featuredProducts: tr.featuredProducts,
+    referencesFile: tr.referencesFile,
+    pageMedia: tr.pageMedia,
+    corporate: locale === "tr" ? tr.corporate : {
+      vision: trText(cache, tr.corporate?.vision || ""),
+      mission: trText(cache, tr.corporate?.mission || ""),
+      companies: trText(cache, tr.corporate?.companies || ""),
+    },
     t: (key, vars = {}) => {
       let s = ui[key] || key;
       for (const [k, v] of Object.entries(vars)) s = s.replaceAll(`{${k}}`, String(v));

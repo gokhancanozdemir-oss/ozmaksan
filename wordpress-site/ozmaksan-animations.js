@@ -39,6 +39,58 @@
   overlay?.addEventListener("click", closeNav);
   nav?.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeNav));
 
+  /* ── Language dropdown ── */
+  const langSwitcher = document.querySelector(".lang-switcher");
+  const langToggle = langSwitcher?.querySelector(".lang-toggle");
+
+  langToggle?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const open = langSwitcher.classList.toggle("open");
+    langToggle.setAttribute("aria-expanded", String(open));
+  });
+
+  document.addEventListener("click", (e) => {
+    if (langSwitcher && !langSwitcher.contains(e.target)) {
+      langSwitcher.classList.remove("open");
+      langToggle?.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      langSwitcher?.classList.remove("open");
+      langToggle?.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  /* ── Media galleries (scroll-snap carousel) ── */
+  document.querySelectorAll("[data-gallery]").forEach((gallery) => {
+    const track = gallery.querySelector(".gallery-track");
+    const dots = [...gallery.querySelectorAll(".gallery-dot")];
+    const count = dots.length;
+    if (!track || count < 2) return;
+
+    const slideW = () => track.clientWidth;
+    const currentIndex = () => Math.round(track.scrollLeft / slideW());
+    const goTo = (i) => {
+      const idx = Math.max(0, Math.min(count - 1, i));
+      track.scrollTo({ left: idx * slideW(), behavior: "smooth" });
+    };
+
+    gallery.querySelector(".gallery-prev")?.addEventListener("click", () => goTo(currentIndex() - 1));
+    gallery.querySelector(".gallery-next")?.addEventListener("click", () => goTo(currentIndex() + 1));
+    dots.forEach((d, i) => d.addEventListener("click", () => goTo(i)));
+
+    let scrollTimer;
+    track.addEventListener("scroll", () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        const idx = currentIndex();
+        dots.forEach((d, i) => d.classList.toggle("active", i === idx));
+      }, 80);
+    }, { passive: true });
+  });
+
   /* ── Scroll reveal ── */
   const revealEls = document.querySelectorAll(
     ".reveal, .reveal-left, .reveal-right, .reveal-scale, .stagger-children"

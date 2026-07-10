@@ -26,7 +26,7 @@
   },
   "about": {
     "intro": [
-      "Gaziantep'te 1976 yılında ısıtma ve buhar sektöründe hizmet vermek üzere kurulmuş olup, uzun yıllardır basınçlı kaplar üretim sektöründe faaliyet göstermektedir.",
+      "ÖZMAKSAN, 1976 yılında ısıtma ve buhar sektöründe hizmet vermek üzere Gaziantep'e kurulmuş olup, uzun yıllardır basınçlı kaplar üretim sektöründe faaliyet göstermektedir.",
       "17.000 m² üretim tesisimizde yüksek basınçlı buhar kazanları, kızgın su ve kızgın yağ kazanları, atık ısı kazanları, buhar jeneratörleri, ısı eşanjörleri, ekonomizerler, akümülasyon tankları ve enerji geri kazanım ekipmanları üretmekteyiz.",
       "Güneydoğu Anadolu bölgesinin en geniş üretim kapasitesine sahip firmalarından biri olarak, modern üretim altyapısı ve uzman mühendis kadrosuyla yurt içi ve yurt dışında önde gelen sanayi kuruluşlarının tedarikçisiyiz."
     ],
@@ -201,25 +201,52 @@
     "Petrol & Rafineri"
   ],
   "exportCountries": [
-    "Irak",
-    "Mısır",
-    "Libya",
-    "Lübnan",
-    "Ürdün",
-    "Birleşik Arap Emirlikleri",
-    "Tunus",
-    "Cezayir",
-    "Fas",
-    "Moldova",
-    "Güney Afrika",
+    "Afganistan",
+    "Amerika Birleşik Devletleri",
+    "Arnavutluk",
     "Azerbaycan",
+    "Bangladeş",
+    "Belarus",
+    "Bosna Hersek",
+    "Bulgaristan",
+    "Cezayir",
+    "Dubai (BAE)",
+    "Etiyopya",
+    "Fas",
+    "Fildişi Sahili",
     "Gürcistan",
-    "Türkmenistan",
+    "Honduras",
+    "Irak",
+    "İran",
+    "İspanya",
+    "İtalya",
     "Kazakistan",
-    "Özbekistan",
-    "Kuzey Kıbrıs Türk Cumhuriyeti",
+    "KKTC",
+    "Kosova",
+    "Kuveyt",
+    "Letonya",
+    "Libya",
+    "Litvanya",
+    "Lübnan",
+    "Maldivler",
+    "Mısır",
+    "Moldova",
+    "Nahçıvan",
+    "Pakistan",
+    "Romanya",
+    "Rusya",
+    "Senegal",
+    "Sudan",
+    "Suriye",
+    "Suudi Arabistan",
+    "Tacikistan",
+    "Tunus",
+    "Türkmenistan",
+    "Ukrayna",
+    "Venezuela",
     "Yunanistan",
-    "Pakistan"
+    "Ürdün",
+    "Özbekistan"
   ],
   "auxiliaries": [
     "Degazörler",
@@ -234,5 +261,20 @@
     "Akümülasyon Tankları",
     "N-Pentan Depolama Tankları",
     "Yakıt Depolama Tankları"
-  ]
+  ],
+  "featuredProducts": [
+    "steamax",
+    "maxidens",
+    "scotchsuper",
+    "tempoil",
+    "automass",
+    "econox"
+  ],
+  "referencesFile": "",
+  "corporate": {
+    "vision": "Yüksek basınçlı buhar ve ısı teknolojilerinde uluslararası ölçekte tanınan, yenilikçi ve güvenilir bir dünya markası olmak; enerji verimliliği ve sürdürülebilir üretimde sektöre yön vermek.",
+    "mission": "1976'dan bu yana edindiğimiz mühendislik birikimiyle; müşterilerimizin ihtiyaçlarına uygun, uluslararası standartlarda, güvenli ve verimli basınçlı kap ve kazan çözümleri üretmek, satış sonrası destekle uzun ömürlü iş ortaklıkları kurmak.",
+    "companies": "ÖZMAKSAN Isı Sanayi Tic. A.Ş. çatısı altında; basınçlı kap ve kazan üretimi, enerji geri kazanım sistemleri ve anahtar teslim kazan dairesi kurulumu alanlarında faaliyet gösteren üretim ve mühendislik birimlerimizle hizmet veriyoruz."
+  },
+  "pageMedia": {}
 }

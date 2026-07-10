@@ -11,6 +11,9 @@ Thumbs.db
 .decap/
 translate-log.txt
 
+# Harita üretimi için indirilen dünya GeoJSON (dev-only)
+temp-world.geojson
+
 # WordPress (artık kullanılmıyor — arşiv)
 ozmaksan/
 ozmaksan-assets/

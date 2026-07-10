@@ -1,6 +1,8 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const geo = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../temp-world.geojson"), "utf8") // dev-only source
 );
@@ -12,10 +14,16 @@ const project = (lon, lat) => [
   ((90 - lat) / 180) * H,
 ];
 
+/* 46 ülke (Değişiklikler.docx) — Nahçıvan Azerbaycan'a, Dubai BAE'ye dahil */
 const EXPORT = new Set([
-  "IRQ", "EGY", "LBY", "LBN", "JOR", "ARE", "TUN", "DZA", "MAR", "MDA",
-  "ZAF", "AZE", "GEO", "TKM", "KAZ", "UZB", "GRC", "PAK",
+  "AFG", "USA", "ALB", "AZE", "BGD", "BLR", "BIH", "BGR", "DZA", "ARE",
+  "ETH", "MAR", "CIV", "GEO", "HND", "IRQ", "IRN", "ESP", "ITA", "KAZ",
+  "CYP", "CS-KM", "KWT", "LVA", "LBY", "LTU", "LBN", "MDV", "EGY", "MDA",
+  "PAK", "ROU", "RUS", "SEN", "SDN", "SYR", "SAU", "TJK", "TUN", "TKM",
+  "UKR", "VEN", "GRC", "JOR", "UZB",
 ]);
+/* GeoJSON'da id'siz/-99 olan bölgeler isimle eşlenir (KKTC → Kıbrıs'a bağlı) */
+const EXPORT_NAMES = new Set(["Northern Cyprus", "Kosovo"]);
 const HUB = "TUR";
 
 function ringPath(ring) {
@@ -44,10 +52,11 @@ let hubPaths = "";
 
 geo.features.forEach((feature) => {
   const id = feature.id;
+  const isExport = EXPORT.has(id) || EXPORT_NAMES.has(feature.properties?.name);
   featurePaths(feature).forEach((d) => {
     if (id === HUB)
       hubPaths += `<path class="map-hub" fill="rgba(215,25,32,0.22)" stroke="#d71920" stroke-width="0.8" d="${d}"/>`;
-    else if (EXPORT.has(id))
+    else if (isExport)
       exportPaths += `<path class="map-export" fill="rgba(26,84,144,0.55)" stroke="#1a5490" stroke-width="0.6" data-iso="${id}" d="${d}"/>`;
     else
       land += `<path class="map-land" fill="#d8e2ed" stroke="#c5d3e3" stroke-width="0.4" d="${d}"/>`;

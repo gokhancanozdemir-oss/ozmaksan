@@ -87,6 +87,7 @@ function normalizeProduct(p) {
   }
 
   out.image = normalizeAssetPath(out.image);
+  out.images = unwrapList(out.images, ["image", "src", "photo"]).map(normalizeAssetPath).filter(Boolean);
   out.pdf = normalizeAssetPath(out.pdf);
   if (typeof out.specs === "string") {
     try {
@@ -141,6 +142,7 @@ function normalizeNews(n, fileSlug = "") {
     excerpt: n.excerpt || "",
     body: n.body || "",
     image: normalizeAssetPath(n.image),
+    images: unwrapList(n.images, ["image", "src", "photo"]).map(normalizeAssetPath).filter(Boolean),
     dateLabel: n.dateLabel || n.date || "",
   };
 }
@@ -155,6 +157,13 @@ function normalizeSite(site) {
   if (Array.isArray(about.intro)) {
     about.intro = unwrapList(about.intro, ["paragraph", "p", "text"]);
   }
+  const pageMedia = {};
+  if (site.pageMedia && typeof site.pageMedia === "object") {
+    for (const [k, v] of Object.entries(site.pageMedia)) {
+      const clean = normalizeAssetPath(v);
+      if (clean) pageMedia[k] = clean;
+    }
+  }
   return {
     ...site,
     company,
@@ -165,6 +174,10 @@ function normalizeSite(site) {
     auxiliaries: unwrapList(site.auxiliaries, ["item", "name"]),
     faq: Array.isArray(site.faq) ? site.faq : [],
     certs: Array.isArray(site.certs) ? site.certs : [],
+    featuredProducts: unwrapList(site.featuredProducts, ["product", "slug", "name"]),
+    referencesFile: normalizeAssetPath(site.referencesFile),
+    corporate: site.corporate && typeof site.corporate === "object" ? site.corporate : null,
+    pageMedia,
   };
 }
 
@@ -211,6 +224,10 @@ export const certs = site?.certs?.length ? site.certs : defaults.certs;
 export const sectors = site?.sectors?.length ? site.sectors : defaults.sectors;
 export const exportCountries = site?.exportCountries?.length ? site.exportCountries : defaults.exportCountries;
 export const auxiliaries = site?.auxiliaries?.length ? site.auxiliaries : defaults.auxiliaries;
+export const featuredProducts = site?.featuredProducts?.length ? site.featuredProducts : defaults.featuredProducts;
+export const referencesFile = site?.referencesFile || "";
+export const corporate = site?.corporate ?? defaults.corporate;
+export const pageMedia = site?.pageMedia ?? {};
 export const nav = defaults.nav;
 export const categories = defaults.categories;
 export { products, news };

@@ -12,6 +12,7 @@ const locale = getLocale(localeCode);
 const {
   company, nav, categories, products, auxiliaries, certs, sectors,
   references, faq, about, exportCountries, news, t, trText,
+  featuredProducts, referencesFile, corporate, pageMedia,
 } = loadLocalizedData(localeCode);
 const relRoot = localeCode === "tr" ? "" : "..";
 const outRoot = localeCode === "tr" ? ROOT : path.join(ROOT, localeCode);
@@ -38,12 +39,30 @@ function langHref(targetLocale, slug) {
   if (targetLocale === "tr") return `../${file}`;
   return `../${targetLocale}/${file}`;
 }
+/* Bayraklar — 24x16 inline SVG */
+const FLAG = {
+  tr: `<svg class="flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#e30a17"/><circle cx="9.4" cy="8" r="4" fill="#fff"/><circle cx="10.4" cy="8" r="3.2" fill="#e30a17"/><path fill="#fff" d="m14.2 8 2.6.85-1.6-2.2v2.7l1.6-2.2z"/></svg>`,
+  en: `<svg class="flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#c8102e" stroke-width="1.6"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5"/><path d="M12 0v16M0 8h24" stroke="#c8102e" stroke-width="3"/></svg>`,
+  ru: `<svg class="flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="5.33" y="0" fill="#fff"/><rect width="24" height="5.33" y="5.33" fill="#0039a6"/><rect width="24" height="5.34" y="10.66" fill="#d52b1e"/></svg>`,
+  ar: `<svg class="flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#006c35"/><rect x="4" y="6" width="16" height="1.6" rx="0.8" fill="#fff"/><rect x="5.5" y="9.4" width="13" height="1.3" rx="0.65" fill="#fff"/></svg>`,
+};
+
 function langSwitcher(pageSlug) {
-  return LOCALES.map((loc) => {
+  /* Kapalı durumda: TR sayfada UK bayrağı, diğer dillerde o dilin bayrağı */
+  const triggerFlagCode = localeCode === "tr" ? "en" : localeCode;
+  const current = LOCALES.find((l) => l.code === localeCode);
+  const items = LOCALES.map((loc) => {
     const href = langHref(loc.code, pageSlug);
     const active = loc.code === localeCode ? ' class="active" aria-current="true"' : "";
-    return `<a href="${href}" hreflang="${loc.htmlLang}" lang="${loc.htmlLang}" data-oz-lang="${loc.code}"${active}>${loc.label}</a>`;
-  }).join("\n        ");
+    return `<a href="${href}" hreflang="${loc.htmlLang}" lang="${loc.htmlLang}" data-oz-lang="${loc.code}"${active}>${FLAG[loc.code]}<span>${loc.name}</span></a>`;
+  }).join("\n          ");
+  return `<button type="button" class="lang-toggle" aria-haspopup="true" aria-expanded="false" aria-label="${esc(t("lang.switch"))}">
+          ${FLAG[triggerFlagCode]}<span class="lang-code">${current.label}</span>
+          <svg class="lang-caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="lang-menu" role="menu">
+          ${items}
+        </div>`;
 }
 const productSlug = (p) => `urun-${p.slug}`;
 const newsSlug = (n) => `haber-${n.slug}`;
@@ -216,8 +235,12 @@ function specTable(p) {
 
 /* ---------- page: home ---------- */
 function homeMain(mode) {
-  const featured = ["steamax", "maxidens", "scotchsuper", "tempoil", "automass", "econox"]
-    .map((s) => products.find((p) => p.slug === s));
+  const featuredSlugs = featuredProducts?.length
+    ? featuredProducts
+    : ["steamax", "maxidens", "scotchsuper", "tempoil", "automass", "econox"];
+  const featured = featuredSlugs
+    .map((s) => products.find((p) => p.slug === s))
+    .filter(Boolean);
   const stats = about.stats
     .map((s) => `<div class="stat"><strong data-count="${s.value}"${s.prefix ? ` data-prefix="${s.prefix}"` : ""} data-suffix="${s.suffix || ""}">0</strong><span>${esc(s.label)}</span></div>`)
     .join("");
@@ -257,8 +280,8 @@ function homeMain(mode) {
     <section class="section about">
       <div class="container about-grid">
         <div class="about-visual reveal-left">
-          <div class="about-img-stack"><img src="${asset(mode, "assets/media/home-factory.jpg")}" alt="${esc(company.brand)} Gaziantep üretim tesisi ve kontrol panelleri" loading="lazy" /></div>
-          <div class="about-float-card"><strong>${company.years}+</strong><span>${esc(t("home.experience"))}</span></div>
+          <div class="about-img-stack"><img src="${asset(mode, pageMedia?.homeAbout || "assets/media/home-factory.jpg")}" alt="${esc(company.brand)} Gaziantep üretim tesisi ve kontrol panelleri" loading="lazy" /></div>
+          <div class="about-float-card"><strong>${esc(t("home.exportBadgeValue"))}</strong><span>${esc(t("home.exportBadgeLabel"))}</span></div>
         </div>
         <div class="about-text reveal-right">
           <span class="section-label">${esc(t("home.aboutLabel"))}</span>
@@ -365,8 +388,8 @@ function homeMain(mode) {
 function urunlerMain(mode) {
   const cards = products.map((p) => productCard(mode, p)).join("\n        ");
 
-  return `    ${pageHero(mode, t("page.products"), t("page.productsTitle"), t("page.productsDesc"), "marketing-boiler.png")}
-    <section class="section">
+  return `    ${pageHero(mode, t("page.products"), t("page.productsTitle"), t("page.productsDesc"), "factory-production.jpg", "heroProducts")}
+    <section class="section products-page-section">
       <div class="container">
         <div class="products-grid products-grid-all stagger-children reveal">
         ${cards}
@@ -374,6 +397,27 @@ function urunlerMain(mode) {
       </div>
     </section>
     ${ctaBand(mode)}`;
+}
+
+/* ---------- media gallery (scroll-snap carousel) ---------- */
+function mediaGallery(mode, images, alt, extraClass = "") {
+  const list = [...new Set(images.filter(Boolean))];
+  if (!list.length) return "";
+  if (list.length === 1) {
+    return `<img src="${asset(mode, list[0])}" alt="${esc(alt)}" />`;
+  }
+  const slides = list
+    .map((img, i) => `<div class="gallery-slide"><img src="${asset(mode, img)}" alt="${esc(alt)} — ${i + 1}"${i ? ' loading="lazy"' : ""} /></div>`)
+    .join("\n            ");
+  const dots = list.map((_, i) => `<button type="button" class="gallery-dot${i ? "" : " active"}" data-index="${i}" aria-label="${i + 1}"></button>`).join("");
+  return `<div class="media-gallery ${extraClass}" data-gallery>
+          <div class="gallery-track">
+            ${slides}
+          </div>
+          <button type="button" class="gallery-arrow gallery-prev" aria-label="Önceki">${ICON.arrow}</button>
+          <button type="button" class="gallery-arrow gallery-next" aria-label="Sonraki">${ICON.arrow}</button>
+          <div class="gallery-dots">${dots}</div>
+        </div>`;
 }
 
 /* ---------- page: product detail ---------- */
@@ -399,7 +443,7 @@ function productMain(mode, p) {
   return `    <nav class="breadcrumb"><div class="container"><a href="${link(mode, "index")}">${esc(t("breadcrumb.home"))}</a> ${ICON.arrow} <a href="${link(mode, "urunler")}">${esc(t("breadcrumb.products"))}</a> ${ICON.arrow} <span>${esc(p.name)}</span></div></nav>
     <section class="section product-hero-sec">
       <div class="container product-hero">
-        <div class="product-hero-media reveal-left"><img src="${asset(mode, p.image)}" alt="${esc(p.name)}" /></div>
+        <div class="product-hero-media reveal-left">${mediaGallery(mode, [p.image, ...(p.images || [])], p.name)}</div>
         <div class="product-hero-info reveal-right">
           <span class="product-series">${esc(p.series)}</span>
           <h1>${esc(p.name)}</h1>
@@ -442,19 +486,20 @@ function kurumsalMain(mode) {
     [t("value.traceability"), t("value.traceabilityDesc")],
     [t("value.sustainability"), t("value.sustainabilityDesc")],
   ].map(([title, desc]) => `<div class="value-card reveal"><h3>${esc(title)}</h3><p>${esc(desc)}</p></div>`).join("\n        ");
-  const steps = [
-    ["01", t("process.1.title"), t("process.1.desc")],
-    ["02", t("process.2.title"), t("process.2.desc")],
-    ["03", t("process.3.title"), t("process.3.desc")],
-    ["04", t("process.4.title"), t("process.4.desc")],
-  ].map(([n, title, desc]) => `<div class="process-step"><div class="process-num">${n}</div><h3>${esc(title)}</h3><p>${esc(desc)}</p></div>`).join("\n        ");
+  const missionCards = [
+    [t("corporate.vision"), corporate?.vision],
+    [t("corporate.mission"), corporate?.mission],
+    [t("corporate.companies"), corporate?.companies],
+  ].filter(([, text]) => text)
+    .map(([title, text]) => `<div class="mission-card reveal"><h3>${esc(title)}</h3><p>${esc(text)}</p></div>`)
+    .join("\n        ");
 
-  return `    ${pageHero(mode, t("page.corporate"), t("page.corporateTitle"), t("page.corporateDesc"), "corporate-wide.jpg")}
+  return `    ${pageHero(mode, t("page.corporate"), t("page.corporateTitle"), t("page.corporateDesc"), "corporate-wide.jpg", "heroCorporate")}
     <section class="section about">
       <div class="container about-grid">
         <div class="about-visual reveal-left">
           <div class="about-img-stack"><img src="${asset(mode, "assets/media/factory-production.jpg")}" alt="${esc(company.brand)} üretim hattı" loading="lazy" /></div>
-          <div class="about-float-card"><strong>14.000</strong><span>m² Üretim Alanı</span></div>
+          <div class="about-float-card"><strong>17.000</strong><span>m² Üretim Alanı</span></div>
         </div>
         <div class="about-text reveal-right">
           <span class="section-label">${esc(t("home.aboutLabel"))}</span>
@@ -474,9 +519,9 @@ function kurumsalMain(mode) {
     </section>
     <section class="section process">
       <div class="container">
-        ${sectionHead(t("page.process"), t("page.processTitle"))}
-        <div class="process-timeline stagger-children reveal">
-        ${steps}
+        ${sectionHead(t("corporate.sectionLabel"), t("corporate.sectionTitle"))}
+        <div class="mission-grid stagger-children reveal">
+        ${missionCards}
         </div>
       </div>
     </section>
@@ -486,7 +531,7 @@ function kurumsalMain(mode) {
 /* ---------- page: haberler ---------- */
 function haberlerMain(mode) {
   const cards = news.map((n) => newsCard(mode, n)).join("\n        ");
-  return `    ${pageHero(mode, t("page.news"), t("page.newsTitle"), t("page.newsDesc"), "factory-aerial.jpg")}
+  return `    ${pageHero(mode, t("page.news"), t("page.newsTitle"), t("page.newsDesc"), "factory-aerial.jpg", "heroNews")}
     <section class="section">
       <div class="container">
         <div class="news-grid news-grid-all stagger-children reveal">
@@ -501,8 +546,9 @@ function newsDetailMain(mode, n) {
   const related = news.filter((x) => x.slug !== n.slug).slice(0, 3);
   const bodyParas = n.body.split(/(?<=[.!?])\s+/).filter(Boolean);
   const bodyHtml = bodyParas.map((p) => `<p>${esc(p)}</p>`).join("\n          ");
-  const img = n.image
-    ? `<figure class="news-detail-figure reveal"><img src="${asset(mode, n.image)}" alt="${esc(n.title)}" /></figure>`
+  const galleryHtml = mediaGallery(mode, [n.image, ...(n.images || [])], n.title);
+  const img = galleryHtml
+    ? `<figure class="news-detail-figure reveal">${galleryHtml}</figure>`
     : "";
   return `    <article class="news-detail">
       <div class="container news-detail-inner">
@@ -542,7 +588,10 @@ function referanslarMain(mode) {
     ["factory-assembly.jpg", "Tesis içi montaj ve kalite kontrol"],
   ].map(([file, alt]) => `<figure class="ref-photo reveal"><img src="${asset(mode, `assets/media/${file}`)}" alt="${esc(alt)}" loading="lazy" /><figcaption>${esc(alt)}</figcaption></figure>`).join("\n        ");
   const grid = references.map((r) => `<div class="ref-cell reveal">${esc(r)}</div>`).join("\n        ");
-  return `    ${pageHero(mode, t("nav.references"), t("page.referencesTitle"), t("page.referencesDesc"), "corporate-hero.jpg")}
+  const fileBtn = referencesFile
+    ? `<div class="center-cta reveal"><a href="${asset(mode, referencesFile)}" target="_blank" rel="noopener" class="btn btn-primary btn-lg">${esc(t("page.referencesFileBtn"))} ${ICON.arrow}</a></div>`
+    : "";
+  return `    ${pageHero(mode, t("nav.references"), t("page.referencesTitle"), t("page.referencesDesc"), "corporate-hero.jpg", "heroReferences")}
     <section class="section">
       <div class="container">
         <div class="ref-photo-grid stagger-children reveal">
@@ -551,6 +600,7 @@ function referanslarMain(mode) {
         <div class="ref-grid stagger-children reveal" style="margin-top:3rem">
         ${grid}
         </div>
+        ${fileBtn}
       </div>
     </section>
     ${ctaBand(mode)}`;
@@ -559,7 +609,7 @@ function referanslarMain(mode) {
 /* ---------- page: sertifikalar ---------- */
 function sertifikalarMain(mode) {
   const grid = certs.map((c) => `<div class="cert-card lg reveal"><strong>${esc(c.code)}</strong><span>${esc(c.note)}</span></div>`).join("\n        ");
-  return `    ${pageHero(mode, t("nav.certs"), t("page.certsTitle"), t("page.certsDesc"), "factory-hall.jpg")}
+  return `    ${pageHero(mode, t("nav.certs"), t("page.certsTitle"), t("page.certsDesc"), "factory-hall.jpg", "heroCerts")}
     <section class="section">
       <div class="container">
         <figure class="certs-banner reveal"><img src="${asset(mode, "assets/media/certs-banner.jpg")}" alt="${esc(company.brand)} sertifika ve onay logoları" loading="lazy" /></figure>
@@ -576,7 +626,7 @@ function sertifikalarMain(mode) {
 function iletisimMain(mode) {
   const phones = company.phones.map((p) => `<a href="tel:${p.replace(/\s/g, "")}">${esc(p)}</a>`).join("<br />");
   const s = company.social;
-  return `    ${pageHero(mode, t("nav.contact"), t("page.contactTitle"), t("page.contactDesc"))}
+  return `    ${pageHero(mode, t("nav.contact"), t("page.contactTitle"), t("page.contactDesc"), "contact-flags.jpg", "heroContact")}
     <section class="section contact">
       <div class="container contact-grid">
         <div class="contact-info reveal-left">
@@ -626,9 +676,11 @@ function iletisimMain(mode) {
 }
 
 /* ---------- shared page pieces ---------- */
-function pageHero(mode, label, titleHtml, desc, bgFile) {
-  const bg = bgFile
-    ? ` style="background-image:linear-gradient(105deg,rgba(255,255,255,0.94),rgba(232,240,248,0.88)),url('${asset(mode, `assets/media/${bgFile}`)}')"`
+function pageHero(mode, label, titleHtml, desc, bgFile, mediaKey) {
+  const override = mediaKey && pageMedia?.[mediaKey];
+  const bgPath = override || (bgFile ? `assets/media/${bgFile}` : "");
+  const bg = bgPath
+    ? ` style="background-image:linear-gradient(105deg,rgba(255,255,255,0.86) 0%,rgba(240,246,252,0.62) 55%,rgba(240,246,252,0.35) 100%),url('${asset(mode, bgPath)}')"`
     : "";
   return `<section class="page-hero"${bg}>
       <div class="container">
@@ -700,7 +752,7 @@ function staticDoc({ title, description, active, main, pageSlug = active }) {
 /* ---------- page registry ---------- */
 const pages = [
   { slug: "index", title: t("meta.indexTitle", { brand: company.brand }), description: t("meta.indexDesc"), active: "index", main: homeMain, front: true },
-  { slug: "kurumsal", title: `${t("nav.corporate")} | ${company.brand}`, description: trText("ÖZMAKSAN kurumsal: 1976'dan beri Gaziantep'te basınçlı kap ve kazan üretimi, 14.000 m² tesis, uzman mühendis kadrosu."), active: "kurumsal", main: kurumsalMain },
+  { slug: "kurumsal", title: `${t("nav.corporate")} | ${company.brand}`, description: trText("ÖZMAKSAN kurumsal: 1976'dan beri Gaziantep'te basınçlı kap ve kazan üretimi, 17.000 m² tesis, uzman mühendis kadrosu."), active: "kurumsal", main: kurumsalMain },
   { slug: "urunler", title: `${t("nav.products")} | ${company.brand}`, description: trText("Buhar kazanları, kızgın su ve kızgın yağ kazanları, sıcak su kazanları ve enerji geri kazanım ekipmanları."), active: "urunler", main: urunlerMain },
   { slug: "haberler", title: `${t("nav.news")} | ${company.brand}`, description: trText("ÖZMAKSAN haberleri: projeler, etkinlikler, AR-GE çalışmaları ve sektörel duyurular."), active: "haberler", main: haberlerMain },
   { slug: "referanslar", title: `${t("nav.references")} | ${company.brand}`, description: trText("Mercedes-Benz, Coca-Cola, Aygaz, Emirates, Weatherford, TPAO, TOKİ ve daha fazlası — yurt içi ve yurt dışı referanslar."), active: "referanslar", main: referanslarMain },
