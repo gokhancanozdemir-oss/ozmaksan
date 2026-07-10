@@ -1705,6 +1705,19 @@ a { color: inherit; text-decoration: none; }
   color: rgba(255,255,255,0.45);
 }
 
+.footer-credit {
+  width: 100%;
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.footer-credit strong {
+  color: rgba(255, 255, 255, 0.48);
+  font-weight: 600;
+}
+
 /* ── Custom cursor (masaüstü) ── */
 .cursor-dot,
 .cursor-ring {

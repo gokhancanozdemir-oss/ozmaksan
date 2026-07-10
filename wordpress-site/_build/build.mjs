@@ -166,6 +166,7 @@ function footer(mode) {
       <div class="container">
         <p>© ${new Date().getFullYear()} ${esc(company.legalName)} — ${esc(t("footer.rights"))}</p>
         <p>${esc(company.slogan)} · <span>${esc(company.sloganEn)}</span></p>
+        <p class="footer-credit">${esc(t("footer.credit"))} <strong>Gökhan Can Özdemir</strong></p>
       </div>
     </div>
   </footer>`;
