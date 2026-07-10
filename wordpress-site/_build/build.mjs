@@ -391,7 +391,7 @@ function urunlerMain(mode) {
   return `    ${pageHero(mode, t("page.products"), t("page.productsTitle"), t("page.productsDesc"), "factory-production.jpg", "heroProducts")}
     <section class="section products-page-section">
       <div class="container">
-        <div class="products-grid products-grid-all stagger-children reveal">
+        <div class="products-grid products-grid-all">
         ${cards}
         </div>
       </div>
@@ -534,7 +534,7 @@ function haberlerMain(mode) {
   return `    ${pageHero(mode, t("page.news"), t("page.newsTitle"), t("page.newsDesc"), "factory-aerial.jpg", "heroNews")}
     <section class="section">
       <div class="container">
-        <div class="news-grid news-grid-all stagger-children reveal">
+        <div class="news-grid news-grid-all">
         ${cards}
         </div>
       </div>
@@ -597,7 +597,7 @@ function referanslarMain(mode) {
         <div class="ref-photo-grid stagger-children reveal">
         ${refGallery}
         </div>
-        <div class="ref-grid stagger-children reveal" style="margin-top:3rem">
+        <div class="ref-grid" style="margin-top:3rem">
         ${grid}
         </div>
         ${fileBtn}
