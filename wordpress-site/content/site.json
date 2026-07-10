@@ -234,7 +234,9 @@
     "econox",
     "deneme2-urunu"
   ],
-  "pageMedia": {},
+  "pageMedia": {
+    "heroCorporate": "/assets/media/marketing-visual.png"
+  },
   "faq": [
     {
       "q": "Hangi standartlara uygun üretim yapıyorsunuz?",
