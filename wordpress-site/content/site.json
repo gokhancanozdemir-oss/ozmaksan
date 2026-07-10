@@ -1,77 +1,72 @@
 {
-  "company": {
-    "founded": "1976",
-    "mobile": "+90 533 372 83 35",
-    "legalName": "ÖZMAKSAN ISI SANAYİ VE TİCARET A.Ş.",
-    "phones": [
-      "+90 342 220 40 56",
-      "+90 342 220 39 56",
-      "+90 342 357 01 62",
-      "+90 533 372 83 35"
-    ],
-    "sloganEn": "HIGH HEATING TECHNOLOGY",
-    "brand": "ÖZMAKSAN",
-    "social": {
-      "facebook": "https://www.facebook.com/OZMAKSANISI/",
-      "instagram": "https://www.instagram.com/ozmaksan_isi/",
-      "linkedin": "https://www.linkedin.com/in/ozmaksan-isi-san-tic-as-570399161",
-      "youtube": "https://www.youtube.com/@ozmaksan"
-    },
-    "web": "www.ozmaksan.com.tr",
-    "address": "4. Organize Sanayi Bölgesi, 83404 Nolu Cadde No:10, Başpınar / Gaziantep / Türkiye",
-    "years": "49",
-    "email": "ozmaksan@ozmaksan.com.tr",
-    "fax": "+90 342 232 61 13",
-    "slogan": "YÜKSEK ISI TEKNOLOJİSİ"
-  },
-  "about": {
-    "intro": [
-      "ÖZMAKSAN, 1976 yılında ısıtma ve buhar sektöründe hizmet vermek üzere Gaziantep'e kurulmuş olup, uzun yıllardır basınçlı kaplar üretim sektöründe faaliyet göstermektedir.",
-      "17.000 m² üretim tesisimizde yüksek basınçlı buhar kazanları, kızgın su ve kızgın yağ kazanları, atık ısı kazanları, buhar jeneratörleri, ısı eşanjörleri, ekonomizerler, akümülasyon tankları ve enerji geri kazanım ekipmanları üretmekteyiz.",
-      "Güneydoğu Anadolu bölgesinin en geniş üretim kapasitesine sahip firmalarından biri olarak, modern üretim altyapısı ve uzman mühendis kadrosuyla yurt içi ve yurt dışında önde gelen sanayi kuruluşlarının tedarikçisiyiz."
-    ],
-    "stats": [
-      {
-        "value": "49",
-        "suffix": "",
-        "label": "Yıllık Tecrübe"
-      },
-      {
-        "value": "17000",
-        "suffix": "",
-        "label": "m² Üretim Alanı"
-      },
-      {
-        "value": "3000",
-        "suffix": "",
-        "label": "Ton/Yıl Kapasite"
-      },
-      {
-        "value": "60",
-        "prefix": "%",
-        "suffix": "",
-        "label": "İhracat Oranı"
-      }
-    ]
-  },
-  "faq": [
-    {
-      "q": "Hangi standartlara uygun üretim yapıyorsunuz?",
-      "a": "97/23/EC (PED), 2014/68/EU, EN 12953, EN 303-5, AD 2000 Merkblatt, ASME, TSE ve CE standartlarına uygun üretim yapılmaktadır. Basınç ve güvenlik testleri bağımsız kuruluş gözetiminde gerçekleştirilir."
-    },
-    {
-      "q": "Montaj ve devreye alma hizmeti veriyor musunuz?",
-      "a": "Evet. Endüstriyel sistemlerin montajı ve devreye alınması konusunda uzman ekibimizle hizmet vermekteyiz. EPDK sertifikalı doğalgaz dönüşüm hizmeti de sunulmaktadır."
-    },
-    {
-      "q": "Hangi yakıt türleriyle çalışan kazanlarınız var?",
-      "a": "Doğalgaz, LPG, LNG, sıvı yakıt ve katı yakıt (kömür, prina, odun talaşı, pelet, meyve kabuğu) ile çalışan geniş bir ürün yelpazemiz bulunmaktadır. Ayrıca çift yakıtlı (dual) çözümler sunulur."
-    },
-    {
-      "q": "İhracat yapıyor musunuz?",
-      "a": "Evet. Ortadoğu, Kuzey Afrika ve Orta Asya başta olmak üzere birçok ülkeye doğrudan ihracat yapmaktayız. Üretimimizin yaklaşık %40'ı yurt dışı pazarlarına yöneliktir."
-    }
+  "exportCountries": [
+    "Afganistan",
+    "Amerika Birleşik Devletleri",
+    "Arnavutluk",
+    "Azerbaycan",
+    "Bangladeş",
+    "Belarus",
+    "Bosna Hersek",
+    "Bulgaristan",
+    "Cezayir",
+    "Dubai (BAE)",
+    "Etiyopya",
+    "Fas",
+    "Fildişi Sahili",
+    "Gürcistan",
+    "Honduras",
+    "Irak",
+    "İran",
+    "İspanya",
+    "İtalya",
+    "Kazakistan",
+    "KKTC",
+    "Kosova",
+    "Kuveyt",
+    "Letonya",
+    "Libya",
+    "Litvanya",
+    "Lübnan",
+    "Maldivler",
+    "Mısır",
+    "Moldova",
+    "Nahçıvan",
+    "Pakistan",
+    "Romanya",
+    "Rusya",
+    "Senegal",
+    "Sudan",
+    "Suriye",
+    "Suudi Arabistan",
+    "Tacikistan",
+    "Tunus",
+    "Türkmenistan",
+    "Ukrayna",
+    "Venezuela",
+    "Yunanistan",
+    "Ürdün",
+    "Özbekistan"
   ],
+  "referencesFile": "",
+  "auxiliaries": [
+    "Degazörler",
+    "Eşanjörler",
+    "Ekonomizerler",
+    "Reküperatörler",
+    "Kondens Tankları",
+    "Flaş Buhar Tankları",
+    "Boylerler",
+    "Bacalar",
+    "Kızdırıcı Üniteleri",
+    "Akümülasyon Tankları",
+    "N-Pentan Depolama Tankları",
+    "Yakıt Depolama Tankları"
+  ],
+  "corporate": {
+    "vision": "Yüksek basınçlı buhar ve ısı teknolojilerinde uluslararası ölçekte tanınan, yenilikçi ve güvenilir bir dünya markası olmak; enerji verimliliği ve sürdürülebilir üretimde sektöre yön vermek.",
+    "mission": "1976'dan bu yana edindiğimiz mühendislik birikimiyle; müşterilerimizin ihtiyaçlarına uygun, uluslararası standartlarda, güvenli ve verimli basınçlı kap ve kazan çözümleri üretmek, satış sonrası destekle uzun ömürlü iş ortaklıkları kurmak.",
+    "companies": "ÖZMAKSAN Isı Sanayi Tic. A.Ş. çatısı altında; basınçlı kap ve kazan üretimi, enerji geri kazanım sistemleri ve anahtar teslim kazan dairesi kurulumu alanlarında faaliyet gösteren üretim ve mühendislik birimlerimizle hizmet veriyoruz."
+  },
   "references": [
     "Mercedes-Benz",
     "Coca-Cola",
@@ -132,6 +127,54 @@
     "TOKİ",
     "Erdemir"
   ],
+  "sectors": [
+    "Tekstil & İplik",
+    "Kimya & Petrokimya",
+    "İlaç Sanayi",
+    "Gıda & İçecek",
+    "Kağıt & Ambalaj",
+    "Metal & Cam",
+    "Otel & AVM",
+    "Hastane & Sterilizasyon",
+    "Seracılık & Besicilik",
+    "Jeotermal Enerji",
+    "Asfalt & İnşaat",
+    "Kamu Kurumları",
+    "Endüstriyel Çamaşırhane",
+    "Boyama & Dokuma",
+    "Mobilya & Ağaç",
+    "Petrol & Rafineri"
+  ],
+  "about": {
+    "intro": [
+      "ÖZMAKSAN, 1976 yılında ısıtma ve buhar sektöründe hizmet vermek üzere Gaziantep'e kurulmuş olup, uzun yıllardır basınçlı kaplar üretim sektöründe faaliyet göstermektedir.",
+      "17.000 m² üretim tesisimizde yüksek basınçlı buhar kazanları, kızgın su ve kızgın yağ kazanları, atık ısı kazanları, buhar jeneratörleri, ısı eşanjörleri, ekonomizerler, akümülasyon tankları ve enerji geri kazanım ekipmanları üretmekteyiz.",
+      "Güneydoğu Anadolu bölgesinin en geniş üretim kapasitesine sahip firmalarından biri olarak, modern üretim altyapısı ve uzman mühendis kadrosuyla yurt içi ve yurt dışında önde gelen sanayi kuruluşlarının tedarikçisiyiz."
+    ],
+    "stats": [
+      {
+        "value": "49",
+        "suffix": "",
+        "label": "Yıllık Tecrübe"
+      },
+      {
+        "value": "17000",
+        "suffix": "",
+        "label": "m² Üretim Alanı"
+      },
+      {
+        "value": "3000",
+        "suffix": "",
+        "label": "Ton/Yıl Kapasite"
+      },
+      {
+        "value": "60",
+        "prefix": "%",
+        "suffix": "",
+        "label": "İhracat Oranı"
+      }
+    ]
+  },
   "certs": [
     {
       "code": "CE",
@@ -182,99 +225,57 @@
       "note": "Verimli teknoloji referansı"
     }
   ],
-  "sectors": [
-    "Tekstil & İplik",
-    "Kimya & Petrokimya",
-    "İlaç Sanayi",
-    "Gıda & İçecek",
-    "Kağıt & Ambalaj",
-    "Metal & Cam",
-    "Otel & AVM",
-    "Hastane & Sterilizasyon",
-    "Seracılık & Besicilik",
-    "Jeotermal Enerji",
-    "Asfalt & İnşaat",
-    "Kamu Kurumları",
-    "Endüstriyel Çamaşırhane",
-    "Boyama & Dokuma",
-    "Mobilya & Ağaç",
-    "Petrol & Rafineri"
-  ],
-  "exportCountries": [
-    "Afganistan",
-    "Amerika Birleşik Devletleri",
-    "Arnavutluk",
-    "Azerbaycan",
-    "Bangladeş",
-    "Belarus",
-    "Bosna Hersek",
-    "Bulgaristan",
-    "Cezayir",
-    "Dubai (BAE)",
-    "Etiyopya",
-    "Fas",
-    "Fildişi Sahili",
-    "Gürcistan",
-    "Honduras",
-    "Irak",
-    "İran",
-    "İspanya",
-    "İtalya",
-    "Kazakistan",
-    "KKTC",
-    "Kosova",
-    "Kuveyt",
-    "Letonya",
-    "Libya",
-    "Litvanya",
-    "Lübnan",
-    "Maldivler",
-    "Mısır",
-    "Moldova",
-    "Nahçıvan",
-    "Pakistan",
-    "Romanya",
-    "Rusya",
-    "Senegal",
-    "Sudan",
-    "Suriye",
-    "Suudi Arabistan",
-    "Tacikistan",
-    "Tunus",
-    "Türkmenistan",
-    "Ukrayna",
-    "Venezuela",
-    "Yunanistan",
-    "Ürdün",
-    "Özbekistan"
-  ],
-  "auxiliaries": [
-    "Degazörler",
-    "Eşanjörler",
-    "Ekonomizerler",
-    "Reküperatörler",
-    "Kondens Tankları",
-    "Flaş Buhar Tankları",
-    "Boylerler",
-    "Bacalar",
-    "Kızdırıcı Üniteleri",
-    "Akümülasyon Tankları",
-    "N-Pentan Depolama Tankları",
-    "Yakıt Depolama Tankları"
-  ],
   "featuredProducts": [
     "steamax",
     "maxidens",
     "scotchsuper",
     "tempoil",
     "automass",
-    "econox"
+    "econox",
+    "deneme2-urunu"
   ],
-  "referencesFile": "",
-  "corporate": {
-    "vision": "Yüksek basınçlı buhar ve ısı teknolojilerinde uluslararası ölçekte tanınan, yenilikçi ve güvenilir bir dünya markası olmak; enerji verimliliği ve sürdürülebilir üretimde sektöre yön vermek.",
-    "mission": "1976'dan bu yana edindiğimiz mühendislik birikimiyle; müşterilerimizin ihtiyaçlarına uygun, uluslararası standartlarda, güvenli ve verimli basınçlı kap ve kazan çözümleri üretmek, satış sonrası destekle uzun ömürlü iş ortaklıkları kurmak.",
-    "companies": "ÖZMAKSAN Isı Sanayi Tic. A.Ş. çatısı altında; basınçlı kap ve kazan üretimi, enerji geri kazanım sistemleri ve anahtar teslim kazan dairesi kurulumu alanlarında faaliyet gösteren üretim ve mühendislik birimlerimizle hizmet veriyoruz."
-  },
-  "pageMedia": {}
+  "pageMedia": {},
+  "faq": [
+    {
+      "q": "Hangi standartlara uygun üretim yapıyorsunuz?",
+      "a": "97/23/EC (PED), 2014/68/EU, EN 12953, EN 303-5, AD 2000 Merkblatt, ASME, TSE ve CE standartlarına uygun üretim yapılmaktadır. Basınç ve güvenlik testleri bağımsız kuruluş gözetiminde gerçekleştirilir."
+    },
+    {
+      "q": "Montaj ve devreye alma hizmeti veriyor musunuz?",
+      "a": "Evet. Endüstriyel sistemlerin montajı ve devreye alınması konusunda uzman ekibimizle hizmet vermekteyiz. EPDK sertifikalı doğalgaz dönüşüm hizmeti de sunulmaktadır."
+    },
+    {
+      "q": "Hangi yakıt türleriyle çalışan kazanlarınız var?",
+      "a": "Doğalgaz, LPG, LNG, sıvı yakıt ve katı yakıt (kömür, prina, odun talaşı, pelet, meyve kabuğu) ile çalışan geniş bir ürün yelpazemiz bulunmaktadır. Ayrıca çift yakıtlı (dual) çözümler sunulur."
+    },
+    {
+      "q": "İhracat yapıyor musunuz?",
+      "a": "Evet. Ortadoğu, Kuzey Afrika ve Orta Asya başta olmak üzere birçok ülkeye doğrudan ihracat yapmaktayız. Üretimimizin yaklaşık %40'ı yurt dışı pazarlarına yöneliktir."
+    }
+  ],
+  "company": {
+    "founded": "1976",
+    "mobile": "+90 533 372 83 35",
+    "legalName": "ÖZMAKSAN ISI SANAYİ VE TİCARET A.Ş.",
+    "phones": [
+      "+90 342 220 40 56",
+      "+90 342 220 39 56",
+      "+90 342 357 01 62",
+      "+90 533 372 83 35"
+    ],
+    "sloganEn": "HIGH HEATING TECHNOLOGY",
+    "brand": "ÖZMAKSAN",
+    "social": {
+      "facebook": "https://www.facebook.com/OZMAKSANISI/",
+      "instagram": "https://www.instagram.com/ozmaksan_isi/",
+      "linkedin": "https://www.linkedin.com/in/ozmaksan-isi-san-tic-as-570399161",
+      "youtube": "https://www.youtube.com/@ozmaksan"
+    },
+    "web": "www.ozmaksan.com.tr",
+    "address": "4. Organize Sanayi Bölgesi, 83404 Nolu Cadde No:10, Başpınar / Gaziantep / Türkiye",
+    "years": "49",
+    "email": "ozmaksan@ozmaksan.com.tr",
+    "fax": "+90 342 232 61 13",
+    "slogan": "YÜKSEK ISI TEKNOLOJİSİ"
+  }
 }
