@@ -1,7 +1,7 @@
 {
   "pressure": "3 - 16 Bar ",
   "efficiency": "% 93 - 95 ",
-  "name": "SCOTCHmax Boiler",
+  "name": "SCOTCHmax KAZANLARI",
   "slug": "scotchmax",
   "intro": [
     "OUPK(S) Serisi Sıvı ve Gaz Yakıtlı Sıcak Su Kazanları, uluslararası standartlara uygun Skoç tip tasarım esas alınarak geliştirilmiştir. Üretimin tüm aşamaları, 2014/68/EU PED, TS 497 ve TS EN 12953 standartlarına uygun kalite kontrol süreçleriyle gerçekleştirilmektedir.\n\n\n\n",
@@ -12,6 +12,7 @@
   "pdf": "assets/catalogs/scotchmax.pdf",
   "fuel": "Sıvı & Gaz",
   "series": "Skoç Tip",
+  "images": [],
   "capacity": "100.000 Kcal/h - 17.200.000 Kcalh",
   "type": "Skoç Tip · 3 Geçişli",
   "image": "/assets/products/scotchmax-ana-resi-m.png",
