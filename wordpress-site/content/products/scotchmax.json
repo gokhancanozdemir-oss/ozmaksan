@@ -1,11 +1,12 @@
 {
-  "pressure": "3 - 16 Bar ",
+  "pressure": "3 - 16 Bar    (1.5 × Test Faktörü)",
   "efficiency": "% 93 - 95 ",
   "name": "SCOTCHmax SICAK SU KAZANLARI",
   "slug": "scotchmax",
   "intro": [
-    "OUPK(S) Serisi Sıvı ve Gaz Yakıtlı Sıcak Su Kazanları, uluslararası standartlara uygun Skoç tip tasarım esas alınarak geliştirilmiştir. Üretimin tüm aşamaları, 2014/68/EU PED, TS 497 ve TS EN 12953 standartlarına uygun kalite kontrol süreçleriyle gerçekleştirilmektedir.\n\n\n\n",
-    "Yüksek su hacmi sayesinde ısı yükü homojen şekilde dağıtılır, böylece termal gerilmeler azalır ve kazan ömrü önemli ölçüde uzar. Optimum ocak ve duman gazı geçiş tasarımı; yüksek yanma verimi, düşük NOx emisyonu ve maksimum ısı transferi sağlar.\n",
+    "OUPK(S) Serisi Sıvı ve Gaz Yakıtlı Sıcak Su Kazanları, uluslararası standartlara uygun Skoç tip tasarım esas alınarak geliştirilmiştir. .\n\n\n\n",
+    "Üretimin tüm aşamaları; PED 2014/68/EU Basınçlı Ekipmanlar Direktifi, TS 497 Çelik Kazanlar Standardı, TS EN 303 ve TS EN 304 Isıtma Kazanları Standartları, TS EN 12953 Kabuk Tipi Kazanlar Standardı ile (AB) 2016/426 Gaz Yakan Cihazlar Yönetmeliği'ne uygun kalite kontrol süreçleri kapsamında gerçekleştirilmektedir.",
+    "Yüksek su hacmi, ısı yükünün homojen dağılımını sağlayarak termal gerilmeleri azaltır ve kazan ömrünü uzatır. Optimum ocak ve duman gazı geçiş tasarımı; yüksek yanma verimi, maksimum ısı transferi ve düşük NOx emisyonu sağlar. Düşük karşı basınç sayesinde brülörün elektrik tüketimi azalırken, optimize edilmiş duman gazı yolu yüksek verim ve düşük yakıt tüketimi ile çevre dostu işletme performansı sunar.",
     "Kazan ön kapağı 1.200 °C'ye dayanıklı özel refrakter malzeme ile izole edilmiştir. Gövde izolasyonu ise yüksek yoğunluklu cam yünü ve boyalı galvaniz sac kaplama ile güçlendirilerek ısı kayıpları minimum seviyeye indirilmiştir."
   ],
   "tagline": "Sıvı & Gaz yakıtlı Skoç Tip Sıcak Su Kazanı",
