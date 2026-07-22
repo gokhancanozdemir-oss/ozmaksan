@@ -1,25 +1,32 @@
 {
-  "slug": "scotchmax",
+  "pressure": "3 - 16 Bar ",
+  "efficiency": "% 93 - 95 ",
   "name": "SCOTCHmax Boiler",
-  "series": "Skoç Tip",
-  "category": "sicaksu",
-  "tagline": "Sıvı & gaz yakıtlı skoç tip sıcak su kazanı",
-  "fuel": "Sıvı & Gaz",
-  "type": "Skoç Tip · 3 Geçişli",
-  "capacity": "Geniş kapasite aralığı",
-  "pressure": "Merkezi ısıtma",
-  "efficiency": "Yüksek verim",
-  "image": "assets/products/scotchmax.jpg",
-  "pdf": "assets/catalogs/scotchmax.pdf",
+  "slug": "scotchmax",
   "intro": [
-    "SCOTCHmax serisi sıvı ve gaz yakıtlı, uluslararası skoç tip 3 geçişli sıcak su kazanıdır. Üretimin her safhası 97/23/EEC PED, EN 303-5 ve TS 497 normlarına uygundur.",
-    "Geniş su hacmi uzun ömür sağlar; düşük yakıt tüketimi ve yüksek ısı transferi sunar."
+    "OUPK(S) Serisi Sıvı ve Gaz Yakıtlı Sıcak Su Kazanları, uluslararası standartlara uygun Skoç tip tasarım esas alınarak geliştirilmiştir. Üretimin tüm aşamaları, 2014/68/EU PED, TS 497 ve TS EN 12953 standartlarına uygun kalite kontrol süreçleriyle gerçekleştirilmektedir.\n\n\n\n",
+    "Yüksek su hacmi sayesinde ısı yükü homojen şekilde dağıtılır, böylece termal gerilmeler azalır ve kazan ömrü önemli ölçüde uzar. Optimum ocak ve duman gazı geçiş tasarımı; yüksek yanma verimi, düşük NOx emisyonu ve maksimum ısı transferi sağlar.\n",
+    "Kazan ön kapağı 1.200 °C'ye dayanıklı özel refrakter malzeme ile izole edilmiştir. Gövde izolasyonu ise yüksek yoğunluklu cam yünü ve boyalı galvaniz sac kaplama ile güçlendirilerek ısı kayıpları minimum seviyeye indirilmiştir."
   ],
+  "tagline": "Sıvı & gaz yakıtlı skoç tip sıcak su kazanı",
+  "pdf": "assets/catalogs/scotchmax.pdf",
+  "fuel": "Sıvı & Gaz",
+  "series": "Skoç Tip",
+  "capacity": "100.000 Kcal/h - 17.200.000 Kcalh",
+  "type": "Skoç Tip · 3 Geçişli",
+  "image": "/assets/products/scotchmax-ana-resi-m.png",
   "features": [
-    "Skoç tip 3 geçişli tasarım",
-    "Geniş su hacmi, uzun ömür",
-    "Düşük yakıt tüketimi",
-    "Dikişsiz kazan boruları",
-    "Galvaniz kaplı, izoleli gövde"
-  ]
+    "\tUluslararası standartlara uygun Skoç tip tasarım ",
+    "Yüksek su hacmi ile uzun kazan ömrü ",
+    "Homojen ısı dağılımı ve düşük termal gerilme ",
+    "Yüksek yanma verimi, düşük NOx emisyonu ",
+    "1.200 °C dayanımlı refrakter ön kapak ",
+    "Cam yünü izolasyon ve boyalı galvaniz sac kaplama ",
+    "Düşük karşı basınç sayesinde düşük brülör enerji tüketimi ",
+    "Optimize edilmiş duman gazı geçişi ile yüksek ısı transferi ",
+    "Düşük yakıt tüketimi ve çevre dostu işletme ",
+    "Kolay bakım ve uzun ekonomik kullanım ömrü",
+    "* Tüm teknik değerler proje ihtiyaçlarına göre opsiyonel olarak belirlenebilmektedir."
+  ],
+  "category": "sicaksu"
 }
