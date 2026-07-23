@@ -1,6 +1,6 @@
 {
-  "pressure": "20 bar'a kadar",
-  "efficiency": "%90 – 92",
+  "pressure": "3 - 25 Bar (1.5 × Test Faktörü)",
+  "efficiency": "% 90 – 94",
   "name": "STEAmAX BUHAR KAZANLARI ",
   "slug": "steamax",
   "intro": [
@@ -59,8 +59,8 @@
       ]
     ]
   },
-  "capacity": "600 – 24.000 kg/h buhar",
-  "type": "Skoç Tip · 3 Geçişli",
+  "capacity": "600 – 30.000 Kg/h",
+  "type": "Skoç Tip · 3 Geçişli · Alev Duman Borulu",
   "image": "/assets/products/karafiber-steam-boiler-kopya.jpg",
   "features": [
     "3 geçişli uluslararası skoç tip tasarım",
