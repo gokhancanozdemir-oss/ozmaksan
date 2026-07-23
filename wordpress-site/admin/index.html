@@ -4,12 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
   <title>ÖZMAKSAN — İçerik Yönetimi</title>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <!-- Sabit sürüm: ^ aralığı önbellekte eski/kırık build bırakabiliyor -->
-  <script src="https://unpkg.com/decap-cms@3.8.3/dist/decap-cms.js"></script>
+  <!-- CMS_BUILD: 2026-07-23-c — özel önizleme yok -->
+  <script src="https://cdn.jsdelivr.net/npm/decap-cms@3.3.3/dist/decap-cms.js"></script>
   <script>
     (function () {
       function slugify(s) {
@@ -32,28 +34,10 @@
         window.netlifyIdentity.on("init", function (user) {
           if (!user) {
             window.netlifyIdentity.on("login", function () {
-              document.location.href = "/admin/";
+              document.location.href = "/admin/?v=20260723c";
             });
           }
         });
-      }
-
-      // Özel önizleme bilerek KALDIRILDI — Decap 3 + createClass React #130 üretiyordu.
-      // Düzenleme formu varsayılan Decap UI ile çalışır.
-
-      function normalizeImageList(data) {
-        var images = data.get("images");
-        if (!images || !images.toJS) return data;
-        var normalized = images.toJS().map(function (item) {
-          if (item == null) return null;
-          if (typeof item === "string") return item;
-          if (typeof item === "object") {
-            if (item.image) return item.image;
-            for (var k in item) if (item[k]) return String(item[k]);
-          }
-          return null;
-        }).filter(Boolean);
-        return data.set("images", normalized);
       }
 
       var hooksDone = false;
@@ -68,14 +52,13 @@
             var data = entry.get("data");
             if (collection === "products") {
               if (!data.get("slug")) data = data.set("slug", slugify(data.get("name")));
-              return normalizeImageList(data);
+              return data;
             }
             if (collection === "news") {
               if (!data.get("slug")) data = data.set("slug", slugify(data.get("title")));
               var d = data.get("date") || "";
               if (d && String(d).indexOf("T") >= 0) d = String(d).slice(0, 10);
-              data = data.set("date", d).set("dateLabel", monthTr(d));
-              return normalizeImageList(data);
+              return data.set("date", d).set("dateLabel", monthTr(d));
             }
             return data;
           },

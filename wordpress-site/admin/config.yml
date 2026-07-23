@@ -1,12 +1,11 @@
 # ÖZMAKSAN — İçerik Paneli (Decap CMS)
-# Yazılım bilmeyen kullanıcı için sadeleştirildi: Ürünler + Haberler önde.
+# CMS_BUILD: 2026-07-23-c
 
 backend:
   name: git-gateway
   branch: main
 
 local_backend: true
-locale: tr
 
 media_folder: wordpress-site/assets/uploads
 public_folder: /assets/uploads
@@ -19,29 +18,19 @@ collections:
   - name: products
     label: "1 · Ürünler"
     label_singular: Ürün
-    description: "Siteye çıkan ürünler. Yeni Ürün ile ekleyin; kaydettikten sonra Publish (Yayınla) basın."
+    description: "Siteye çıkan ürünler. Kaydettikten sonra Publish (Yayınla) basın."
     folder: wordpress-site/content/products
     create: true
     delete: true
-    slug: "{{name}}"
+    slug: "{{slug}}"
     extension: json
     format: json
     identifier_field: name
     summary: "{{name}}"
-    sortable_fields: ["name", "category"]
     fields:
-      - label: Ürün adı
-        name: name
-        widget: string
-        hint: "Örn. STEAmAX Boiler"
-      - name: slug
-        widget: hidden
-        required: false
-      - label: Kısa açıklama (tek cümle)
-        name: tagline
-        widget: string
-        required: false
-        hint: "Ürün kartında görünür"
+      - { label: Ürün adı, name: name, widget: string }
+      - { label: Slug, name: slug, widget: string, required: false, hint: "Boş bırakılırsa otomatik üretilir" }
+      - { label: Kısa açıklama, name: tagline, widget: string, required: false }
       - label: Kategori
         name: category
         widget: select
@@ -55,35 +44,29 @@ collections:
       - label: Ürün fotoğrafı
         name: image
         widget: image
+        required: false
         media_folder: ../../assets/products
         public_folder: /assets/products
         choose_url: false
-        required: false
-        hint: "Dosya seç / fotoğraf yükle"
       - label: Açıklama (paragraflar)
         name: intro
         widget: list
-        allow_add: true
         required: false
-        hint: "Her satır bir paragraf. Sağdaki + ile ekleyin."
-        field: { label: Paragraf, widget: text }
-      - label: Özellikler (madde madde)
+        allow_add: true
+        field: { label: Paragraf, name: paragraph, widget: text }
+      - label: Özellikler
         name: features
         widget: list
         required: false
         allow_add: true
-        field: { label: Özellik, widget: string }
-      - label: Teknik bilgiler (isteğe bağlı)
-        name: series
-        widget: string
-        required: false
-        hint: "Seri kodu, örn. OSBK"
+        field: { label: Özellik, name: feature, widget: string }
+      - { label: Seri, name: series, widget: string, required: false }
       - { label: Yakıt, name: fuel, widget: string, required: false }
       - { label: Tip, name: type, widget: string, required: false }
       - { label: Kapasite, name: capacity, widget: string, required: false }
       - { label: Basınç, name: pressure, widget: string, required: false }
       - { label: Verim, name: efficiency, widget: string, required: false }
-      - label: Katalog PDF (isteğe bağlı)
+      - label: Katalog PDF
         name: pdf
         widget: file
         required: false
@@ -94,39 +77,26 @@ collections:
   - name: news
     label: "2 · Haberler"
     label_singular: Haber
-    description: "Anasayfa ve Haberler sayfası. Yeni Haber ekleyin, Publish ile yayınlayın."
     folder: wordpress-site/content/news
     create: true
     delete: true
-    slug: "{{title}}"
+    slug: "{{slug}}"
     extension: json
     format: json
     identifier_field: title
     summary: "{{title}}"
-    sortable_fields: ["date", "title"]
     fields:
-      - label: Başlık
-        name: title
-        widget: string
-      - name: slug
-        widget: hidden
-        required: false
+      - { label: Başlık, name: title, widget: string }
+      - { label: Slug, name: slug, widget: string, required: false }
       - label: Tarih
         name: date
         widget: datetime
         date_format: DD.MM.YYYY
         time_format: false
         format: YYYY-MM-DD
-      - name: dateLabel
-        widget: hidden
-        required: false
-      - label: Kısa özet
-        name: excerpt
-        widget: text
-        hint: "Liste kartında görünen kısa metin"
-      - label: Haberin tamamı
-        name: body
-        widget: text
+      - { label: Tarih etiketi, name: dateLabel, widget: string, required: false }
+      - { label: Kısa özet, name: excerpt, widget: text, required: false }
+      - { label: Haberin tamamı, name: body, widget: text, required: false }
       - label: Fotoğraf
         name: image
         widget: image
@@ -137,7 +107,6 @@ collections:
 
   - name: site
     label: "3 · Firma bilgileri"
-    description: "Telefon, adres, referanslar. Seyrek değiştirilir."
     files:
       - name: site
         label: İletişim ve kurumsal
@@ -152,7 +121,7 @@ collections:
               - { label: Slogan, name: slogan, widget: string, required: false }
               - { label: Slogan (EN), name: sloganEn, widget: string, required: false }
               - { label: Kuruluş yılı, name: founded, widget: string, required: false }
-              - { label: Kaçıncı yıl yazısı, name: years, widget: string, required: false }
+              - { label: Kaçıncı yıl, name: years, widget: string, required: false }
               - { label: Adres, name: address, widget: text }
               - label: Telefonlar
                 name: phones
@@ -166,6 +135,7 @@ collections:
                 name: social
                 widget: object
                 collapsed: true
+                required: false
                 fields:
                   - { label: Facebook, name: facebook, widget: string, required: false }
                   - { label: Instagram, name: instagram, widget: string, required: false }
@@ -175,10 +145,12 @@ collections:
             name: about
             widget: object
             collapsed: true
+            required: false
             fields:
               - label: Paragraflar
                 name: intro
                 widget: list
+                required: false
                 field: { label: Paragraf, name: paragraph, widget: text }
               - label: Rakamlar
                 name: stats
@@ -193,6 +165,7 @@ collections:
             name: faq
             widget: list
             collapsed: true
+            required: false
             fields:
               - { label: Soru, name: q, widget: string }
               - { label: Cevap, name: a, widget: text }
@@ -200,11 +173,13 @@ collections:
             name: references
             widget: list
             collapsed: true
+            required: false
             field: { label: Firma adı, name: company, widget: string }
           - label: Sertifikalar
             name: certs
             widget: list
             collapsed: true
+            required: false
             fields:
               - { label: Kod, name: code, widget: string }
               - { label: Açıklama, name: note, widget: string }
@@ -217,6 +192,7 @@ collections:
           - label: İhracat ülkeleri
             name: exportCountries
             widget: list
+            required: false
             collapsed: true
             field: { label: Ülke, name: country, widget: string }
           - label: Yardımcı donanımlar
@@ -230,17 +206,15 @@ collections:
             widget: list
             required: false
             collapsed: true
-            hint: "Anasayfada gösterilecek ürün slug'ları (örn. steamax, maxidens). Boş bırakılırsa varsayılan liste kullanılır."
             field: { label: Ürün slug, name: product, widget: string }
-          - label: Referans listesi dosyası (PDF)
+          - label: Referans PDF
             name: referencesFile
             widget: file
             required: false
             media_folder: ../../assets/uploads
             public_folder: /assets/uploads
             choose_url: false
-            hint: "Referanslar sayfasındaki 'Tüm referanslarımız' butonunun açacağı dosya. Boşsa buton görünmez."
-          - label: Kurumsal (Vizyon / Misyon / Şirketlerimiz)
+          - label: Kurumsal
             name: corporate
             widget: object
             required: false
@@ -254,17 +228,11 @@ collections:
             widget: object
             required: false
             collapsed: true
-            hint: "Sayfa üst bantları ve anasayfa hakkımızda görseli. Boş bırakılan alanlarda varsayılan görsel kullanılır."
             fields:
-              - { label: "Anasayfa — Hakkımızda görseli", name: homeAbout, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
-              - { label: "Kurumsal bant görseli", name: heroCorporate, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
-              - { label: "Ürünler bant görseli", name: heroProducts, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
-              - { label: "Haberler bant görseli", name: heroNews, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
-              - { label: "Referanslar bant görseli", name: heroReferences, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
-              - { label: "Sertifikalar bant görseli", name: heroCerts, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
-              - { label: "İletişim bant görseli", name: heroContact, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
-
-  # Sayfa metinleri (ui.tr.json) Decap'ta noktalı anahtarlarla (hero.badge vb.)
-  # düzenlenince React #130 hatası veriyor. Metinler dosyadan / geliştirici ile güncellenir;
-  # sık kullanılan metinler için "3 · Firma bilgileri" koleksiyonunu kullanın.
-  # İleride nested JSON yapısına geçilirse buraya tekrar eklenebilir.
+              - { label: Anasayfa hakkımızda, name: homeAbout, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: Kurumsal bant, name: heroCorporate, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: Ürünler bant, name: heroProducts, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: Haberler bant, name: heroNews, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: Referanslar bant, name: heroReferences, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: Sertifikalar bant, name: heroCerts, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
+              - { label: İletişim bant, name: heroContact, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
