@@ -63,14 +63,15 @@ collections:
         widget: list
         required: false
         allow_add: true
+        summary: "{{fields.image}}"
         hint: "Birden fazla fotoğraf eklerseniz ürün sayfasında kaydırmalı galeri oluşur."
-        field:
-          label: Fotoğraf
-          name: image
-          widget: image
-          media_folder: ../../assets/products
-          public_folder: /assets/products
-          choose_url: false
+        fields:
+          - label: Fotoğraf
+            name: image
+            widget: image
+            media_folder: ../../assets/products
+            public_folder: /assets/products
+            choose_url: false
       - label: Açıklama (paragraflar)
         name: intro
         widget: list
@@ -149,14 +150,15 @@ collections:
         widget: list
         required: false
         allow_add: true
+        summary: "{{fields.image}}"
         hint: "Birden fazla fotoğraf eklerseniz haber sayfasında kaydırmalı galeri oluşur."
-        field:
-          label: Fotoğraf
-          name: image
-          widget: image
-          media_folder: ../../assets/news
-          public_folder: /assets/news
-          choose_url: false
+        fields:
+          - label: Fotoğraf
+            name: image
+            widget: image
+            media_folder: ../../assets/news
+            public_folder: /assets/news
+            choose_url: false
 
   - name: site
     label: "3 · Firma bilgileri"
@@ -253,15 +255,8 @@ collections:
             widget: list
             required: false
             collapsed: true
-            hint: "Anasayfada gösterilecek ürünlerin adları (ürün dosya adı/slug). Boş bırakılırsa varsayılan liste kullanılır."
-            field:
-              label: Ürün
-              name: product
-              widget: relation
-              collection: products
-              search_fields: ["name"]
-              value_field: slug
-              display_fields: ["name"]
+            hint: "Anasayfada gösterilecek ürün slug'ları (örn. steamax, maxidens). Boş bırakılırsa varsayılan liste kullanılır."
+            field: { label: Ürün slug, name: product, widget: string }
           - label: Referans listesi dosyası (PDF)
             name: referencesFile
             widget: file
@@ -294,37 +289,7 @@ collections:
               - { label: "Sertifikalar bant görseli", name: heroCerts, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
               - { label: "İletişim bant görseli", name: heroContact, widget: image, required: false, media_folder: ../assets/media, public_folder: /assets/media, choose_url: false }
 
-  - name: pagetexts
-    label: "4 · Sayfa metinleri"
-    description: "Sitedeki başlık ve tanıtım metinleri (Türkçe kaynak — diğer diller otomatik çevrilir)."
-    files:
-      - name: uitr
-        label: Sayfa metinleri (TR)
-        file: wordpress-site/_build/i18n/ui.tr.json
-        fields:
-          - { label: "Anasayfa — üst rozet", name: "hero.badge", widget: string, hint: "{founded} kuruluş yılına dönüşür" }
-          - { label: "Anasayfa — ana başlık", name: "hero.title", widget: string, hint: "HTML etiketleri korunmalı (<br>, <span>)" }
-          - { label: "Anasayfa — açıklama", name: "hero.desc", widget: text }
-          - { label: "Anasayfa — Hakkımızda başlığı", name: "home.aboutTitle", widget: string, hint: "<em> etiketi vurgu için" }
-          - { label: "Anasayfa — Ürün grupları başlığı", name: "home.productGroupsTitle", widget: string }
-          - { label: "Anasayfa — Ürün grupları açıklaması", name: "home.productGroupsDesc", widget: string }
-          - { label: "Anasayfa — Sektörler başlığı", name: "home.sectorsTitle", widget: string }
-          - { label: "Anasayfa — İhracat etiketi", name: "home.export", widget: string }
-          - { label: "Anasayfa — İhracat başlığı", name: "home.exportTitle", widget: string }
-          - { label: "Anasayfa — İhracat açıklaması", name: "home.exportDesc", widget: text }
-          - { label: "İhracat kutucuğu — değer", name: "home.exportBadgeValue", widget: string }
-          - { label: "İhracat kutucuğu — etiket", name: "home.exportBadgeLabel", widget: string }
-          - { label: "Anasayfa — Referanslar başlığı", name: "home.referencesTitle", widget: string }
-          - { label: "Anasayfa — Referanslar açıklaması", name: "home.referencesDesc", widget: string }
-          - { label: "Anasayfa — Haberler başlığı", name: "home.newsTitle", widget: string }
-          - { label: "Sertifikalar — tanıtım metni", name: "page.certsLead", widget: text }
-          - { label: "Referanslar — başlık", name: "page.referencesTitle", widget: string }
-          - { label: "Referanslar — açıklama", name: "page.referencesDesc", widget: text }
-          - { label: "Ürünler — başlık", name: "page.productsTitle", widget: string }
-          - { label: "Ürünler — açıklama", name: "page.productsDesc", widget: text }
-          - { label: "Kurumsal — başlık", name: "page.corporateTitle", widget: string }
-          - { label: "Kurumsal — açıklama", name: "page.corporateDesc", widget: text }
-          - { label: "İletişim — başlık", name: "page.contactTitle", widget: string }
-          - { label: "İletişim — açıklama", name: "page.contactDesc", widget: text }
-          - { label: "CTA — başlık", name: "cta.title", widget: string }
-          - { label: "CTA — açıklama", name: "cta.desc", widget: text }
+  # Sayfa metinleri (ui.tr.json) Decap'ta noktalı anahtarlarla (hero.badge vb.)
+  # düzenlenince React #130 hatası veriyor. Metinler dosyadan / geliştirici ile güncellenir;
+  # sık kullanılan metinler için "3 · Firma bilgileri" koleksiyonunu kullanın.
+  # İleride nested JSON yapısına geçilirse buraya tekrar eklenebilir.

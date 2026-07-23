@@ -92,38 +92,59 @@
       }
 
       function makePreview(builder) {
-        return window.createClass({
+        var create = window.createClass || (window.CMS && window.CMS.createClass);
+        var h = window.h || (window.CMS && window.CMS.h) || (window.React && window.React.createElement);
+        if (!create || !h) return null;
+        return create({
           render: function () {
-            var entry = this.props.entry;
-            var data = entry.get("data").toJS();
-            var getAsset = this.props.getAsset;
-            var imgUrl = "";
-            if (data.image && getAsset) {
-              try { imgUrl = getAsset(data.image).toString(); } catch (e) { imgUrl = data.image; }
+            try {
+              var entry = this.props.entry;
+              if (!entry || !entry.get) {
+                return h("div", { className: "ozmaksan-preview" }, "Önizleme yükleniyor…");
+              }
+              var dataMap = entry.get("data");
+              var data = dataMap && dataMap.toJS ? dataMap.toJS() : {};
+              var getAsset = this.props.getAsset;
+              var imgUrl = "";
+              if (data.image && getAsset) {
+                try { imgUrl = getAsset(data.image).toString(); } catch (e) { imgUrl = String(data.image); }
+              }
+              return h("div", {
+                className: "ozmaksan-preview",
+                dangerouslySetInnerHTML: { __html: builder(data, imgUrl) || "" },
+              });
+            } catch (err) {
+              return h("div", { className: "ozmaksan-preview", style: { padding: "1rem", color: "#b00020" } },
+                "Önizleme hatası: " + String(err && err.message ? err.message : err));
             }
-            return window.h("div", {
-              className: "ozmaksan-preview",
-              dangerouslySetInnerHTML: { __html: builder(data, imgUrl) },
-            });
           },
         });
       }
 
       var previewsDone = false;
       function registerPreviews() {
-        if (previewsDone) return;
-        if (!window.CMS || !window.CMS.registerPreviewStyle || !window.createClass || !window.h) return;
-        window.CMS.registerPreviewStyle(
-          "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap"
-        );
-        window.CMS.registerPreviewStyle("/ozmaksan-corporate.css");
-        window.CMS.registerPreviewStyle(
-          ".ozmaksan-preview{padding:8px 0}.ozmaksan-preview .reveal{opacity:1 !important;transform:none !important}",
-          { raw: true }
-        );
-        window.CMS.registerPreviewTemplate("products", makePreview(productPreviewHtml));
-        window.CMS.registerPreviewTemplate("news", makePreview(newsPreviewHtml));
-        previewsDone = true;
+        if (previewsDone) return true;
+        if (!window.CMS || !window.CMS.registerPreviewStyle) return false;
+        var productPreview = makePreview(productPreviewHtml);
+        var newsPreview = makePreview(newsPreviewHtml);
+        if (!productPreview || !newsPreview) return false;
+        try {
+          window.CMS.registerPreviewStyle(
+            "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap"
+          );
+          window.CMS.registerPreviewStyle("/ozmaksan-corporate.css");
+          window.CMS.registerPreviewStyle(
+            ".ozmaksan-preview{padding:8px 0}.ozmaksan-preview .reveal{opacity:1 !important;transform:none !important}",
+            { raw: true }
+          );
+          window.CMS.registerPreviewTemplate("products", productPreview);
+          window.CMS.registerPreviewTemplate("news", newsPreview);
+          previewsDone = true;
+          return true;
+        } catch (e) {
+          console.warn("CMS preview register failed:", e);
+          return false;
+        }
       }
 
       var hooksDone = false;
@@ -140,6 +161,17 @@
               var data = entry.get("data");
               if (collection === "products") {
                 if (!data.get("slug")) data = data.set("slug", slugify(data.get("name")));
+                // Galeri: hem string hem {image: "..."} formatını string listesine normalize et
+                var images = data.get("images");
+                if (images && images.toJS) {
+                  var normalized = images.toJS().map(function (item) {
+                    if (item == null) return null;
+                    if (typeof item === "string") return { image: item };
+                    if (typeof item === "object" && item.image) return { image: item.image };
+                    return null;
+                  }).filter(Boolean);
+                  data = data.set("images", normalized);
+                }
                 return data;
               }
               if (collection === "news") {
@@ -147,6 +179,16 @@
                 var d = data.get("date") || "";
                 if (d && String(d).indexOf("T") >= 0) d = String(d).slice(0, 10);
                 data = data.set("date", d).set("dateLabel", monthTr(d));
+                var nImages = data.get("images");
+                if (nImages && nImages.toJS) {
+                  var nNorm = nImages.toJS().map(function (item) {
+                    if (item == null) return null;
+                    if (typeof item === "string") return { image: item };
+                    if (typeof item === "object" && item.image) return { image: item.image };
+                    return null;
+                  }).filter(Boolean);
+                  data = data.set("images", nNorm);
+                }
                 return data;
               }
               return data;
@@ -154,7 +196,7 @@
           });
           hooksDone = true;
         }
-        return hooksDone && previewsDone;
+        return hooksDone;
       }
 
       var tries = 0;
