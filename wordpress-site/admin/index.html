@@ -8,8 +8,8 @@
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <!-- Decap CMS kendi "Netlify Identity ile Giriş" ekranını gösterir -->
-  <script src="https://unpkg.com/decap-cms@^3.8.3/dist/decap-cms.js"></script>
+  <!-- Sabit sürüm: ^ aralığı önbellekte eski/kırık build bırakabiliyor -->
+  <script src="https://unpkg.com/decap-cms@3.8.3/dist/decap-cms.js"></script>
   <script>
     (function () {
       function slugify(s) {
@@ -28,7 +28,6 @@
         return Number(d[2]) + " " + m[Number(d[1]) - 1] + " " + d[0];
       }
 
-      // Davet / şifre sıfırlama token'ı ana sayfada kalırsa buraya taşı
       if (window.netlifyIdentity) {
         window.netlifyIdentity.on("init", function (user) {
           if (!user) {
@@ -39,164 +38,50 @@
         });
       }
 
-      function esc(s) {
-        return String(s == null ? "" : s)
-          .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-      }
-      function toList(v) {
-        if (!v) return [];
-        if (v.toJS) v = v.toJS();
-        if (!Array.isArray(v)) return [];
-        return v
-          .map(function (x) {
-            if (x == null) return "";
-            if (typeof x === "object") { for (var k in x) if (x[k]) return String(x[k]); return ""; }
-            return String(x);
-          })
-          .filter(function (s) { return s.trim(); });
-      }
+      // Özel önizleme bilerek KALDIRILDI — Decap 3 + createClass React #130 üretiyordu.
+      // Düzenleme formu varsayılan Decap UI ile çalışır.
 
-      function newsPreviewHtml(data, imgUrl) {
-        var paras = String(data.body || "").split(/(?<=[.!?])\s+/).filter(Boolean);
-        var body = paras.length ? paras.map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") : "<p></p>";
-        var fig = imgUrl ? '<figure class="news-detail-figure"><img src="' + esc(imgUrl) + '" alt="' + esc(data.title) + '" /></figure>' : "";
-        return '<article class="news-detail"><div class="container news-detail-inner">' +
-          '<header class="news-detail-head"><time>' + esc(data.dateLabel || data.date || "") + "</time><h1>" + esc(data.title) + "</h1></header>" +
-          fig +
-          '<div class="news-detail-body">' + body + "</div>" +
-          "</div></article>";
-      }
-
-      function productPreviewHtml(data, imgUrl) {
-        var quickRows = [
-          ["Yakıt", data.fuel], ["Tip", data.type], ["Kapasite", data.capacity],
-          ["Sıcaklık / Basınç", data.pressure], ["Verim", data.efficiency], ["Seri", data.series],
-        ].filter(function (r) { return r[1] && String(r[1]).trim(); })
-          .map(function (r) { return "<div><dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd></div>"; }).join("");
-        var intro = toList(data.intro).map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") || "<p></p>";
-        var feats = toList(data.features).map(function (f) { return "<li><span>" + esc(f) + "</span></li>"; }).join("");
-        var media = imgUrl ? '<img src="' + esc(imgUrl) + '" alt="' + esc(data.name) + '" />' : "";
-        return '<section class="section product-hero-sec"><div class="container product-hero">' +
-          '<div class="product-hero-media">' + media + "</div>" +
-          '<div class="product-hero-info">' +
-          (data.series ? '<span class="product-series">' + esc(data.series) + "</span>" : "") +
-          "<h1>" + esc(data.name) + "</h1>" +
-          '<p class="product-tagline">' + esc(data.tagline) + "</p>" +
-          '<dl class="quick-specs">' + quickRows + "</dl>" +
-          "</div></div></section>" +
-          '<section class="section product-detail"><div class="container product-detail-grid">' +
-          '<div class="product-desc"><h2 class="section-title">Ürün Açıklaması</h2>' + intro + "</div>" +
-          (feats ? '<aside class="product-features"><h3 class="block-title">Öne Çıkan Özellikler</h3><ul class="feature-list">' + feats + "</ul></aside>" : "") +
-          "</div></section>";
-      }
-
-      function makePreview(builder) {
-        var create = window.createClass || (window.CMS && window.CMS.createClass);
-        var h = window.h || (window.CMS && window.CMS.h) || (window.React && window.React.createElement);
-        if (!create || !h) return null;
-        return create({
-          render: function () {
-            try {
-              var entry = this.props.entry;
-              if (!entry || !entry.get) {
-                return h("div", { className: "ozmaksan-preview" }, "Önizleme yükleniyor…");
-              }
-              var dataMap = entry.get("data");
-              var data = dataMap && dataMap.toJS ? dataMap.toJS() : {};
-              var getAsset = this.props.getAsset;
-              var imgUrl = "";
-              if (data.image && getAsset) {
-                try { imgUrl = getAsset(data.image).toString(); } catch (e) { imgUrl = String(data.image); }
-              }
-              return h("div", {
-                className: "ozmaksan-preview",
-                dangerouslySetInnerHTML: { __html: builder(data, imgUrl) || "" },
-              });
-            } catch (err) {
-              return h("div", { className: "ozmaksan-preview", style: { padding: "1rem", color: "#b00020" } },
-                "Önizleme hatası: " + String(err && err.message ? err.message : err));
-            }
-          },
-        });
-      }
-
-      var previewsDone = false;
-      function registerPreviews() {
-        if (previewsDone) return true;
-        if (!window.CMS || !window.CMS.registerPreviewStyle) return false;
-        var productPreview = makePreview(productPreviewHtml);
-        var newsPreview = makePreview(newsPreviewHtml);
-        if (!productPreview || !newsPreview) return false;
-        try {
-          window.CMS.registerPreviewStyle(
-            "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap"
-          );
-          window.CMS.registerPreviewStyle("/ozmaksan-corporate.css");
-          window.CMS.registerPreviewStyle(
-            ".ozmaksan-preview{padding:8px 0}.ozmaksan-preview .reveal{opacity:1 !important;transform:none !important}",
-            { raw: true }
-          );
-          window.CMS.registerPreviewTemplate("products", productPreview);
-          window.CMS.registerPreviewTemplate("news", newsPreview);
-          previewsDone = true;
-          return true;
-        } catch (e) {
-          console.warn("CMS preview register failed:", e);
-          return false;
-        }
+      function normalizeImageList(data) {
+        var images = data.get("images");
+        if (!images || !images.toJS) return data;
+        var normalized = images.toJS().map(function (item) {
+          if (item == null) return null;
+          if (typeof item === "string") return item;
+          if (typeof item === "object") {
+            if (item.image) return item.image;
+            for (var k in item) if (item[k]) return String(item[k]);
+          }
+          return null;
+        }).filter(Boolean);
+        return data.set("images", normalized);
       }
 
       var hooksDone = false;
       function registerHooks() {
         if (!window.CMS || !window.CMS.registerEventListener) return false;
-        registerPreviews();
-        if (!hooksDone) {
-          window.CMS.registerEventListener({
-            name: "preSave",
-            handler: function (_ref) {
-              // preSave, DEĞİŞTİRİLMİŞ DATA'yı döndürmeli (entry'yi değil).
-              var entry = _ref.entry;
-              var collection = entry.get("collection");
-              var data = entry.get("data");
-              if (collection === "products") {
-                if (!data.get("slug")) data = data.set("slug", slugify(data.get("name")));
-                // Galeri: hem string hem {image: "..."} formatını string listesine normalize et
-                var images = data.get("images");
-                if (images && images.toJS) {
-                  var normalized = images.toJS().map(function (item) {
-                    if (item == null) return null;
-                    if (typeof item === "string") return { image: item };
-                    if (typeof item === "object" && item.image) return { image: item.image };
-                    return null;
-                  }).filter(Boolean);
-                  data = data.set("images", normalized);
-                }
-                return data;
-              }
-              if (collection === "news") {
-                if (!data.get("slug")) data = data.set("slug", slugify(data.get("title")));
-                var d = data.get("date") || "";
-                if (d && String(d).indexOf("T") >= 0) d = String(d).slice(0, 10);
-                data = data.set("date", d).set("dateLabel", monthTr(d));
-                var nImages = data.get("images");
-                if (nImages && nImages.toJS) {
-                  var nNorm = nImages.toJS().map(function (item) {
-                    if (item == null) return null;
-                    if (typeof item === "string") return { image: item };
-                    if (typeof item === "object" && item.image) return { image: item.image };
-                    return null;
-                  }).filter(Boolean);
-                  data = data.set("images", nNorm);
-                }
-                return data;
-              }
-              return data;
-            },
-          });
-          hooksDone = true;
-        }
-        return hooksDone;
+        if (hooksDone) return true;
+        window.CMS.registerEventListener({
+          name: "preSave",
+          handler: function (_ref) {
+            var entry = _ref.entry;
+            var collection = entry.get("collection");
+            var data = entry.get("data");
+            if (collection === "products") {
+              if (!data.get("slug")) data = data.set("slug", slugify(data.get("name")));
+              return normalizeImageList(data);
+            }
+            if (collection === "news") {
+              if (!data.get("slug")) data = data.set("slug", slugify(data.get("title")));
+              var d = data.get("date") || "";
+              if (d && String(d).indexOf("T") >= 0) d = String(d).slice(0, 10);
+              data = data.set("date", d).set("dateLabel", monthTr(d));
+              return normalizeImageList(data);
+            }
+            return data;
+          },
+        });
+        hooksDone = true;
+        return true;
       }
 
       var tries = 0;

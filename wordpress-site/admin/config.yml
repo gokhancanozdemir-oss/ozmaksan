@@ -37,53 +37,42 @@ collections:
       - name: slug
         widget: hidden
         required: false
+      - label: Kısa açıklama (tek cümle)
+        name: tagline
+        widget: string
+        required: false
+        hint: "Ürün kartında görünür"
       - label: Kategori
         name: category
         widget: select
+        required: false
         options:
           - { label: Buhar kazanları, value: buhar }
           - { label: Kızgın su, value: kizginsu }
           - { label: Sıcak su, value: sicaksu }
           - { label: Kızgın yağ, value: kizginyag }
           - { label: Enerji & tanklar, value: enerji }
-      - label: Kısa açıklama (tek cümle)
-        name: tagline
-        widget: string
-        hint: "Ürün kartında görünür"
       - label: Ürün fotoğrafı
         name: image
         widget: image
-        # content/products klasöründen iki üst: wordpress-site/assets/products
         media_folder: ../../assets/products
         public_folder: /assets/products
         choose_url: false
-        hint: "Dosya seç / fotoğraf yükle"
-      - label: Ek fotoğraflar (galeri)
-        name: images
-        widget: list
         required: false
-        allow_add: true
-        summary: "{{fields.image}}"
-        hint: "Birden fazla fotoğraf eklerseniz ürün sayfasında kaydırmalı galeri oluşur."
-        fields:
-          - label: Fotoğraf
-            name: image
-            widget: image
-            media_folder: ../../assets/products
-            public_folder: /assets/products
-            choose_url: false
+        hint: "Dosya seç / fotoğraf yükle"
       - label: Açıklama (paragraflar)
         name: intro
         widget: list
         allow_add: true
+        required: false
         hint: "Her satır bir paragraf. Sağdaki + ile ekleyin."
-        field: { label: Paragraf, name: paragraph, widget: text }
+        field: { label: Paragraf, widget: text }
       - label: Özellikler (madde madde)
         name: features
         widget: list
         required: false
         allow_add: true
-        field: { label: Özellik, name: feature, widget: string }
+        field: { label: Özellik, widget: string }
       - label: Teknik bilgiler (isteğe bağlı)
         name: series
         widget: string
@@ -145,20 +134,6 @@ collections:
         media_folder: ../../assets/news
         public_folder: /assets/news
         choose_url: false
-      - label: Ek fotoğraflar (galeri)
-        name: images
-        widget: list
-        required: false
-        allow_add: true
-        summary: "{{fields.image}}"
-        hint: "Birden fazla fotoğraf eklerseniz haber sayfasında kaydırmalı galeri oluşur."
-        fields:
-          - label: Fotoğraf
-            name: image
-            widget: image
-            media_folder: ../../assets/news
-            public_folder: /assets/news
-            choose_url: false
 
   - name: site
     label: "3 · Firma bilgileri"
