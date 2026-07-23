@@ -3,11 +3,7 @@
   "efficiency": "—",
   "name": "AKUMULASYON TANKLAR",
   "slug": "akumulasyon-tanklari",
-  "intro": [
-    "Çeşitli Endüstriyel Proseslerde, Jeotermal Enerji Üretim tesislerinde ve sıcak su kullanım uygulamalarında, buhar veya sıcak su ara depolama ihtiyaçlarını karşılamak amacı ile kullanılan Basınçlı Sıvı Depolama Tanklarıdır.",
-    "Tipi : Silindirik tip, Yatık Tip, Bombeli, Tek Cidarlı",
-    "Dizayn Standardı : AD2000 MERKBLATT - EN 13445"
-  ],
+  "intro": "Çeşitli Endüstriyel Proseslerde, Jeotermal Enerji Üretim tesislerinde ve sıcak su kullanım uygulamalarında, buhar veya sıcak su ara depolama ihtiyaçlarını karşılamak amacı ile kullanılan Basınçlı Sıvı Depolama Tanklarıdır.\n\nTipi : Silindirik tip, Yatık Tip, Bombeli, Tek Cidarlı\n\nDizayn Standardı : AD2000 MERKBLATT - EN 13445",
   "tagline": "Çeşitli Endüstriyel Proseslerde Jeotermal Enerji Üretim tesislerinde ve sıcak su kullanım uygulamalarında, buhar veya sıcak su ara depolama ihtiyaçlarını karşılamak amacı ile kull",
   "pdf": "",
   "sourceUrl": "https://ozmaksan.com.tr/urunler/1007/depolama-tankları-ve-basınçlı-kaplar/1023/akumulasyon-tankları.aspx",
@@ -16,6 +12,6 @@
   "capacity": "Projeye özel",
   "type": "—",
   "image": "assets/products/akumulasyon-tanklari.jpg",
-  "features": [],
+  "features": "",
   "category": "enerji"
 }

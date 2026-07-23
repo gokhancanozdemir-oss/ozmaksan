@@ -3,10 +3,7 @@
   "efficiency": "94",
   "name": "Zarttiri zort",
   "slug": "zarttiri-zort",
-  "intro": [
-    "açıklama paragrafı 1 ",
-    "açıklama paragrafı 2 "
-  ],
+  "intro": "açıklama paragrafı 1 \n\naçıklama paragrafı 2 ",
   "tagline": "tek cümlelik kısa açıklama",
   "pdf": "/assets/catalogs/mudiweb.xlsx",
   "fuel": "yakıt tütürü",
@@ -14,9 +11,6 @@
   "capacity": "sınırsız",
   "type": "türkiye işçi partisi",
   "image": "/assets/products/4.jpg",
-  "features": [
-    "özellik 1 ",
-    "özellik 2 "
-  ],
+  "features": "özellik 1 \nözellik 2 ",
   "category": "kizginyag"
 }

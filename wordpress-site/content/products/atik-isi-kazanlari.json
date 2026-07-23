@@ -3,11 +3,7 @@
   "efficiency": "—",
   "name": "ATIK ISI KAZANLARI",
   "slug": "atik-isi-kazanlari",
-  "intro": [
-    "Muhtelif proseslerden çıkan Atık Gazların, Isı Enerjilerinin Geri Kazanılmasını sağlar.",
-    "Konvansiyonel sistemler ile elektrik üretiminde verim %40'iken atık ısı kazanı kullanımı ile kurulan birleşik güç sistemlerinde %90 verim sağlanır.",
-    "Kojenerasyon / Trijenerasyon sistemlerinin önemli ekipmanıdır."
-  ],
+  "intro": "Muhtelif proseslerden çıkan Atık Gazların, Isı Enerjilerinin Geri Kazanılmasını sağlar.\n\nKonvansiyonel sistemler ile elektrik üretiminde verim %40'iken atık ısı kazanı kullanımı ile kurulan birleşik güç sistemlerinde %90 verim sağlanır.\n\nKojenerasyon / Trijenerasyon sistemlerinin önemli ekipmanıdır.",
   "tagline": "Muhtelif proseslerden çıkan ısı ve enerji yüklü Atık gazların ve Egzoz gazlarının Enerjilerinin Geri Kazanılmasını sağlar.",
   "pdf": "",
   "sourceUrl": "https://ozmaksan.com.tr/urunler/1008/enerji-geri-kazanım-ekipmanları/1019/atık-ısı-kazanları.aspx",
@@ -16,6 +12,6 @@
   "capacity": "Projeye özel",
   "type": "—",
   "image": "assets/products/atik-isi-kazanlari.jpg",
-  "features": [],
+  "features": "",
   "category": "enerji"
 }

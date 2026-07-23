@@ -11,16 +11,6 @@
   "efficiency": "Yakıt tasarrufu",
   "image": "assets/products/factory-boilers.jpg",
   "pdf": "",
-  "intro": [
-    "Kazan sistemlerini tamamlayan enerji geri kazanım ekipmanları ve basınçlı kaplar; baca gazı ısısını geri kazanarak yakıt tasarrufu ve yüksek sistem verimi sağlar.",
-    "Tüm ekipmanlar AD 2000 Merkblatt ve ASME standartlarına uygun, yüksek makine mühendislerinden oluşan ekibimiz tarafından projeye özel tasarlanır."
-  ],
-  "features": [
-    "Ekonomizer & Reküperatörler — baca gazından ısı geri kazanımı",
-    "Atık Isı & Bioatık Kazanları — TÜBİTAK destekli AR-GE",
-    "Akümülasyon Tankları — jeotermal ve buhar enerji depolama",
-    "N-Pentan & Yakıt Depolama Tankları (yer üstü / yer altı)",
-    "Degazör, Kondens Tankı, Flaş Buhar Tankı, Boyler",
-    "Isı Eşanjörleri, Bacalar ve Kızdırıcı Üniteleri"
-  ]
+  "intro": "Kazan sistemlerini tamamlayan enerji geri kazanım ekipmanları ve basınçlı kaplar; baca gazı ısısını geri kazanarak yakıt tasarrufu ve yüksek sistem verimi sağlar.\n\nTüm ekipmanlar AD 2000 Merkblatt ve ASME standartlarına uygun, yüksek makine mühendislerinden oluşan ekibimiz tarafından projeye özel tasarlanır.",
+  "features": "Ekonomizer & Reküperatörler — baca gazından ısı geri kazanımı\nAtık Isı & Bioatık Kazanları — TÜBİTAK destekli AR-GE\nAkümülasyon Tankları — jeotermal ve buhar enerji depolama\nN-Pentan & Yakıt Depolama Tankları (yer üstü / yer altı)\nDegazör, Kondens Tankı, Flaş Buhar Tankı, Boyler\nIsı Eşanjörleri, Bacalar ve Kızdırıcı Üniteleri"
 }

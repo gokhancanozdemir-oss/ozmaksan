@@ -11,17 +11,8 @@
   "efficiency": "%90 – 92",
   "image": "assets/media/product-steam-buhar2.jpg",
   "pdf": "assets/catalogs/tempoil.pdf",
-  "intro": [
-    "KYK serisi kızgın yağ kazanları sıvı ve gaz yakıtlı olup spiral sarımlı borulu dizayna sahiptir. Kızgın yağı serpantin borularda optimum hızda dolaştırarak 350°C'ye kadar kullanıma uygun ısı transferi sağlar.",
-    "Tekstil, kimya, yağ, ağaç, gıda ve asfalt endüstrilerinde proses ısıtma için idealdir. 500.000 – 5.000.000 kcal/h."
-  ],
-  "features": [
-    "Spiral sarımlı serpantin tasarım",
-    "350°C'ye kadar çalışma sıcaklığı",
-    "DIN 17155 kazan çeliği, DIN 17175/2448 spiral borular",
-    "1300°C'ye dayanıklı refrakter",
-    "100 mm kaya yünü izolasyon"
-  ],
+  "intro": "KYK serisi kızgın yağ kazanları sıvı ve gaz yakıtlı olup spiral sarımlı borulu dizayna sahiptir. Kızgın yağı serpantin borularda optimum hızda dolaştırarak 350°C'ye kadar kullanıma uygun ısı transferi sağlar.\n\nTekstil, kimya, yağ, ağaç, gıda ve asfalt endüstrilerinde proses ısıtma için idealdir. 500.000 – 5.000.000 kcal/h.",
+  "features": "Spiral sarımlı serpantin tasarım\n350°C'ye kadar çalışma sıcaklığı\nDIN 17155 kazan çeliği, DIN 17175/2448 spiral borular\n1300°C'ye dayanıklı refrakter\n100 mm kaya yünü izolasyon",
   "usage": [
     "Tekstil",
     "Kimya",

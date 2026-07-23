@@ -89,6 +89,14 @@ function normalizeProduct(p) {
   out.image = normalizeAssetPath(out.image);
   out.images = unwrapList(out.images, ["image", "src", "photo"]).map(normalizeAssetPath).filter(Boolean);
   out.pdf = normalizeAssetPath(out.pdf);
+
+  // CMS text widget: intro/features string olabilir; dizi de olabilir
+  if (typeof out.intro === "string") {
+    out.intro = out.intro.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
+  }
+  if (typeof out.features === "string") {
+    out.features = out.features.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  }
   if (typeof out.specs === "string") {
     try {
       out.specs = JSON.parse(out.specs);

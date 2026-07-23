@@ -11,17 +11,8 @@
   "efficiency": "%109'a kadar",
   "image": "assets/media/product-steam-5tph.jpg",
   "pdf": "assets/catalogs/maxidens.pdf",
-  "intro": [
-    "OYPK serisi yoğuşmalı merkezi ısıtma kazanları doğalgaz, LPG ve LNG ile çalışır. 86.000 – 860.000 kcal/h (100–1.000 kW) kapasite aralığında üretilir.",
-    "Türk Standartları Enstitüsü laboratuvarlarında gerçekleşen ısıl verim testleri sonucunda, verim değerleri %109,3'e varan oranlarda tescillenmiştir."
-  ],
-  "features": [
-    "%109,3'e varan yüksek verim",
-    "3 geçişli tasarım, paslanmaz çelik yoğuşma bölmesi",
-    "80 mm alüminyum folyolu cam yünü izolasyon",
-    "Düşük yakıt tüketimi, düşük emisyon",
-    "2009/142/AT ve TS EN 15417 uygun · çevre dostu"
-  ],
+  "intro": "OYPK serisi yoğuşmalı merkezi ısıtma kazanları doğalgaz, LPG ve LNG ile çalışır. 86.000 – 860.000 kcal/h (100–1.000 kW) kapasite aralığında üretilir.\n\nTürk Standartları Enstitüsü laboratuvarlarında gerçekleşen ısıl verim testleri sonucunda, verim değerleri %109,3'e varan oranlarda tescillenmiştir.",
+  "features": "%109,3'e varan yüksek verim\n3 geçişli tasarım, paslanmaz çelik yoğuşma bölmesi\n80 mm alüminyum folyolu cam yünü izolasyon\nDüşük yakıt tüketimi, düşük emisyon\n2009/142/AT ve TS EN 15417 uygun · çevre dostu",
   "specs": {
     "columns": [
       "Model",

@@ -11,17 +11,8 @@
   "efficiency": "Yüksek verim",
   "image": "assets/products/trinity.jpg",
   "pdf": "assets/catalogs/trinity.pdf",
-  "intro": [
-    "TRINITY serisi sıvı ve gaz yakıtlı sıcak su kazanları üç geçişli dizayna sahip, Özmaksan'ın yeni nesil kazanlarındandır.",
-    "Kazan gövdesinde optimum ısıl denge sağlanır; türbülatör kullanımıyla konveksiyonel ısı transferi artırılarak yüksek performans elde edilir."
-  ],
-  "features": [
-    "Yeni nesil 3 geçişli tasarım",
-    "Optimum ısıl denge",
-    "Türbülatörlü yüksek verim",
-    "80 mm alüminyum folyolu cam yünü izolasyon",
-    "92/42/EEC, 2009/142/AT, TS 497 ve TS EN 303-304 uygun"
-  ],
+  "intro": "TRINITY serisi sıvı ve gaz yakıtlı sıcak su kazanları üç geçişli dizayna sahip, Özmaksan'ın yeni nesil kazanlarındandır.\n\nKazan gövdesinde optimum ısıl denge sağlanır; türbülatör kullanımıyla konveksiyonel ısı transferi artırılarak yüksek performans elde edilir.",
+  "features": "Yeni nesil 3 geçişli tasarım\nOptimum ısıl denge\nTürbülatörlü yüksek verim\n80 mm alüminyum folyolu cam yünü izolasyon\n92/42/EEC, 2009/142/AT, TS 497 ve TS EN 303-304 uygun",
   "specs": {
     "columns": [
       "Model",

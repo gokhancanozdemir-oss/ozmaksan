@@ -1,5 +1,6 @@
 [build]
-  command = "npm install && node _build/translate.mjs && node _build/build-all.mjs"
+  # translate isteğe bağlı: cache yeter; hata/deploy gecikmesi CMS düzeltmelerini engellemesin
+  command = "npm install && node _build/build-all.mjs"
   publish = "."
 
 [build.environment]

@@ -11,17 +11,8 @@
   "efficiency": "Yüksek verim",
   "image": "assets/products/oilmass.jpg",
   "pdf": "assets/catalogs/oilmass.pdf",
-  "intro": [
-    "KKYK serisi katı yakıtlı kızgın yağ kazanları, alttan ocaklı dikey serpantin sarımlı tasarımdır. Katı yakıt, helezon vasıtasıyla otomatik (stokerli) prensiple yüklenir.",
-    "Prina, odun ve badem kabuğu gibi çeşitli katı yakıtlarla çalışır. 500.000 – 3.000.000 kcal/h."
-  ],
-  "features": [
-    "Alttan ocaklı dikey serpantin tasarım",
-    "Stokerli otomatik yükleme",
-    "Çoklu katı yakıt kullanımı",
-    "Kaya yünü izolasyon",
-    "Opsiyonel komple paket ünite"
-  ],
+  "intro": "KKYK serisi katı yakıtlı kızgın yağ kazanları, alttan ocaklı dikey serpantin sarımlı tasarımdır. Katı yakıt, helezon vasıtasıyla otomatik (stokerli) prensiple yüklenir.\n\nPrina, odun ve badem kabuğu gibi çeşitli katı yakıtlarla çalışır. 500.000 – 3.000.000 kcal/h.",
+  "features": "Alttan ocaklı dikey serpantin tasarım\nStokerli otomatik yükleme\nÇoklu katı yakıt kullanımı\nKaya yünü izolasyon\nOpsiyonel komple paket ünite",
   "specs": {
     "columns": [
       "Model",

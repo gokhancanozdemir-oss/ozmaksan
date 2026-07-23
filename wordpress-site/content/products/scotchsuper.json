@@ -11,17 +11,8 @@
   "efficiency": "%90 – 92",
   "image": "assets/media/product-steam-27tph.jpg",
   "pdf": "assets/catalogs/scotchsuper.pdf",
-  "intro": [
-    "OKSK serisi sıvı ve gaz yakıtlı kızgın su kazanları uluslararası skoç tip olarak dizayn edilmiştir. 100.000 – 10.000.000 kcal/h gibi çok geniş bir kapasite aralığında üretilir.",
-    "Geniş su hacmi ve optimum ısıl denge uzun ömür sağlar; uygun brülör seçimiyle düşük NOx'lu mükemmel yanma elde edilir."
-  ],
-  "features": [
-    "Uluslararası skoç tip tasarım",
-    "24 bar'a kadar çalışma basıncı",
-    "10.000.000 kcal/h'e varan kapasite",
-    "ST 35.8 dikişsiz kazan boruları (DIN 17175/2448)",
-    "17Mn4 / 19Mn6 özel kazan sacı"
-  ],
+  "intro": "OKSK serisi sıvı ve gaz yakıtlı kızgın su kazanları uluslararası skoç tip olarak dizayn edilmiştir. 100.000 – 10.000.000 kcal/h gibi çok geniş bir kapasite aralığında üretilir.\n\nGeniş su hacmi ve optimum ısıl denge uzun ömür sağlar; uygun brülör seçimiyle düşük NOx'lu mükemmel yanma elde edilir.",
+  "features": "Uluslararası skoç tip tasarım\n24 bar'a kadar çalışma basıncı\n10.000.000 kcal/h'e varan kapasite\nST 35.8 dikişsiz kazan boruları (DIN 17175/2448)\n17Mn4 / 19Mn6 özel kazan sacı",
   "specs": {
     "columns": [
       "Model",

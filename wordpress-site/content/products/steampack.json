@@ -11,15 +11,6 @@
   "efficiency": "Yüksek verim",
   "image": "assets/products/steampack.jpg",
   "pdf": "assets/catalogs/steampack.pdf",
-  "intro": [
-    "STEAMpack paket buhar sistemleri; buhar kazanı ile birlikte pompa grubu, emniyet ekipmanları, kolektörler ve tüm yardımcı donanımların tek bir şase üzerine monte edildiği tak-çalıştır çözümlerdir.",
-    "2014/68/EU basınçlı ekipman yönetmeliğine uygun üretilir; hızlı devreye alma ve kompakt yerleşim sağlar."
-  ],
-  "features": [
-    "Komple paket (skid) çözüm",
-    "Pompa grubu, emniyet ve kontrol ekipmanları dahil",
-    "Hızlı devreye alma",
-    "2014/68/EU yönetmeliğine uygun",
-    "Minimum saha işçiliği, kompakt yerleşim"
-  ]
+  "intro": "STEAMpack paket buhar sistemleri; buhar kazanı ile birlikte pompa grubu, emniyet ekipmanları, kolektörler ve tüm yardımcı donanımların tek bir şase üzerine monte edildiği tak-çalıştır çözümlerdir.\n\n2014/68/EU basınçlı ekipman yönetmeliğine uygun üretilir; hızlı devreye alma ve kompakt yerleşim sağlar.",
+  "features": "Komple paket (skid) çözüm\nPompa grubu, emniyet ve kontrol ekipmanları dahil\nHızlı devreye alma\n2014/68/EU yönetmeliğine uygun\nMinimum saha işçiliği, kompakt yerleşim"
 }

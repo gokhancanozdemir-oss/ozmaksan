@@ -11,17 +11,8 @@
   "efficiency": "%91'e kadar",
   "image": "assets/products/economass.jpg",
   "pdf": "assets/catalogs/economass.pdf",
-  "intro": [
-    "OKK serisi elle yüklemeli katı yakıtlı sıcak su kazanları son Avrupa normlarına (EN 303-5) göre dizayn edilmiştir. Skoç tip üç geçişli yapıdadır.",
-    "Geniş servis bunkeri, uzun ömür ve %91'e varan yüksek verim sunar; kömür, odun ve prina gibi katı yakıtlarla çalışır."
-  ],
-  "features": [
-    "Elle yüklemeli, geniş yükleme bunkeri",
-    "3 geçişli skoç tip",
-    "%91'e varan verim",
-    "1300°C refrakter malzeme",
-    "Opsiyonel üfleme fanı ve kontrol paneli"
-  ],
+  "intro": "OKK serisi elle yüklemeli katı yakıtlı sıcak su kazanları son Avrupa normlarına (EN 303-5) göre dizayn edilmiştir. Skoç tip üç geçişli yapıdadır.\n\nGeniş servis bunkeri, uzun ömür ve %91'e varan yüksek verim sunar; kömür, odun ve prina gibi katı yakıtlarla çalışır.",
+  "features": "Elle yüklemeli, geniş yükleme bunkeri\n3 geçişli skoç tip\n%91'e varan verim\n1300°C refrakter malzeme\nOpsiyonel üfleme fanı ve kontrol paneli",
   "specs": {
     "columns": [
       "Model",

@@ -11,15 +11,6 @@
   "efficiency": "Yüksek verim",
   "image": "assets/products/jumbomass.jpg",
   "pdf": "assets/catalogs/jumbomass.pdf",
-  "intro": [
-    "JUMBOmass serisi elle yüklemeli katı yakıtlı sıcak su kazanları, EN direktiflerine uygun olarak büyük kapasiteli tesisler için üretilir.",
-    "Geniş yanma hacmi ve kolay temizlenebilir tasarımıyla uzun ömürlü ve ekonomik çalışma sağlar."
-  ],
-  "features": [
-    "Büyük kapasiteli, elle yüklemeli",
-    "Geniş yanma hacmi",
-    "EN direktiflerine uygun",
-    "Dayanıklı gövde ve kolay kül temizliği",
-    "Ekonomik katı yakıt kullanımı"
-  ]
+  "intro": "JUMBOmass serisi elle yüklemeli katı yakıtlı sıcak su kazanları, EN direktiflerine uygun olarak büyük kapasiteli tesisler için üretilir.\n\nGeniş yanma hacmi ve kolay temizlenebilir tasarımıyla uzun ömürlü ve ekonomik çalışma sağlar.",
+  "features": "Büyük kapasiteli, elle yüklemeli\nGeniş yanma hacmi\nEN direktiflerine uygun\nDayanıklı gövde ve kolay kül temizliği\nEkonomik katı yakıt kullanımı"
 }

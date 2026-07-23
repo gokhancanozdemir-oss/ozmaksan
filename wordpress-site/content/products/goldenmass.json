@@ -11,15 +11,6 @@
   "efficiency": "Yüksek verim",
   "image": "assets/products/goldenmass.jpg",
   "pdf": "assets/catalogs/goldenmass.pdf",
-  "intro": [
-    "GOLDENmass serisi aküple (ön) ocaklı katı yakıtlı buhar kazanlarıdır. Kömür ve katı yakıtlarla yüksek kapasiteli, sürekli buhar üretimi için tasarlanmıştır.",
-    "Ayrı yanma ocağı sayesinde yüksek verim ve kesintisiz buhar sağlar (örn. 2000 kg/h · 12 bar kömürlü buhar santrali)."
-  ],
-  "features": [
-    "Aküple (ön) yanma ocağı",
-    "Katı yakıtla yüksek kapasiteli buhar",
-    "Sürekli ve kararlı buhar üretimi",
-    "Sağlam çelik gövde",
-    "Endüstriyel proses için ideal"
-  ]
+  "intro": "GOLDENmass serisi aküple (ön) ocaklı katı yakıtlı buhar kazanlarıdır. Kömür ve katı yakıtlarla yüksek kapasiteli, sürekli buhar üretimi için tasarlanmıştır.\n\nAyrı yanma ocağı sayesinde yüksek verim ve kesintisiz buhar sağlar (örn. 2000 kg/h · 12 bar kömürlü buhar santrali).",
+  "features": "Aküple (ön) yanma ocağı\nKatı yakıtla yüksek kapasiteli buhar\nSürekli ve kararlı buhar üretimi\nSağlam çelik gövde\nEndüstriyel proses için ideal"
 }

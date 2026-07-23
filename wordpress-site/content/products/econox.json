@@ -11,17 +11,8 @@
   "efficiency": "%90 – 92",
   "image": "assets/media/product-econox.jpg",
   "pdf": "assets/catalogs/econox.pdf",
-  "intro": [
-    "OPK serisi sıvı ve gaz yakıtlı sıcak su kazanları 'Karşı Basınç' (Reverse Flame) teknolojisine göre üretilir. Brülör alevi ocak içinde geri döner; yanma gazlarının yarattığı karşı basınçla alev yön değiştirir.",
-    "Bu sayede ısı transferi ve verim yükselir; 80.000 – 2.000.000 kcal/h aralığında üretilir."
-  ],
-  "features": [
-    "Reverse Flame / karşı basınçlı teknoloji",
-    "Yüksek ısı transferi ve verim",
-    "1300°C'ye dayanıklı özel refrakter",
-    "Düşük yakıt tüketimi",
-    "Kompakt dizayn, kolay montaj"
-  ],
+  "intro": "OPK serisi sıvı ve gaz yakıtlı sıcak su kazanları 'Karşı Basınç' (Reverse Flame) teknolojisine göre üretilir. Brülör alevi ocak içinde geri döner; yanma gazlarının yarattığı karşı basınçla alev yön değiştirir.\n\nBu sayede ısı transferi ve verim yükselir; 80.000 – 2.000.000 kcal/h aralığında üretilir.",
+  "features": "Reverse Flame / karşı basınçlı teknoloji\nYüksek ısı transferi ve verim\n1300°C'ye dayanıklı özel refrakter\nDüşük yakıt tüketimi\nKompakt dizayn, kolay montaj",
   "specs": {
     "columns": [
       "Model",

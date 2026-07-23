@@ -3,10 +3,7 @@
   "efficiency": "Yüksek verim",
   "name": "AUTOmass Boiler",
   "slug": "automass",
-  "intro": [
-    "OOPK serisi otomatik yüklemeli katı yakıtlı sıcak su kazanları, katı yakıtı helezon vasıtasıyla otomatik besleme prensibiyle çalışır (EN 303-5).",
-    "Prina, odun talaşı, fındık kömürü, odun peleti ve meyve kabuğu gibi yakıtlarla çalışabilir; düşük yakıt sarfiyatı sağlar. 100.000 – 800.000 kcal/h."
-  ],
+  "intro": "OOPK serisi otomatik yüklemeli katı yakıtlı sıcak su kazanları, katı yakıtı helezon vasıtasıyla otomatik besleme prensibiyle çalışır (EN 303-5).\n\nPrina, odun talaşı, fındık kömürü, odun peleti ve meyve kabuğu gibi yakıtlarla çalışabilir; düşük yakıt sarfiyatı sağlar. 100.000 – 800.000 kcal/h.",
   "tagline": "Otomatik (helezon) yüklemeli katı yakıtlı kazan",
   "pdf": "",
   "fuel": "Katı Yakıt (Otomatik)",
@@ -54,12 +51,6 @@
   "capacity": "100.000 – 800.000 kcal/h",
   "type": "Otomatik Yüklemeli",
   "image": "assets/media/product-steam-buhar.jpg",
-  "features": [
-    "Otomatik helezon besleme sistemi",
-    "Çoklu katı yakıt: prina, talaş, fındık kömürü, pelet, meyve kabuğu",
-    "Düşük yakıt sarfiyatı",
-    "Elektronik kontrol paneli",
-    "Fan destekli verimli yanma"
-  ],
+  "features": "Otomatik helezon besleme sistemi\nÇoklu katı yakıt: prina, talaş, fındık kömürü, pelet, meyve kabuğu\nDüşük yakıt sarfiyatı\nElektronik kontrol paneli\nFan destekli verimli yanma",
   "category": "sicaksu"
 }
