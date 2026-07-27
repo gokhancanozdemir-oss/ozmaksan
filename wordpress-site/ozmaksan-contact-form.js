@@ -1,18 +1,21 @@
 /**
- * Netlify Forms — teklif formu gönderimi ve başarı/hata mesajları
+ * Teklif formu — FormSubmit (ücretsiz, Netlify Forms gerekmez)
  */
 (function () {
   "use strict";
 
-  var form = document.querySelector(".contact-form[data-netlify]");
+  var form = document.querySelector(".contact-form");
   if (!form) return;
 
   var statusEl = document.querySelector(".contact-form-status");
   var submitBtn = form.querySelector('button[type="submit"]');
   var defaultBtnHtml = submitBtn ? submitBtn.innerHTML : "";
+  var email =
+    form.getAttribute("data-form-email") ||
+    "info@ozmaksan.com.tr";
 
   function msg(key, fallback) {
-    var el = document.querySelector("[data-contact-msg=\"" + key + "\"]");
+    var el = document.querySelector('[data-contact-msg="' + key + '"]');
     return el ? el.textContent.trim() : fallback;
   }
 
@@ -23,19 +26,6 @@
     statusEl.textContent = text;
   }
 
-  function clearSentParam() {
-    var params = new URLSearchParams(location.search);
-    if (!params.has("sent")) return;
-    params.delete("sent");
-    var qs = params.toString();
-    history.replaceState(null, "", location.pathname + (qs ? "?" + qs : ""));
-  }
-
-  if (new URLSearchParams(location.search).get("sent") === "1") {
-    showStatus("success", msg("success", "Teşekkürler! Talebiniz alındı."));
-    clearSentParam();
-  }
-
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     if (!submitBtn) return;
@@ -44,15 +34,21 @@
     submitBtn.innerHTML = msg("sending", "Gönderiliyor…");
     if (statusEl) statusEl.hidden = true;
 
-    var body = new URLSearchParams(new FormData(form)).toString();
+    var fd = new FormData(form);
+    fd.append("_subject", "ÖZMAKSAN web teklif formu");
+    fd.append("_template", "table");
+    fd.append("_captcha", "false");
 
-    fetch("/", {
+    fetch("https://formsubmit.co/ajax/" + encodeURIComponent(email), {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: body,
+      body: fd,
+      headers: { Accept: "application/json" },
     })
       .then(function (res) {
         if (!res.ok) throw new Error("submit failed");
+        return res.json();
+      })
+      .then(function () {
         form.reset();
         showStatus("success", msg("success", "Teşekkürler! Talebiniz alındı."));
       })

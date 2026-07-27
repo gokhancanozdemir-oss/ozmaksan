@@ -1,9 +1,14 @@
 # ÖZMAKSAN — İçerik Paneli (Decap CMS)
-# CMS_BUILD: 2026-07-27-a
+# CMS_BUILD: 2026-07-27-free
+# İçerik Publish = sadece GitHub commit (site deploy YOK, kredi YOK)
 
 backend:
-  name: git-gateway
+  name: github
+  repo: gokhancanozdemir-oss/ozmaksan
   branch: main
+  # cms-oauth Worker deploy sonrası URL'yi buraya yazın (ör. https://ozmaksan-cms-auth.xxx.workers.dev)
+  base_url: https://ozmaksan-cms-auth.gokhancanozdemir-oss.workers.dev
+  auth_endpoint: auth
 
 local_backend: true
 
@@ -18,7 +23,7 @@ collections:
   - name: products
     label: "1 · Ürünler"
     label_singular: Ürün
-    description: "Düzenleyin → Yayınla (Publish). Metinler saniyeler içinde, tam site ~1 dk içinde güncellenir. Kalın yazı için B butonunu kullanın."
+    description: "Yayınla = GitHub'a kayıt. Site saniyeler içinde güncellenir; Netlify/CF deploy olmaz, kredi harcanmaz. Kalın yazı: B."
     folder: wordpress-site/content/products
     create: true
     delete: true

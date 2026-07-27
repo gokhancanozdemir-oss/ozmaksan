@@ -1,11 +1,11 @@
 [build]
-  # Saf Node build — npm/sharp/ffmpeg yok; CMS Publish sonrası site ~30–90 sn'de güncellenir
-  command = "node _build/build-all.mjs"
+  # CMS içerik kaydı = deploy YOK (kredi yakmaz). Sadece kod değişince build.
+  command = "node _build/write-catalog.mjs && node _build/build-all.mjs"
   publish = "."
+  ignore = "bash _build/should-build.sh"
 
 [build.environment]
   NODE_VERSION = "20"
-  # Ağır bağımlılık kurulmasın (medya scriptleri lokal)
   NODE_ENV = "production"
 
 # Dil klasörleri
@@ -30,7 +30,6 @@
   to = "/admin/index.html"
   status = 200
 
-# Temiz URL'ler (isteğe bağlı)
 [[redirects]]
   from = "/"
   to = "/index.html"

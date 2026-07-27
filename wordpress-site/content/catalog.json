@@ -1,0 +1,577 @@
+{
+  "updatedAt": "2026-07-27T09:50:42.893Z",
+  "products": [
+    {
+      "slug": "akumulasyon-tanklari",
+      "name": "AKUMULASYON TANKLAR",
+      "tagline": "Çeşitli Endüstriyel Proseslerde Jeotermal Enerji Üretim tesislerinde ve sıcak su kullanım uygulamalarında, buhar veya sıcak su ara depolama ihtiyaçlarını karşılamak amacı ile kull",
+      "image": "assets/products/akumulasyon-tanklari.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "atik-isi-kazanlari",
+      "name": "ATIK ISI KAZANLARI",
+      "tagline": "Muhtelif proseslerden çıkan ısı ve enerji yüklü Atık gazların ve Egzoz gazlarının Enerjilerinin Geri Kazanılmasını sağlar.",
+      "image": "assets/products/atik-isi-kazanlari.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "automass",
+      "name": "AUTOmass Boiler",
+      "tagline": "Otomatik (helezon) yüklemeli katı yakıtlı kazan",
+      "image": "assets/media/product-steam-buhar.jpg",
+      "category": "sicaksu",
+      "series": "OOPK",
+      "fuel": "Katı Yakıt (Otomatik)",
+      "capacity": "100.000 – 800.000 kcal/h",
+      "pdf": ""
+    },
+    {
+      "slug": "bioatik-kazanlari",
+      "name": "BIOATIK KAZANLARI",
+      "tagline": "Bioatıkların Enerjiye dönüştürülmesini sağlayan sistemlerdir. TUBİTAK tarafından desteklenmiş bir projedir.",
+      "image": "assets/products/bioatik-kazanlari.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "butan-tanklari",
+      "name": "BUTAN TANKLARI",
+      "tagline": "Detaylar için bize ulaşın.",
+      "image": "assets/products/butan-tanklari.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "degazor-ve-kondens-tanklari",
+      "name": "DEGAZOR VE KONDENS TANKLARI",
+      "tagline": "ÜRÜN AÇIKLAMASI",
+      "image": "assets/media/product-degazor.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "deneme2-urunu",
+      "name": "Deneme2 Ürünü",
+      "tagline": "Deneme Açıklaması",
+      "image": "assets/products/ake.jpg",
+      "category": "buhar",
+      "series": "",
+      "fuel": "",
+      "capacity": "",
+      "pdf": ""
+    },
+    {
+      "slug": "deneme3",
+      "name": "deneme3",
+      "tagline": "debene 3 kısa ",
+      "image": "assets/products/1764869161400.jpg",
+      "category": "buhar",
+      "series": "",
+      "fuel": "",
+      "capacity": "",
+      "pdf": ""
+    },
+    {
+      "slug": "dik-depolama-tanklari",
+      "name": "DİK DEPOLAMA TANKLARI",
+      "tagline": "Detaylar için bize ulaşın.",
+      "image": "assets/products/dik-depolama-tanklari.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "economass",
+      "name": "ECONOmass Boiler",
+      "tagline": "Elle yüklemeli katı yakıtlı sıcak su kazanı",
+      "image": "assets/products/economass.jpg",
+      "category": "sicaksu",
+      "series": "OKK",
+      "fuel": "Katı Yakıt",
+      "capacity": "100.000 – 1.000.000 kcal/h",
+      "pdf": "assets/catalogs/economass.pdf"
+    },
+    {
+      "slug": "econox",
+      "name": "ECONOx Boiler",
+      "tagline": "Karşı basınçlı (reverse flame) sıcak su kazanı",
+      "image": "assets/media/product-econox.jpg",
+      "category": "sicaksu",
+      "series": "OPK",
+      "fuel": "Sıvı & Gaz",
+      "capacity": "80.000 – 2.000.000 kcal/h (93–2.325 kW)",
+      "pdf": "assets/catalogs/econox.pdf"
+    },
+    {
+      "slug": "ekonomizer-rekuperatorler",
+      "name": "EKONOMIZER & REKUPERATÖRLER",
+      "tagline": "Atık Baca Gazlarından ek ısı kazanımını sağlayan ekipmanlardır.",
+      "image": "assets/products/ekonomizer-rekuperatorler.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "enerji-geri-kazanim",
+      "name": "Enerji Geri Kazanım & Basınçlı Kaplar",
+      "tagline": "Ekonomizer, atık ısı, tanklar ve basınçlı kaplar",
+      "image": "assets/products/factory-boilers.jpg",
+      "category": "enerji",
+      "series": "Yardımcı Donanım",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "flas-buhar-tanki",
+      "name": "FLAŞ BUHAR TANKI",
+      "tagline": "Kondens tankının havalık borusundan kaçan flaş buharı sisteme kazandırmayı amaçlayan ekipmanlardır.",
+      "image": "assets/products/flas-buhar-tanki.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "goldenmass",
+      "name": "GOLDENmass Boiler",
+      "tagline": "Aküple ocaklı katı yakıtlı buhar kazanı",
+      "image": "assets/products/goldenmass.jpg",
+      "category": "buhar",
+      "series": "Aküple Ocaklı",
+      "fuel": "Katı Yakıt (Kömür)",
+      "capacity": "Yüksek kapasiteli buhar",
+      "pdf": "assets/catalogs/goldenmass.pdf"
+    },
+    {
+      "slug": "izosiyonat-poliol-depolama-tanklari",
+      "name": "IZOSIYONAT & POLIOL DEPOLAMA TANKLARI",
+      "tagline": "ÜRÜN AÇIKLAMASI",
+      "image": "assets/products/izosiyonat-poliol-depolama-tanklari.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "jumbomass",
+      "name": "JUMBOmass Boiler",
+      "tagline": "Büyük kapasiteli elle yüklemeli katı yakıtlı kazan",
+      "image": "assets/products/jumbomass.jpg",
+      "category": "sicaksu",
+      "series": "Elle Yüklemeli",
+      "fuel": "Katı Yakıt",
+      "capacity": "Geniş kapasite aralığı",
+      "pdf": "assets/catalogs/jumbomass.pdf"
+    },
+    {
+      "slug": "klor-tanklari",
+      "name": "KLOR TANKLARI",
+      "tagline": "Sanayi tesislerinde ihtiyaç duyulan Klor gazının depolanması için kullanılan Gaz Depolama Tanklarıdır.",
+      "image": "assets/products/klor-tanklari.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "kum-filtreleri",
+      "name": "KUM FİLTRELERİ",
+      "tagline": "Şehir suyu arıtma tesislerinde suda bulunan veya bulunması muhtemel tortu ve bulanıklığın alınmasını, dolayısıyla suyun berrak bir görünüm kazanmasına yardımcı olan tanklardır.",
+      "image": "assets/products/kum-filtreleri.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "maxidens",
+      "name": "MAXIdens Boiler",
+      "tagline": "Yoğuşmalı sıcak su kazanı — %109'a varan verim",
+      "image": "assets/media/product-steam-5tph.jpg",
+      "category": "sicaksu",
+      "series": "OYPK",
+      "fuel": "Doğalgaz / LPG / LNG",
+      "capacity": "86.000 – 860.000 kcal/h (100–1.000 kW)",
+      "pdf": "assets/catalogs/maxidens.pdf"
+    },
+    {
+      "slug": "mobil-buhar-odalari",
+      "name": "MOBIL BUHAR ODALARI",
+      "tagline": "Detaylar için bize ulaşın.",
+      "image": "assets/products/mobil-buhar-odalari.jpg",
+      "category": "buhar",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "n-pentan-depolama-tanklari",
+      "name": "N-PENTAN DEPOLAMA TANKLARI",
+      "tagline": "Sanayi tesislerinde ve Jeotermal Enerji Üretim tesislerinde; ihtiyaç duyulan N-Pentan gazının depolanması için kullanılan Gaz Depolama Tanklarıdır.",
+      "image": "assets/products/n-pentan-depolama-tanklari.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "oilmass",
+      "name": "OILmass Boiler",
+      "tagline": "Katı yakıtlı (stokerli) kızgın yağ kazanı",
+      "image": "assets/products/oilmass.jpg",
+      "category": "kizginyag",
+      "series": "KKYK",
+      "fuel": "Katı Yakıt (Stokerli)",
+      "capacity": "500.000 – 3.000.000 kcal/h",
+      "pdf": "assets/catalogs/oilmass.pdf"
+    },
+    {
+      "slug": "on-ocakli-buhar-sistemleri",
+      "name": "ÖN OCAKLI BUHAR SİSTEMLERİ",
+      "tagline": "Özel dizayn Ön Ocakların, Skoç Buhar kazanlarına adaptasyonu ile Katı yakıt yakmaya özel geliştirilmiş sistemlerdir. Pirinç Kömür, Fındık kömür, Ceviz Kömür",
+      "image": "assets/products/on-ocakli-buhar-sistemleri.jpg",
+      "category": "buhar",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "paslanmaz-tanklar",
+      "name": "PASLANMAZ TANKLAR",
+      "tagline": "Detaylar için bize ulaşın.",
+      "image": "assets/products/paslanmaz-tanklar.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "reaktorler",
+      "name": "REAKTORLER",
+      "tagline": "Petrol Rafinerileri, petrol işleme, temizleme ve ayrımsal damıtma tesislerinde, kimyasal reaksiyonların ve çalışmaların gerektirdiği tesislerde kullanılan, enerji geri kazanımla me",
+      "image": "assets/products/reaktorler.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "scotchmax",
+      "name": "SCOTCHmax SICAK SU KAZANLARI",
+      "tagline": "Sıvı & Gaz yakıtlı Skoç Tip Sıcak Su Kazanı",
+      "image": "assets/products/scotchmax-ana-resi-m.png",
+      "category": "sicaksu",
+      "series": "OUPK.S",
+      "fuel": "Sıvı & Gaz",
+      "capacity": "100.000 Kcal/h - 17.200.000 Kcalh",
+      "pdf": "assets/catalogs/scotchmax_teknik-tablo-2026.pdf"
+    },
+    {
+      "slug": "scotchmax",
+      "name": "SCOTCHmax SICAK SU KAZANLARI 2",
+      "tagline": "Sıvı & Gaz yakıtlı Skoç Tip Sıcak Su Kazanı",
+      "image": "assets/products/scotchmax-ana-resi-m.png",
+      "category": "sicaksu",
+      "series": "OUPK.S",
+      "fuel": "Sıvı & Gaz",
+      "capacity": "100.000 Kcal/h - 17.200.000 Kcalh",
+      "pdf": "assets/catalogs/scotchmax_teknik-tablo-2026.pdf"
+    },
+    {
+      "slug": "scotchsuper",
+      "name": "SCOTCHsuper Boiler",
+      "tagline": "Sıvı & gaz yakıtlı skoç tip kızgın su kazanı",
+      "image": "assets/media/product-steam-27tph.jpg",
+      "category": "kizginsu",
+      "series": "OKSK",
+      "fuel": "Sıvı & Gaz",
+      "capacity": "100.000 – 10.000.000 kcal/h",
+      "pdf": "assets/catalogs/scotchsuper.pdf"
+    },
+    {
+      "slug": "seperator-tanklari",
+      "name": "SEPERATOR TANKLARI",
+      "tagline": "Jeotermal Enerji üretim tesislerinde, yeraltı kaynaklarından elde edilen enerji ve ısı yüklü akışkan önce seperatöre gelir. Katı parçaların akışkandan ayrılması ya da flaş buhar yö",
+      "image": "assets/products/seperator-tanklari.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "stajyer",
+      "name": "Stajyer",
+      "tagline": "new",
+      "image": "assets/products/1764869161400.jpg",
+      "category": "buhar",
+      "series": "",
+      "fuel": "",
+      "capacity": "",
+      "pdf": ""
+    },
+    {
+      "slug": "steamax-boiler",
+      "name": "STEAmAX BUHAR KAZANLARI ",
+      "tagline": "Sıvı & Gaz yakıtlı Yüksek Basınçlı Buhar Kazanı",
+      "image": "assets/products/karafiber-steam-boiler-kesilmis.jpg",
+      "category": "buhar",
+      "series": "OSBK",
+      "fuel": "Sıvı & Gaz",
+      "capacity": "600 – 30.000 Kg/h",
+      "pdf": ""
+    },
+    {
+      "slug": "steamax-boiler",
+      "name": "STEAmAX BUHAR KAZANLARI 3",
+      "tagline": "Sıvı & Gaz yakıtlı Yüksek Basınçlı Buhar Kazanı",
+      "image": "assets/products/karafiber-steam-boiler-kesilmis.jpg",
+      "category": "buhar",
+      "series": "OSBK",
+      "fuel": "Sıvı & Gaz",
+      "capacity": "600 – 30.000 Kg/h",
+      "pdf": ""
+    },
+    {
+      "slug": "steampack",
+      "name": "STEAMpack Boiler",
+      "tagline": "Tak-çalıştır paket (skid) buhar sistemi",
+      "image": "assets/products/steampack.jpg",
+      "category": "buhar",
+      "series": "Paket Ünite",
+      "fuel": "Sıvı & Gaz",
+      "capacity": "Talebe göre",
+      "pdf": "assets/catalogs/steampack.pdf"
+    },
+    {
+      "slug": "tempoil",
+      "name": "TEMPoIL Boiler",
+      "tagline": "Sıvı & gaz yakıtlı kızgın yağ (termal) kazanı",
+      "image": "assets/media/product-steam-buhar2.jpg",
+      "category": "kizginyag",
+      "series": "KYK",
+      "fuel": "Sıvı & Gaz",
+      "capacity": "500.000 – 5.000.000 kcal/h",
+      "pdf": "assets/catalogs/tempoil.pdf"
+    },
+    {
+      "slug": "trinity",
+      "name": "TRInITY Boiler",
+      "tagline": "Yeni nesil 3 geçişli sıvı & gaz yakıtlı sıcak su kazanı",
+      "image": "assets/products/trinity.jpg",
+      "category": "sicaksu",
+      "series": "OUPK",
+      "fuel": "Sıvı & Gaz",
+      "capacity": "90.000 – 1.200.000 kcal/h (105–1.395 kW)",
+      "pdf": "assets/catalogs/trinity.pdf"
+    },
+    {
+      "slug": "yakit-depolama-tanklari",
+      "name": "YAKIT DEPOLAMA TANKLARI",
+      "tagline": "Sıvı ve Gaz yakıtların depo edilmesi için kullanılan tanklardır. Mazot, Fuel Oil, Lng gibi yakıtların depo edilmesi amacı ile kullanılır.",
+      "image": "assets/products/yakit-depolama-tanklari.jpg",
+      "category": "enerji",
+      "series": "",
+      "fuel": "—",
+      "capacity": "Projeye özel",
+      "pdf": ""
+    },
+    {
+      "slug": "zarttiri-zort",
+      "name": "Zarttiri zort",
+      "tagline": "tek cümlelik kısa açıklama",
+      "image": "assets/products/4.jpg",
+      "category": "kizginyag",
+      "series": "teknik bilgi",
+      "fuel": "yakıt tütürü",
+      "capacity": "sınırsız",
+      "pdf": "assets/catalogs/mudiweb.xlsx"
+    }
+  ],
+  "news": [
+    {
+      "slug": "cift-deneme-haber",
+      "title": "çift deneme haber",
+      "excerpt": "kısa özet",
+      "date": "2026-07-10",
+      "dateLabel": "10 Tem 2026",
+      "image": "assets/news/whatsapp-image-2026-07-09-at-10.55.17.jpeg"
+    },
+    {
+      "slug": "haber-denemesi",
+      "title": "haber denemesi",
+      "excerpt": "deneme özeti",
+      "date": "2026-07-09",
+      "dateLabel": "9 Tem 2026",
+      "image": "assets/news/ake.jpg"
+    },
+    {
+      "slug": "a",
+      "title": "a",
+      "excerpt": "aa",
+      "date": "2026-07-08",
+      "dateLabel": "8 Tem 2026",
+      "image": "assets/news/ake.jpg"
+    },
+    {
+      "slug": "elektrikli-kizgin-su-kazani-ehwb-avantajlari",
+      "title": "Elektrikli Kızgın Su Kazanı (EHWB): Avantajlar ve Kullanım Alanları",
+      "excerpt": "Elektrikli kızgın su kazanları hangi tesisler için idealdir? Emisyon, kurulum ve işletme avantajları.",
+      "date": "2026-07-08",
+      "dateLabel": "08 Tem 2026",
+      "image": "assets/media/product-ehwb-catalog.jpg"
+    },
+    {
+      "slug": "kondens-degazor-sistemleri-enerji-verimliligi",
+      "title": "Kondens ve Degazör Sistemleri ile Enerji Verimliliği Nasıl Artırılır?",
+      "excerpt": "Buhar tesisatında kondens geri kazanımı ve degazör kullanımının yakıt tasarrufuna etkisi.",
+      "date": "2026-07-07",
+      "dateLabel": "07 Tem 2026",
+      "image": "assets/media/product-condens-tank.jpg"
+    },
+    {
+      "slug": "endustriyel-referans-projeler-abdi-ibrahim-saka-oba",
+      "title": "Endüstriyel Referans Projeler: Abdi İbrahim, Saka Holding ve Oba Makarna",
+      "excerpt": "İlaç, gıda ve holding sektörlerinde ÖZMAKSAN kazan çözümlerinin sahada nasıl uygulandığı.",
+      "date": "2026-07-06",
+      "dateLabel": "06 Tem 2026",
+      "image": "assets/media/ref-abdi-ibrahim.jpg"
+    },
+    {
+      "slug": "covid-19-ozmaksan-isi-sanayi-tic-a-s-olarak-uyesi-oldugumuz-",
+      "title": "COVID-19 - ÖZMAKSAN ISI SANAYİ TİC A.Ş olarak, üyesi olduğumuz Kazan Ve Basınçlı Kap Sanayicileri Birliği nisan ayı toplantısı firmamız katılımı ile online olarak yapıldı.",
+      "excerpt": "COVID-19 - ÖZMAKSAN ISI SANAYİ TİC A.Ş olarak, üyesi olduğumuz Kazan Ve Basınçlı Kap Sanayicileri Birliği nisan ayı toplantısı firmamız katılımı ile online olarak yapıldı.",
+      "date": "2020-04-10",
+      "dateLabel": "10 Nis 2020",
+      "image": "assets/news/covid-19-ozmaksan-isi-sanayi-tic-a-s-olarak-uyesi-oldugumuz-.jpg"
+    },
+    {
+      "slug": "4-osb-de-bulunan-ozmaksan-tesisimizde-makine-parkurumuzu-gen",
+      "title": "4. OSB de bulunan OZMAKSAN tesisimizde Makine Parkurumuzu Genişletiyoruz",
+      "excerpt": "Makine Parkurumuzu Genişletiyoruz",
+      "date": "2017-04-06",
+      "dateLabel": "06 Nis 2017",
+      "image": "assets/news/4-osb-de-bulunan-ozmaksan-tesisimizde-makine-parkurumuzu-gen.jpg"
+    },
+    {
+      "slug": "temiz-ve-verimli-enerji-uretimi-icin-ar-ge-calismalarimiz-de",
+      "title": "Temiz ve verimli Enerji üretimi için AR-GE Çalışmalarımız devam ediyor",
+      "excerpt": "AR-GE faaliyetleri kapsamında; Temiz ve verimli Enerji üretimi için tasarladığımız, çeşitli katı yakıtlar yakabilen kazanlarımızı test ediyoruz.",
+      "date": "2017-04-06",
+      "dateLabel": "06 Nis 2017",
+      "image": "assets/news/temiz-ve-verimli-enerji-uretimi-icin-ar-ge-calismalarimiz-de.jpg"
+    },
+    {
+      "slug": "aves-uretimini-ozmaksan-yuksek-basincli-buhar-kazanlari-ile-",
+      "title": "AVES üretimini ÖZMAKSAN Yüksek Basınçlı Buhar kazanları ile yapacak.",
+      "excerpt": "Türkiye’nin en büyük ham Ayçiçek yağı tedarikçilerinden olan AVES, Avrupa’nın sayılı entegre yağ tesisleri arasında yer alan Mersin deki yatırımdan sonra Erbil de de 45 milyon dolarlık yatırıma imza atıyor.",
+      "date": "2016-07-27",
+      "dateLabel": "27 Tem 2016",
+      "image": "assets/news/aves-uretimini-ozmaksan-yuksek-basincli-buhar-kazanlari-ile-.jpg"
+    },
+    {
+      "slug": "aygaz-dolum-tesislerinde-ozmaksan-tasinabilir-kazan-daireler",
+      "title": "AYGAZ dolum tesislerinde ÖZMAKSAN taşınabilir kazan daireleri hizmet veriyor.",
+      "excerpt": "AYGAZ dolum tesislerinde ÖZMAKSAN taşınabilir kazan daireleri hizmet veriyor.",
+      "date": "2016-07-27",
+      "dateLabel": "27 Tem 2016",
+      "image": "assets/news/aygaz-dolum-tesislerinde-ozmaksan-tasinabilir-kazan-daireler.jpg"
+    },
+    {
+      "slug": "bilgilendirme-egitimleri-veriyoruz",
+      "title": "Bilgilendirme eğitimleri veriyoruz.",
+      "excerpt": "Teknik destek hizmeti veren özel/ kamu kurum ve kuruluşlarına, üretim prosesleri ve uygulama teknikleri konusunda bilgilendirme eğitimleri veriyoruz.",
+      "date": "2016-07-27",
+      "dateLabel": "27 Tem 2016",
+      "image": "assets/news/bilgilendirme-egitimleri-veriyoruz.jpg"
+    },
+    {
+      "slug": "enerji-geri-kazanim-ekipmanlari",
+      "title": "Enerji Geri Kazanım Ekipmanları",
+      "excerpt": "Enerji Geri Kazanım Ekipmanları; &nbsp;&nbsp; Yoğuşmalı Kazanlar,&nbsp; Bioatık Kazanları,&nbsp; Ekonomizerler,&nbsp; Flaş Buhar Tankları,&nbsp; Rek&uuml;perat&ouml;rler,&nbsp; Atı",
+      "date": "2016-07-27",
+      "dateLabel": "27 Tem 2016",
+      "image": "assets/news/enerji-geri-kazanim-ekipmanlari.jpg"
+    },
+    {
+      "slug": "erdemir-calisanlarindan-ozmaksan-uretim-tesisimize-ziyaret",
+      "title": "ERDEMİR çalışanlarından ÖZMAKSAN üretim tesisimize ziyaret",
+      "excerpt": "Erdemir çalışanlarından mühendis, formen ve uzmanların oluşturduğu 53 kişilik bir ekip, teknolojik gelişmeleri yerinde izlemek, üretim süreçleri hakkında bilgi almak amacı ile ÖZMAKSAN üretim tesisimize teknik ziyarette bulunmuştur.",
+      "date": "2016-07-27",
+      "dateLabel": "27 Tem 2016",
+      "image": "assets/news/erdemir-calisanlarindan-ozmaksan-uretim-tesisimize-ziyaret.jpg"
+    },
+    {
+      "slug": "forum-gaziantep-de-sicak-ve-konforlu-alisverisler-dileriz",
+      "title": "Forum Gaziantep' de sıcak ve konforlu alışverişler dileriz",
+      "excerpt": "Forum Gaziantep’te çok salonlu sinema kompleksi, eğlence alanları, hipermarket, yapı market ve restoranlar ile 44.000 m² kiralanabilir alana sahip olan projede yaklaşık 1500 araçlık kapalı otopark yer alıyor. Isınma sistemleri tercihi ise ÖZMAKSAN ka",
+      "date": "2016-07-27",
+      "dateLabel": "27 Tem 2016",
+      "image": "assets/news/forum-gaziantep-de-sicak-ve-konforlu-alisverisler-dileriz.jpg"
+    },
+    {
+      "slug": "gaziantep-arena-stadyumu-ozmaksan-kazanlari-ile-isinacak",
+      "title": "Gaziantep ARENA stadyumu ÖZMAKSAN kazanları ile ısınacak",
+      "excerpt": "Toplam inşaat alanı, 103.948 m2 olan 33.000 kişi kapasiteye sahip Gaziantep ARENA stadyumu ÖZMAKSAN kazanları ile ısınacak,",
+      "date": "2016-07-27",
+      "dateLabel": "27 Tem 2016",
+      "image": "assets/news/gaziantep-arena-stadyumu-ozmaksan-kazanlari-ile-isinacak.jpg"
+    },
+    {
+      "slug": "gaziantep-universitesi-makine-muhendisligi-bolumu-ogrenciler",
+      "title": "Gaziantep Üniversitesi Makine Mühendisliği Bölümü Öğrencileri",
+      "excerpt": "Gaziantep &Uuml;niversitesi Makine M&uuml;hendisliği B&ouml;l&uuml;m&uuml; &ouml;ğrencileri &Ouml;ZMAKSAN &uuml;retim tesisimizde teknik bir gezi ger&ccedil;ekleştirdi. &nbsp;",
+      "date": "2016-07-27",
+      "dateLabel": "27 Tem 2016",
+      "image": "assets/news/gaziantep-universitesi-makine-muhendisligi-bolumu-ogrenciler.jpg"
+    },
+    {
+      "slug": "kbsb-olagan-kurulu-toplandi",
+      "title": "KBSB Olağan Kurulu Toplandı",
+      "excerpt": "ÖZMAKSAN yönetim kurulu üyeleri katılımı ile, KBSB- Kazan ve Basınçlı Kap Sanayicileri Birliği Derneği Olağan Genel Kurulu 7 Mayıs’ta Cnr Fuar Merkezinde yapıldı.",
+      "date": "2016-07-27",
+      "dateLabel": "27 Tem 2016",
+      "image": "assets/news/kbsb-olagan-kurulu-toplandi.jpg"
+    },
+    {
+      "slug": "sektor-gunu-bulusmasi",
+      "title": "Sektör Günü Buluşması",
+      "excerpt": "&Uuml;yesi olduğumuz KBSB -Kazan ve Basın&ccedil;lı Kap Sanayicileri Birliği- tarafından organize edilen &quot;Sekt&ouml;r G&uuml;n&uuml; Buluşması&quot; karşılıklı bilgi ve talep ",
+      "date": "2016-07-27",
+      "dateLabel": "27 Tem 2016",
+      "image": "assets/news/sektor-gunu-bulusmasi.jpg"
+    }
+  ]
+}

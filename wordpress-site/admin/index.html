@@ -7,10 +7,9 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <title>ÖZMAKSAN — İçerik Yönetimi</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <!-- CMS_BUILD: 2026-07-27-a — markdown bold + hızlı yayın -->
+  <!-- CMS_BUILD: 2026-07-27-free — GitHub backend, deploy yok -->
   <script src="https://unpkg.com/decap-cms@3.1.2/dist/decap-cms.js"></script>
   <script>
     (function () {
@@ -28,16 +27,6 @@
         var d = String(iso || "").slice(0, 10).split("-");
         if (d.length < 3) return iso || "";
         return Number(d[2]) + " " + m[Number(d[1]) - 1] + " " + d[0];
-      }
-
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on("init", function (user) {
-          if (!user) {
-            window.netlifyIdentity.on("login", function () {
-              document.location.href = "/admin/?v=20260727a";
-            });
-          }
-        });
       }
 
       var hooksDone = false;

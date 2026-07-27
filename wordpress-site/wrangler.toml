@@ -1,0 +1,15 @@
+# Cloudflare Pages — ücretsiz hosting (Netlify kredisi gerekmez)
+#
+# Dashboard ayarları:
+#   Framework preset: None
+#   Root directory: wordpress-site
+#   Build command: node _build/write-catalog.mjs && node _build/build-all.mjs
+#   Build output: .
+#   Build watch paths (Include): _build/* admin/* *.js *.css *.html package.json
+#   Build watch paths (Exclude): content/** assets/products/** assets/news/** assets/catalogs/** assets/uploads/**
+#
+# CMS Publish sadece GitHub'a yazar → site GitHub raw'dan okur → Pages build TETİKLENMEZ.
+
+name = "ozmaksan"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "."

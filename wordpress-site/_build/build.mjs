@@ -186,7 +186,7 @@ ${main}
 function productCard(mode, p) {
   const chips = [p.fuel, p.capacity].filter((x) => x && x !== "—").slice(0, 2)
     .map((c) => `<span>${esc(c)}</span>`).join("");
-  return `<article class="product-card reveal">
+  return `<article class="product-card reveal" data-product-slug="${esc(p.slug)}">
         <a class="product-card-media" href="${link(mode, productSlug(p))}">
           <img src="${asset(mode, p.image)}" alt="${esc(p.name)}" loading="lazy" />
         </a>
@@ -207,7 +207,7 @@ function newsCard(mode, n, featured = false) {
   const img = n.image
     ? `<img src="${asset(mode, n.image)}" alt="${esc(n.title)}" loading="lazy" />`
     : `<div class="news-card-placeholder">${ICON.web}</div>`;
-  return `<article class="news-card reveal${featured ? " news-card-featured" : ""}">
+  return `<article class="news-card reveal${featured ? " news-card-featured" : ""}" data-news-slug="${esc(n.slug)}">
         <a class="news-card-media" href="${link(mode, newsSlug(n))}">${img}</a>
         <div class="news-card-body">
           <time class="news-date" datetime="${esc(n.date)}">${esc(n.dateLabel || formatNewsDate(n.date))}</time>
@@ -688,8 +688,7 @@ function iletisimMain(mode) {
             <a href="${s.youtube}" target="_blank" rel="noopener" aria-label="YouTube">${ICON.youtube}</a>
           </div>
         </div>
-        <form class="contact-form reveal-right" name="teklif" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="${link(mode, "iletisim")}">
-          <input type="hidden" name="form-name" value="teklif" />
+        <form class="contact-form reveal-right" name="teklif" method="POST" data-form-email="${esc(company.email)}" action="${link(mode, "iletisim")}">
           <input type="hidden" name="locale" value="${localeCode}" />
           <p class="contact-form-honeypot" hidden aria-hidden="true">
             <label>Bot: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
@@ -754,10 +753,6 @@ function staticDoc({ title, description, active, main, pageSlug = active }) {
     pageSlug === "iletisim"
       ? `<script src="${relRoot ? `${relRoot}/ozmaksan-contact-form.js` : "ozmaksan-contact-form.js"}"></script>`
       : "";
-  const netlifyProbe =
-    pageSlug === "index" && localeCode === "tr"
-      ? `<form name="teklif" data-netlify="true" data-netlify-honeypot="bot-field" hidden><input type="hidden" name="form-name" value="teklif" /><input name="bot-field" /></form>`
-      : "";
   const hreflangs = LOCALES.map((loc) => {
     const href = langHref(loc.code, pageSlug);
     return `<link rel="alternate" hreflang="${loc.htmlLang}" href="/${href.replace(/^\.\.\//, "").replace(/^index\.html$/, "")}" />`;
@@ -785,7 +780,6 @@ function staticDoc({ title, description, active, main, pageSlug = active }) {
   <script src="${langScript}"></script>
 </head>
 <body>
-  ${netlifyProbe}
   ${bodyInner("static", active, main, pageSlug)}
   <script src="${animHref}"></script>
   <script src="${mapHref}"></script>
