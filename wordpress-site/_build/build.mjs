@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadLocalizedData } from "./i18n-loader.mjs";
 import { LOCALES, getLocale } from "./locales.mjs";
+import { escHtml, mdInline, mdBlocks } from "./markdown.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -22,7 +23,7 @@ const exportSvg = fs.readFileSync(path.join(ROOT, "export-map-generated.svg"), "
   .replace(/<\?xml[^>]*\?>\s*/i, "");
 
 /* ---------- helpers ---------- */
-const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const esc = escHtml;
 /** Statik site: göreli varlık yolu; alt dil klasörlerinde ../ ile köke çıkar */
 const asset = (_mode, p) => {
   const clean = String(p || "").replace(/^\/+/, "");
@@ -211,7 +212,7 @@ function newsCard(mode, n, featured = false) {
         <div class="news-card-body">
           <time class="news-date" datetime="${esc(n.date)}">${esc(n.dateLabel || formatNewsDate(n.date))}</time>
           <h3><a href="${link(mode, newsSlug(n))}">${esc(n.title)}</a></h3>
-          <p>${esc(n.excerpt)}</p>
+          <p>${mdInline(n.excerpt)}</p>
           <a href="${link(mode, newsSlug(n))}" class="news-link">${esc(t("news.readMore"))} ${ICON.arrow}</a>
         </div>
       </article>`;
@@ -253,7 +254,7 @@ function homeMain(mode) {
   const countryChips = exportCountries.map((c) => `<span class="export-country-chip">${esc(c)}</span>`).join("\n        ");
   const faqItems = faq.map((f, i) => `<details class="faq-item"${i === 0 ? " open" : ""}>
           <summary>${esc(f.q)}</summary>
-          <p>${esc(f.a)}</p>
+          <p>${mdInline(f.a)}</p>
         </details>`).join("\n        ");
 
   return `    <section class="hero" aria-label="Ana tanıtım">
@@ -287,8 +288,8 @@ function homeMain(mode) {
         <div class="about-text reveal-right">
           <span class="section-label">${esc(t("home.aboutLabel"))}</span>
           <h2 class="section-title">${t("home.aboutTitle")}</h2>
-          <p>${esc(about.intro[0])}</p>
-          <p>${esc(about.intro[1])}</p>
+          <p>${mdInline(about.intro[0])}</p>
+          <p>${mdInline(about.intro[1])}</p>
           <div class="about-stats">${stats}</div>
           <a href="${link(mode, "kurumsal")}" class="btn btn-blue">${esc(t("nav.corporate"))} ${ICON.arrow}</a>
         </div>
@@ -459,7 +460,7 @@ function productMain(mode, p) {
     [t("spec.pressure"), p.pressure], [t("spec.efficiency"), p.efficiency], [t("spec.series"), p.series],
   ].filter(([, v]) => v && v !== "—")
     .map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("");
-  const features = p.features.map((f) => `<li>${ICON.check}<span>${esc(f)}</span></li>`).join("\n          ");
+  const features = p.features.map((f) => `<li>${ICON.check}<span>${mdInline(f)}</span></li>`).join("\n          ");
   const usage = p.usage
     ? `<div class="usage-block reveal"><h3 class="block-title">${esc(t("product.usage"))}</h3><div class="usage-chips">${p.usage.map((u) => `<span>${esc(u)}</span>`).join("")}</div></div>`
     : "";
@@ -469,16 +470,17 @@ function productMain(mode, p) {
         <div class="products-grid stagger-children reveal">${related.map((r) => productCard(mode, r)).join("")}</div>
       </div></section>`
     : "";
-  const intro = p.intro.map((t) => `<p>${esc(t)}</p>`).join("\n          ");
+  const intro = p.intro.map((para) => `<p>${mdInline(para)}</p>`).join("\n          ");
 
-  return `    <nav class="breadcrumb"><div class="container"><a href="${link(mode, "index")}">${esc(t("breadcrumb.home"))}</a> ${ICON.arrow} <a href="${link(mode, "urunler")}">${esc(t("breadcrumb.products"))}</a> ${ICON.arrow} <span>${esc(p.name)}</span></div></nav>
+  return `    <div data-live-product="${esc(p.slug)}">
+    <nav class="breadcrumb"><div class="container"><a href="${link(mode, "index")}">${esc(t("breadcrumb.home"))}</a> ${ICON.arrow} <a href="${link(mode, "urunler")}">${esc(t("breadcrumb.products"))}</a> ${ICON.arrow} <span>${esc(p.name)}</span></div></nav>
     <section class="section product-hero-sec">
       <div class="container product-hero">
         <div class="product-hero-media reveal-left">${mediaGallery(mode, [p.image, ...(p.images || [])], p.name)}</div>
         <div class="product-hero-info reveal-right">
           <span class="product-series">${esc(p.series)}</span>
-          <h1>${esc(p.name)}</h1>
-          <p class="product-tagline">${esc(p.tagline)}</p>
+          <h1 data-live="name">${esc(p.name)}</h1>
+          <p class="product-tagline" data-live="tagline">${esc(p.tagline)}</p>
           <dl class="quick-specs">${quick}</dl>
           <div class="product-hero-actions">
             <a href="${link(mode, "iletisim")}" class="btn btn-primary btn-lg">${esc(t("cta.quote"))} ${ICON.arrow}</a>
@@ -491,12 +493,14 @@ function productMain(mode, p) {
       <div class="container product-detail-grid">
         <div class="product-desc reveal">
           <h2 class="section-title">${esc(t("product.description"))}</h2>
+          <div data-live="intro">
           ${intro}
+          </div>
           ${usage}
         </div>
         <aside class="product-features reveal">
           <h3 class="block-title">${esc(t("product.features"))}</h3>
-          <ul class="feature-list">
+          <ul class="feature-list" data-live="features">
           ${features}
           </ul>
         </aside>
@@ -504,7 +508,8 @@ function productMain(mode, p) {
       <div class="container">${specTable(p)}</div>
     </section>
     ${relatedHtml}
-    ${ctaBand(mode)}`;
+    ${ctaBand(mode)}
+    </div>`;
 }
 
 /* ---------- page: kurumsal ---------- */
@@ -522,7 +527,7 @@ function kurumsalMain(mode) {
     [t("corporate.mission"), corporate?.mission],
     [t("corporate.companies"), corporate?.companies],
   ].filter(([, text]) => text)
-    .map(([title, text]) => `<div class="mission-card reveal"><h3>${esc(title)}</h3><p>${esc(text)}</p></div>`)
+    .map(([title, text]) => `<div class="mission-card reveal"><h3>${esc(title)}</h3><div>${mdBlocks(text)}</div></div>`)
     .join("\n        ");
 
   return `    ${pageHero(mode, t("page.corporate"), t("page.corporateTitle"), t("page.corporateDesc"), "corporate-wide.jpg", "heroCorporate")}
@@ -535,7 +540,7 @@ function kurumsalMain(mode) {
         <div class="about-text reveal-right">
           <span class="section-label">${esc(t("home.aboutLabel"))}</span>
           <h2 class="section-title">${t("page.corporateProfile")}</h2>
-          ${about.intro.map((para) => `<p>${esc(para)}</p>`).join("\n          ")}
+          ${about.intro.map((para) => `<p>${mdInline(para)}</p>`).join("\n          ")}
           <div class="about-stats">${stats}</div>
         </div>
       </div>
@@ -575,13 +580,20 @@ function haberlerMain(mode) {
 
 function newsDetailMain(mode, n) {
   const related = news.filter((x) => x.slug !== n.slug).slice(0, 3);
-  const bodyParas = n.body.split(/(?<=[.!?])\s+/).filter(Boolean);
-  const bodyHtml = bodyParas.map((p) => `<p>${esc(p)}</p>`).join("\n          ");
+  const rawBody = String(n.body || "");
+  const bodyHtml =
+    /\n\s*\n/.test(rawBody) || /\*\*/.test(rawBody)
+      ? mdBlocks(rawBody)
+      : rawBody
+          .split(/(?<=[.!?])\s+/)
+          .filter(Boolean)
+          .map((p) => `<p>${mdInline(p)}</p>`)
+          .join("\n          ");
   const galleryHtml = mediaGallery(mode, [n.image, ...(n.images || [])], n.title);
   const img = galleryHtml
     ? `<figure class="news-detail-figure reveal">${galleryHtml}</figure>`
     : "";
-  return `    <article class="news-detail">
+  return `    <article class="news-detail" data-live-news="${esc(n.slug)}">
       <div class="container news-detail-inner">
         <nav class="breadcrumb reveal" aria-label="Konum">
           <a href="${link(mode, "index")}">${esc(t("breadcrumb.home"))}</a><span>/</span>
@@ -590,10 +602,10 @@ function newsDetailMain(mode, n) {
         </nav>
         <header class="news-detail-head reveal">
           <time datetime="${esc(n.date)}">${esc(n.dateLabel || formatNewsDate(n.date))}</time>
-          <h1>${esc(n.title)}</h1>
+          <h1 data-live="title">${esc(n.title)}</h1>
         </header>
         ${img}
-        <div class="news-detail-body reveal">
+        <div class="news-detail-body reveal" data-live="body">
           ${bodyHtml}
         </div>
         ${related.length ? `<section class="news-related reveal">
@@ -736,6 +748,8 @@ function staticDoc({ title, description, active, main, pageSlug = active }) {
   const animHref = relRoot ? `${relRoot}/ozmaksan-animations.js` : "ozmaksan-animations.js";
   const mapHref = relRoot ? `${relRoot}/ozmaksan-export-map.js` : "ozmaksan-export-map.js";
   const langScript = relRoot ? `${relRoot}/ozmaksan-lang.js` : "ozmaksan-lang.js";
+  const liveHref = relRoot ? `${relRoot}/ozmaksan-live-content.js` : "ozmaksan-live-content.js";
+  const liveScript = localeCode === "tr" ? `<script src="${liveHref}" defer></script>` : "";
   const contactScript =
     pageSlug === "iletisim"
       ? `<script src="${relRoot ? `${relRoot}/ozmaksan-contact-form.js` : "ozmaksan-contact-form.js"}"></script>`
@@ -775,6 +789,7 @@ function staticDoc({ title, description, active, main, pageSlug = active }) {
   ${bodyInner("static", active, main, pageSlug)}
   <script src="${animHref}"></script>
   <script src="${mapHref}"></script>
+  ${liveScript}
   ${contactScript}
 </body>
 </html>`;

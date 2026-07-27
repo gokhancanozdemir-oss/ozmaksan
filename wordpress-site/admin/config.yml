@@ -1,5 +1,5 @@
 # ÖZMAKSAN — İçerik Paneli (Decap CMS)
-# CMS_BUILD: 2026-07-23-d
+# CMS_BUILD: 2026-07-27-a
 
 backend:
   name: git-gateway
@@ -18,7 +18,7 @@ collections:
   - name: products
     label: "1 · Ürünler"
     label_singular: Ürün
-    description: "Siteye çıkan ürünler. Kaydettikten sonra Publish (Yayınla) basın."
+    description: "Düzenleyin → Yayınla (Publish). Metinler saniyeler içinde, tam site ~1 dk içinde güncellenir. Kalın yazı için B butonunu kullanın."
     folder: wordpress-site/content/products
     create: true
     delete: true
@@ -50,14 +50,20 @@ collections:
         choose_url: false
       - label: Açıklama
         name: intro
-        widget: text
+        widget: markdown
         required: false
-        hint: "Paragrafları boş satırla ayırın"
+        buttons: [bold, italic, link]
+        editor_components: []
+        modes: [rich_text]
+        hint: "Kalın yazı için B. Paragrafları boş satırla ayırın."
       - label: Özellikler
         name: features
-        widget: text
+        widget: markdown
         required: false
-        hint: "Her satıra bir özellik yazın"
+        buttons: [bold, italic]
+        editor_components: []
+        modes: [rich_text]
+        hint: "Her satıra bir özellik. Kalın için B."
       - { label: Seri, name: series, widget: string, required: false }
       - { label: Yakıt, name: fuel, widget: string, required: false }
       - { label: Tip, name: type, widget: string, required: false }
@@ -93,8 +99,21 @@ collections:
         time_format: false
         format: YYYY-MM-DD
       - { label: Tarih etiketi, name: dateLabel, widget: string, required: false }
-      - { label: Kısa özet, name: excerpt, widget: text, required: false }
-      - { label: Haberin tamamı, name: body, widget: text, required: false }
+      - label: Kısa özet
+        name: excerpt
+        widget: markdown
+        required: false
+        buttons: [bold, italic]
+        editor_components: []
+        modes: [rich_text]
+      - label: Haberin tamamı
+        name: body
+        widget: markdown
+        required: false
+        buttons: [bold, italic, link]
+        editor_components: []
+        modes: [rich_text]
+        hint: "Kalın yazı için B butonu"
       - label: Fotoğraf
         name: image
         widget: image
@@ -149,7 +168,13 @@ collections:
                 name: intro
                 widget: list
                 required: false
-                field: { label: Paragraf, name: paragraph, widget: text }
+                field:
+                  label: Paragraf
+                  name: paragraph
+                  widget: markdown
+                  buttons: [bold, italic]
+                  editor_components: []
+                  modes: [rich_text]
               - label: Rakamlar
                 name: stats
                 widget: list
@@ -166,7 +191,12 @@ collections:
             required: false
             fields:
               - { label: Soru, name: q, widget: string }
-              - { label: Cevap, name: a, widget: text }
+              - label: Cevap
+                name: a
+                widget: markdown
+                buttons: [bold, italic]
+                editor_components: []
+                modes: [rich_text]
           - label: Referanslar
             name: references
             widget: list
@@ -218,9 +248,27 @@ collections:
             required: false
             collapsed: true
             fields:
-              - { label: Vizyon, name: vision, widget: text, required: false }
-              - { label: Misyon, name: mission, widget: text, required: false }
-              - { label: Şirketlerimiz, name: companies, widget: text, required: false }
+              - label: Vizyon
+                name: vision
+                widget: markdown
+                required: false
+                buttons: [bold, italic]
+                editor_components: []
+                modes: [rich_text]
+              - label: Misyon
+                name: mission
+                widget: markdown
+                required: false
+                buttons: [bold, italic]
+                editor_components: []
+                modes: [rich_text]
+              - label: Şirketlerimiz
+                name: companies
+                widget: markdown
+                required: false
+                buttons: [bold, italic]
+                editor_components: []
+                modes: [rich_text]
           - label: Sayfa görselleri
             name: pageMedia
             widget: object

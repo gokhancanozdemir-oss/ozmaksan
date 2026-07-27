@@ -1,10 +1,12 @@
 [build]
-  # translate isteğe bağlı: cache yeter; hata/deploy gecikmesi CMS düzeltmelerini engellemesin
-  command = "npm install && node _build/build-all.mjs"
+  # Saf Node build — npm/sharp/ffmpeg yok; CMS Publish sonrası site ~30–90 sn'de güncellenir
+  command = "node _build/build-all.mjs"
   publish = "."
 
 [build.environment]
   NODE_VERSION = "20"
+  # Ağır bağımlılık kurulmasın (medya scriptleri lokal)
+  NODE_ENV = "production"
 
 # Dil klasörleri
 [[redirects]]
